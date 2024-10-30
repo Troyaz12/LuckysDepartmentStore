@@ -12,19 +12,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var womensClothing = document.getElementById('womensClothing');
     const items = womensClothing.querySelectorAll('li');
 
-    //// This simulates the button being "activated" by hover
-    //button.addEventListener('mouseenter', function () {
-    //    const firstChild = item.firstElementChild;
-    //    const secondChild = firstChild.nextElementSibling;
-    //    firstChild.classList.add('show');
-
-    //    secondChild.classList.add('show')
-    //    secondChild.style.display = 'block';
-
-
-
-
-    //});
     womensClothing.addEventListener('keydown', function () {
         if (event.key === 'Tab') {
             console.log("hi");
@@ -52,21 +39,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-
-
-
-
     // Reset when mouse leaves  it was item
     WomensListItems.addEventListener('mouseenter', activateButton);
     WomensListItems.addEventListener('mouseleave', deactivateButton);
     item.addEventListener('keydown', function (event) {
         // Check if the pressed key is the Escape key
         if (event.key === 'Escape' || event.keyCode === 27) {
-            const firstChild = item.firstElementChild;
-            const secondChild = firstChild.nextElementSibling;
-            firstChild.classList.remove('show');
-            secondChild.classList.remove('show')
-            secondChild.style.display = 'none';
+            console.log("exe");
+            deactivateButton()
         }
       
     });
@@ -76,9 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const firstChild = item.firstElementChild;
         const secondChild = firstChild.nextElementSibling;
         firstChild.classList.add('show');
-
         secondChild.classList.add('show')
-        secondChild.style.display = 'block';
         secondChild.firstElementChild.focus();
     }
 
@@ -86,8 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const firstChild = item.firstElementChild;
         const secondChild = firstChild.nextElementSibling;
         firstChild.classList.remove('show');
-        secondChild.classList.remove('show')
-        secondChild.style.display = 'none';
+        secondChild.classList.remove('show');
     }
 
    
