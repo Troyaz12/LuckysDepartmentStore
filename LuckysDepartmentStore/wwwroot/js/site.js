@@ -33,7 +33,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (index === lastIndex) {
                     items[0].focus();
                 } else {
-                    items[index + 1].focus();
+                    if (index !== 0) {
+                        items[index + 1].focus();
+                    }
+                    else
+                        items[index + 2].focus();
                 }
             }
         }
