@@ -32,3 +32,21 @@ body {
     justify-content: space-between;
     align-items: center;
 }
+
+.dropdown-menu {
+    width: fit-content;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background-color:gold;
+
+}
+
+.dropdown-header {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.menu-button{
+
+}
