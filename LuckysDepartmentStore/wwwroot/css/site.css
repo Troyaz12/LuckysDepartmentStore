@@ -34,12 +34,15 @@ body {
 }
 
 .dropdown-menu {
+    columns: auto 3; /* Auto number of columns, max 3 */
+    column-fill: balance; /* Try to fill columns evenly */
+    min-height: 300px; /* Should match max-height of container */
+    /* Optional: for layout purposes */
     width: fit-content;
     left: 0;
     right: 0;
     top: 100%;
-    background-color:gold;
-
+    background-color: gold;
 }
 
 .dropdown-header {

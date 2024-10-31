@@ -28,10 +28,16 @@ namespace LuckysDepartmentStore.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        [HttpPost]
+        //[HttpPost]
+        //public IActionResult Search(string name)
+        //{
+        //    return View();
+        //}
+
         public IActionResult Search(string searchString)
         {
             return View();
         }
+
     }
 }

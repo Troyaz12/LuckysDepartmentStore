@@ -3,77 +3,33 @@
 
 // Write your JavaScript code.
 document.addEventListener('DOMContentLoaded', function () {
-    // Select all list items
-    var button = document.getElementById('women');
-    var item = document.getElementById('womenList');
-    var firstItem = document.getElementById('women');
-    var WomensListItems = document.getElementById('womens');
 
-    var womensClothing = document.getElementById('womensClothing');
-    const items = womensClothing.querySelectorAll('li');
-
-    womensClothing.addEventListener('keydown', function () {
-        if (event.key === 'Tab') {
-            console.log("hi");
-            event.preventDefault();
-
-            const focusedItem = document.activeElement;
-            const index = Array.from(items).indexOf(focusedItem);
-            const lastIndex = items.length - 1;
-
-            if (event.shiftKey) {
-                // Shift+Tab, move backwards
-                if (index === 0) {
-                    items[lastIndex].focus();
-                } else {
-                    items[index - 1].focus();
-                }
-            } else {
-                // Regular Tab, move forwards
-                if (index === lastIndex) {
-                    items[0].focus();
-                } else {
-                    if (index !== 0) {
-                        items[index + 1].focus();
-                    }
-                    else
-                        items[index + 2].focus();
-                }
-            }
-        }
-    });
-
-    // Reset when mouse leaves  it was item
-    WomensListItems.addEventListener('mouseenter', activateButton);
-    WomensListItems.addEventListener('mouseleave', deactivateButton);
-    item.addEventListener('keydown', function (event) {
-        // Check if the pressed key is the Escape key
-        if (event.key === 'Escape' || event.keyCode === 27) {
-            console.log("exe");
-            deactivateButton()
-        }
-      
-    });
-    //WomensListItems.addEventListener('click', activateButton);
-
-    function activateButton() {
-        const firstChild = item.firstElementChild;
-        const secondChild = firstChild.nextElementSibling;
-        firstChild.classList.add('show');
-        secondChild.classList.add('show')
-        secondChild.firstElementChild.focus();
+    var dropdowns = document.querySelectorAll('.nav-item.dropdown');
+    
+    function activateButton(WomensListItems, womensClothing) {
+        
+        WomensListItems.classList.add('show');
+        womensClothing.classList.add('show')
     }
 
-    function deactivateButton() {
-        const firstChild = item.firstElementChild;
-        const secondChild = firstChild.nextElementSibling;
-        firstChild.classList.remove('show');
-        secondChild.classList.remove('show');
+    function deactivateButton(WomensListItems, womensClothing) {
+
+        WomensListItems.classList.remove('show');
+        womensClothing.classList.remove('show');
     }
 
-   
+    dropdowns.forEach(dropdown => {
+
+        var WomensListItems = dropdown.firstElementChild;
 
 
+        var womensClothing = WomensListItems.nextElementSibling;
 
-
+        dropdown.addEventListener('mouseenter', () => {
+            activateButton(WomensListItems, womensClothing);
+        });
+        dropdown.addEventListener('mouseleave', () => {
+            deactivateButton(WomensListItems, womensClothing);
+        });
+    });
 });
