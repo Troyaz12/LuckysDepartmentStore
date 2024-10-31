@@ -36,7 +36,7 @@ body {
 .dropdown-menu {
     columns: auto 3; /* Auto number of columns, max 3 */
     column-fill: balance; /* Try to fill columns evenly */
-    min-height: 300px; /* Should match max-height of container */
+    min-height: 600px; /* Should match max-height of container */
     /* Optional: for layout purposes */
     width: fit-content;
     left: 0;
@@ -50,6 +50,13 @@ body {
     font-weight: 600;
 }
 
-.menu-button{
+.menu-heading {
+    font-size: 1.25rem;
+    font-weight: 600
+}
 
+.force-new-column {
+    clear: both;
+    width: 100%;
+    display: block; /* Ensures it takes full width of its container */
 }
