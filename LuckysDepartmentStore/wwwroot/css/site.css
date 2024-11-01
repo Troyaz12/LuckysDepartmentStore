@@ -27,6 +27,12 @@ body {
     border-radius: 50%;
 }
 
+.imgLayoutSales {
+    width: 150px;
+    height: 150px;
+    border-radius: 10%;
+}
+
 .headerContainer {
     display: flex;
     justify-content: space-between;
@@ -34,11 +40,11 @@ body {
 }
 
 .dropdown-menu {
-    columns: auto 3; /* Auto number of columns, max 3 */
-    column-fill: balance; /* Try to fill columns evenly */
-    min-height: 600px; /* Should match max-height of container */
+    /* columns: auto; /* Auto number of columns, max 3 */
+    /* column-fill: balance; /* Try to fill columns evenly */
+    /* min-height: 600px; /* Should match max-height of container */
     /* Optional: for layout purposes */
-    width: fit-content;
+    width: 600px;
     left: 0;
     right: 0;
     top: 100%;
@@ -56,7 +62,5 @@ body {
 }
 
 .force-new-column {
-    clear: both;
-    width: 100%;
-    display: block; /* Ensures it takes full width of its container */
+    column-break-before: always;
 }

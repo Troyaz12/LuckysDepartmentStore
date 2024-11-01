@@ -39,15 +39,18 @@
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-                    <div class="collapse navbar-collapse" id="navbarScroll">
+                    <div class="collapse navbar-collapse justify-content-center" id="navbarScroll">
                         <ul class="navbar-nav navbar-nav-scroll">                           
                             <li class="nav-item dropdown" id="womenList">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="womens">
                                     Womens
                                 </a>
-                                    <ul class="dropdown-menu" id="womensClothing">
+                                <div class="dropdown-menu">
+                                    <div class="container">
+                                    <div class="row">
+                                    <ul id="womensClothing" class="list-unstyled col-md-4">
                                         <li><a class="dropdown-item menu-heading" asp-controller="Home" asp-action="Search" asp-route-name="Womens">Women's Clothing</a></li>
-                                        <li><hr class="dropdown-divider asp-controller=" Home" asp-action="Search" asp-route-name="Womens" "></li>
+                                        <li><hr class="dropdown-divider asp-controller=" Home" asp-action="Search" asp-route-name="Womens"></li>
                                         <li><a class="dropdown-item" asp-controller="Home" asp-action="Search" asp-route-name="Womens Pants">Pants</a></li>
                                         <li><a class="dropdown-item" asp-controller="Home" asp-action="Search" asp-route-name="Womens dresses">Dresses</a></li>
                                         <li><a class="dropdown-item" asp-controller="Home" asp-action="Search" asp-route-name="Womens skirts">Skirts</a></li>
@@ -58,9 +61,10 @@
                                         <li><a class="dropdown-item" asp-controller="Home" asp-action="Search" asp-route-name="Womens tops">Tops</a></li>
                                         <li><a class="dropdown-item" asp-controller="Home" asp-action="Search" asp-route-name="Womens active wear">Active Wear</a></li>
                                         <li><a class="dropdown-item" asp-controller="Home" asp-action="Search" asp-route-name="Womens outdoor wear">Outdoor Wear</a></li>
-                                     
-                                        <li><a class="dropdown-item menu-heading force-new-column" asp-controller="Home" asp-action="Search" asp-route-name="Womens">Featured Brands</a></li>
-                                        <li><hr class="dropdown-divider asp-controller=" Home" asp-action="Search" asp-route-name="Womens" "></li>
+                                     </ul>
+                                    <ul class="list-unstyled col-md-4">
+                                        <li><a class="dropdown-item menu-heading col" asp-controller="Home" asp-action="Search" asp-route-name="Womens">Featured Brands</a></li>
+                                        <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item" asp-controller="Home" asp-action="Search" asp-route-name="Womens Ralph Lauren">Ralph Lauren</a></li>
                                         <li><a class="dropdown-item" asp-controller="Home" asp-action="Search" asp-route-name="Womens GAP">GAP</a></li>
                                         <li><a class="dropdown-item" asp-controller="Home" asp-action="Search" asp-route-name="Womens Calvin Klien">Calvin Klien</a></li>
@@ -69,10 +73,13 @@
                                         <li><a class="dropdown-item" asp-controller="Home" asp-action="Search" asp-route-name="Womens J.Crew">J.Crew</a></li>
                                         <li><a class="dropdown-item" asp-controller="Home" asp-action="Search" asp-route-name="Womens H&M">H&M</a></li>
                                         <li><a class="dropdown-item" asp-controller="Home" asp-action="Search" asp-route-name="Womens Zara">Zara</a></li>
-                                   
-
                                     </ul>
-                                 
+                                    <ul class="list-unstyled col-md-4">
+                                        <a asp-area="dropdown-item" asp-controller="Home" asp-action="Search" asp-route-name="discount womens"><img src="~/img/InUse/WomensSale.png" class="imgLayoutSales my-1"></a>
+                                    </ul>
+                                    </div>
+                                    </div>
+                                  </div>                                 
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -148,10 +155,10 @@
                                 </ul>
                             </li>
                         </ul>
-                        <form class="d-flex" role="search">
+                   @*      <form class="d-flex" role="search">
                             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                             <button class="btn btn-outline-success" type="submit">Search</button>
-                        </form>
+                        </form> *@
                     </div>
                 </div>
             </nav>
