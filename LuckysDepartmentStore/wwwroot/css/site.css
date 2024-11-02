@@ -30,7 +30,7 @@ body {
 .imgLayoutSales {
     width: 150px;
     height: 150px;
-    border-radius: 10%;
+    border-radius: 10%;    
 }
 
 .headerContainer {
@@ -40,15 +40,15 @@ body {
 }
 
 .dropdown-menu {
-    /* columns: auto; /* Auto number of columns, max 3 */
-    /* column-fill: balance; /* Try to fill columns evenly */
-    /* min-height: 600px; /* Should match max-height of container */
-    /* Optional: for layout purposes */
-    width: 600px;
+    /*width: 1000px;
     left: 0;
     right: 0;
-    top: 100%;
-    background-color: gold;
+    top: 100%;*/
+    background-color: rgb(247,233,142);
+    position: fixed;
+    top: 165px;
+    left: 0;
+    width: 100vw;
 }
 
 .dropdown-header {

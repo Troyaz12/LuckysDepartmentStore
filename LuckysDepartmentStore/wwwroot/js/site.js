@@ -6,30 +6,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var dropdowns = document.querySelectorAll('.nav-item.dropdown');
     
-    function activateButton(WomensListItems, womensClothing) {
+    function activateButton(ListItems, Clothing) {
         
-        WomensListItems.classList.add('show');
-        womensClothing.classList.add('show')
+        ListItems.classList.add('show');
+        Clothing.classList.add('show')
     }
 
-    function deactivateButton(WomensListItems, womensClothing) {
+    function deactivateButton(ListItems, Clothing) {
 
-        WomensListItems.classList.remove('show');
-        womensClothing.classList.remove('show');
+        ListItems.classList.remove('show');
+        Clothing.classList.remove('show');
     }
 
     dropdowns.forEach(dropdown => {
 
-        var WomensListItems = dropdown.firstElementChild;
+        var ListItems = dropdown.firstElementChild;
 
 
-        var womensClothing = WomensListItems.nextElementSibling;
+        var Clothing = ListItems.nextElementSibling;
 
         dropdown.addEventListener('mouseenter', () => {
-            activateButton(WomensListItems, womensClothing);
+            activateButton(ListItems, Clothing);
         });
         dropdown.addEventListener('mouseleave', () => {
-            deactivateButton(WomensListItems, womensClothing);
+            deactivateButton(ListItems, Clothing);
         });
     });
 });
