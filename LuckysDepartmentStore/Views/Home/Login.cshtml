@@ -1,0 +1,39 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Login";
+}
+<form>
+    <div class="row g-3 pt-3">
+        <div class="col-auto">
+            <label class="fw-bold">Sign In</label>
+        </div>
+        <div class="col-auto">
+            <label class="fw-bold">Create a Lucky's Account</label>
+        </div>
+    </div>
+    <div class="row g-3 pt-3">
+        <div class="col-auto">
+            <label for="staticEmail" class="visually-hidden">Password</label>
+            <input type="text" id="staticEmail" placeholder="Email" class="form-control">
+        </div>
+    </div>
+    <div class="row g-3 pt-3">
+        <div class="col-auto">
+            <label for="inputPassword" class="visually-hidden">Password</label>
+            <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+        </div>
+    </div>
+    <div class="row g-3 pt-3">
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-3">Sign In</button>
+        </div>
+    </div>
+    <div class="row g-3 pt-3">
+        <div class="col-auto">
+            <a type="button" class="btn btn-secondary mb-3" asp-controller="Home" asp-action="CreateNewAccount">Create New Account</a>
+        </div>
+    </div>
+
+</form>

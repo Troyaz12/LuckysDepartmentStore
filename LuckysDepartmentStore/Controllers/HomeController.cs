@@ -38,6 +38,18 @@ namespace LuckysDepartmentStore.Controllers
         {
             return View();
         }
+        public IActionResult Login()
+        {
+
+
+            return View();
+        }
+        public IActionResult CreateNewAccount()
+        {
+
+
+            return View();
+        }
 
     }
 }
