@@ -1,3 +1,4 @@
+using Lucky_sDepartmentStore.Models;
 using LuckysDepartmentStore.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -38,7 +39,7 @@ namespace LuckysDepartmentStore.Controllers
         {
             return View();
         }
-        public IActionResult Login()
+        public IActionResult Login(string inputEmail, string inputPassword)
         {
 
 
@@ -50,6 +51,12 @@ namespace LuckysDepartmentStore.Controllers
 
             return View();
         }
+        [HttpPost]
+		public IActionResult Login(Customer customer)
+		{
 
-    }
+
+			return View();
+		}
+	}
 }
