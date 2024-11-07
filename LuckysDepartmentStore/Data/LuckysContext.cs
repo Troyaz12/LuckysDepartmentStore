@@ -1,9 +1,10 @@
 ﻿using Lucky_sDepartmentStore.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LuckysDepartmentStore.Data
 {
-    public class LuckysContext : DbContext
+    public class LuckysContext : IdentityDbContext
     {
         public LuckysContext(DbContextOptions<LuckysContext> options)
         : base(options)

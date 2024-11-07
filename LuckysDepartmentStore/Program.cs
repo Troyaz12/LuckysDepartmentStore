@@ -1,6 +1,8 @@
 using LuckysDepartmentStore.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+//using LuckysDepartmentStore.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +11,15 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<LuckysContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'LuckysContext' not found.")));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<LuckysContext>();
+builder.Services.AddRazorPages();
 //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+// Add Identity services
+//builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+//	.AddEntityFrameworkStores<LuckysContext>()
+//	.AddDefaultTokenProviders();
 
 var app = builder.Build();
 
@@ -33,5 +43,16 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorPages();
+
 
 app.Run();
