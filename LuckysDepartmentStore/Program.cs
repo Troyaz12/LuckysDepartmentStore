@@ -14,6 +14,7 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<LuckysContext>();
 builder.Services.AddRazorPages();
+
 //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Add Identity services
@@ -38,13 +39,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
