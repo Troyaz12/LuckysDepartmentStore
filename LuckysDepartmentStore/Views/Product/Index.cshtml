@@ -1,0 +1,146 @@
+﻿@model LuckysDepartmentStore.Models.ViewModels.Product.ProductListVM
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-controller="Product" asp-action="Create" method="get">Create New</a>
+</p>
+
+<form asp-controller="Product" asp-action="Index" method="get">
+    <p>
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <select asp-for="Category" asp-items="Model.Categories!">
+                    <option value="">All</option>
+                </select>
+            </div>
+
+            <div class="col-auto">
+                <input class="form-control" type="text" asp-for="SearchString" placeholder="Enter Movie Title" />
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-dark">Filter</button>
+            </div>
+
+        </div>
+
+    </p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Products![0].ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Products![0].Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Products![0].Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Products![0].Quantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Products![0].Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Products![0].Brand)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Products![0].Color)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Products![0].SubCategory)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Products![0].ProductPicture)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Products![0].CreatedDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Products!)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Brand)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Color)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SubCategory)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductPicture)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                </td>
+                <td>
+                    <div class="btn-group" role="group" aria-label="Basic outlined example">
+                        <form asp-controller="Movies" asp-action="Edit" asp-route-id="@item.ProductID" method="get">
+                            <button id="edit" type="submit" class="btn btn-outline-primary">Edit</button>
+                        </form>
+                        <a asp-action="Details" asp-route-id="@item.ProductID" class="btn btn-outline-primary">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.ProductID" class="btn btn-outline-primary">Delete</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    // the below can be used for reloading a partial view
+    /* use with this:  <button id="edit" onclick="editButton(*put at here*item.Id)" type="button" class="btn btn-outline-primary">Edit</button>  */
+    function editButton(id) {
+
+        var myId = id;
+
+        var urlMy = "@Url.Action("Edit", "Product", new { id = "ID" })";
+        urlMy = urlMy.replace("ID", myId);
+
+        $.ajax({
+            url: urlMy,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            success: function (result) {
+                console.log(result);
+            }
+
+        });
+    }
+    // cool way to get the whole model from the array. It's not needed though
+    function makeJson(id) {
+
+        let myJson = @Html.Raw(Json.Serialize(Model.Products));
+        var final = myJson.find(Movies => Movies.id === id);
+        return JSON.stringify(final);
+    }
+</script>

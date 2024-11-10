@@ -1,4 +1,4 @@
-using Lucky_sDepartmentStore.Models;
+using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;

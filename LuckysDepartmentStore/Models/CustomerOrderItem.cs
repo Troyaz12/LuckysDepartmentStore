@@ -1,4 +1,4 @@
-﻿namespace Lucky_sDepartmentStore.Models
+﻿namespace LuckysDepartmentStore.Models
 {
     public class CustomerOrderItem
     {

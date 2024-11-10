@@ -25,7 +25,7 @@ namespace LuckysDepartmentStore.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Lucky_sDepartmentStore.Models.Category", b =>
+            modelBuilder.Entity("LuckysDepartmentStore.Models.Category", b =>
                 {
                     b.Property<int>("CategoryID")
                         .ValueGeneratedOnAdd()
@@ -49,7 +49,7 @@ namespace LuckysDepartmentStore.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("Lucky_sDepartmentStore.Models.Color", b =>
+            modelBuilder.Entity("LuckysDepartmentStore.Models.Color", b =>
                 {
                     b.Property<int>("ColorID")
                         .ValueGeneratedOnAdd()
@@ -69,7 +69,7 @@ namespace LuckysDepartmentStore.Migrations
                     b.ToTable("Colors");
                 });
 
-            modelBuilder.Entity("Lucky_sDepartmentStore.Models.ColorProduct", b =>
+            modelBuilder.Entity("LuckysDepartmentStore.Models.ColorProduct", b =>
                 {
                     b.Property<int>("ColorProductID")
                         .ValueGeneratedOnAdd()
@@ -91,7 +91,7 @@ namespace LuckysDepartmentStore.Migrations
                     b.ToTable("ColorProducts");
                 });
 
-            modelBuilder.Entity("Lucky_sDepartmentStore.Models.Customer", b =>
+            modelBuilder.Entity("LuckysDepartmentStore.Models.Customer", b =>
                 {
                     b.Property<int>("CustomerID")
                         .ValueGeneratedOnAdd()
@@ -133,7 +133,7 @@ namespace LuckysDepartmentStore.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("Lucky_sDepartmentStore.Models.CustomerOrder", b =>
+            modelBuilder.Entity("LuckysDepartmentStore.Models.CustomerOrder", b =>
                 {
                     b.Property<int>("CustomerOrderID")
                         .ValueGeneratedOnAdd()
@@ -152,7 +152,7 @@ namespace LuckysDepartmentStore.Migrations
                     b.ToTable("CustomerOrders");
                 });
 
-            modelBuilder.Entity("Lucky_sDepartmentStore.Models.CustomerOrderItem", b =>
+            modelBuilder.Entity("LuckysDepartmentStore.Models.CustomerOrderItem", b =>
                 {
                     b.Property<int>("CustomerOrderItemID")
                         .ValueGeneratedOnAdd()
@@ -177,7 +177,7 @@ namespace LuckysDepartmentStore.Migrations
                     b.ToTable("CustomerOrderItems");
                 });
 
-            modelBuilder.Entity("Lucky_sDepartmentStore.Models.Discount", b =>
+            modelBuilder.Entity("LuckysDepartmentStore.Models.Discount", b =>
                 {
                     b.Property<int>("DiscountID")
                         .ValueGeneratedOnAdd()
@@ -208,7 +208,7 @@ namespace LuckysDepartmentStore.Migrations
                     b.ToTable("Discounts");
                 });
 
-            modelBuilder.Entity("Lucky_sDepartmentStore.Models.Payment", b =>
+            modelBuilder.Entity("LuckysDepartmentStore.Models.Payment", b =>
                 {
                     b.Property<int>("PaymentID")
                         .ValueGeneratedOnAdd()
@@ -268,7 +268,7 @@ namespace LuckysDepartmentStore.Migrations
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("Lucky_sDepartmentStore.Models.PaymentOptions", b =>
+            modelBuilder.Entity("LuckysDepartmentStore.Models.PaymentOptions", b =>
                 {
                     b.Property<int>("PaymentOptionsID")
                         .ValueGeneratedOnAdd()
@@ -327,7 +327,7 @@ namespace LuckysDepartmentStore.Migrations
                     b.ToTable("PaymentOptions");
                 });
 
-            modelBuilder.Entity("Lucky_sDepartmentStore.Models.Product", b =>
+            modelBuilder.Entity("LuckysDepartmentStore.Models.Product", b =>
                 {
                     b.Property<int>("ProductID")
                         .ValueGeneratedOnAdd()
@@ -373,7 +373,7 @@ namespace LuckysDepartmentStore.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("Lucky_sDepartmentStore.Models.Rating", b =>
+            modelBuilder.Entity("LuckysDepartmentStore.Models.Rating", b =>
                 {
                     b.Property<int>("RatingID")
                         .ValueGeneratedOnAdd()
@@ -402,7 +402,7 @@ namespace LuckysDepartmentStore.Migrations
                     b.ToTable("Ratings");
                 });
 
-            modelBuilder.Entity("Lucky_sDepartmentStore.Models.Shipping", b =>
+            modelBuilder.Entity("LuckysDepartmentStore.Models.Shipping", b =>
                 {
                     b.Property<int>("ShippingID")
                         .ValueGeneratedOnAdd()
@@ -451,7 +451,7 @@ namespace LuckysDepartmentStore.Migrations
                     b.ToTable("Shipping");
                 });
 
-            modelBuilder.Entity("Lucky_sDepartmentStore.Models.SubCategory", b =>
+            modelBuilder.Entity("LuckysDepartmentStore.Models.SubCategory", b =>
                 {
                     b.Property<int>("SubCategoryID")
                         .ValueGeneratedOnAdd()
