@@ -32,7 +32,7 @@ namespace LuckysDepartmentStore.Controllers
         // POST: Product/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create([Bind("ProductID,Price,Description,Quantity,ProductName,Category,Brand,CategoryID,ColorProductID,SubCategoryID,Color,SubCategory,ProductPicture,CreatedDate")] ProductVM product)
         {
             try
             {

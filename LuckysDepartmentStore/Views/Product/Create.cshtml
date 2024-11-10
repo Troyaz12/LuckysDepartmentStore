@@ -43,11 +43,11 @@
                 <input asp-for="Quantity" class="form-control" />
                 <span asp-validation-for="Quantity" class="text-danger"></span>
             </div>
-            <div class="form-group">
+          @*   <div class="form-group">
                 <label asp-for="Category" class="control-label"></label>
                 <input asp-for="Category" class="form-control" />
                 <span asp-validation-for="Category" class="text-danger"></span>
-            </div>
+            </div> *@
             <div class="form-group">
                 <label asp-for="Brand" class="control-label"></label>
                 <input asp-for="Brand" class="form-control" />
@@ -70,7 +70,7 @@
 
             <div class="container mt-5">
                 <div class="dropdown">
-                    <input type="text" class="form-control dropdown-toggle" id="dropdownInput" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                    <input asp-for="Category" type="text" class="form-control dropdown-toggle" id="dropdownInput" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
                     <ul class="dropdown-menu" aria-labelledby="dropdownInput">
                         <li><a class="dropdown-item" href="#">Option 1</a></li>
                         <li><a class="dropdown-item" href="#">Option 2</a></li>
