@@ -43,42 +43,43 @@
                 <input asp-for="Quantity" class="form-control" />
                 <span asp-validation-for="Quantity" class="text-danger"></span>
             </div>
-          @*   <div class="form-group">
-                <label asp-for="Category" class="control-label"></label>
-                <input asp-for="Category" class="form-control" />
-                <span asp-validation-for="Category" class="text-danger"></span>
-            </div> *@
             <div class="form-group">
                 <label asp-for="Brand" class="control-label"></label>
                 <input asp-for="Brand" class="form-control" />
                 <span asp-validation-for="Brand" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Color" class="control-label"></label>
-                <input asp-for="Color" class="form-control" />
-                <span asp-validation-for="Color" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SubCategory" class="control-label"></label>
-                <input asp-for="SubCategory" class="form-control" />
-                <span asp-validation-for="SubCategory" class="text-danger"></span>
             </div>           
+        
             <div class="input-group mb-3">
                 <label class="input-group-text" for="inputGroupFile01">Product Picture</label>
                 <input type="file" class="form-control" id="inputGroupFile01">
-            </div>
+            </div>   
 
             <div class="container mt-5">
                 <div class="dropdown">
-                    <input asp-for="Category" type="text" class="form-control dropdown-toggle" id="dropdownInput" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
-                    <ul class="dropdown-menu" aria-labelledby="dropdownInput">
-                        <li><a class="dropdown-item" href="#">Option 1</a></li>
-                        <li><a class="dropdown-item" href="#">Option 2</a></li>
-                        <li><a class="dropdown-item" href="#">Option 3</a></li>
+                    <input type="text" class="form-control dropdown-toggle" id="colorInput" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                    <ul class="dropdown-menu" aria-labelledby="colorInput">
+                        <li><a class="dropdown-item" href="#">Option 1-1</a></li>
+                        <li><a class="dropdown-item" href="#">Option 1-2</a></li>
+                        <li><a class="dropdown-item" href="#">Option 1-3</a></li>
+                    </ul>
+                </div>
+                <div class="dropdown mt-3">
+                    <input type="text" class="form-control dropdown-toggle" id="catogoryInput" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                    <ul class="dropdown-menu" aria-labelledby="catogoryInput">
+                        <li><a class="dropdown-item" href="#">Option 2-1</a></li>
+                        <li><a class="dropdown-item" href="#">Option 2-2</a></li>
+                        <li><a class="dropdown-item" href="#">Option 2-3</a></li>
+                    </ul>
+                </div>
+                <div class="dropdown mt-3">
+                    <input type="text" class="form-control dropdown-toggle" id="subCatogoryInput" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                    <ul class="dropdown-menu" aria-labelledby="subCatogoryInput">
+                        <li><a class="dropdown-item" href="#">Option 2-1</a></li>
+                        <li><a class="dropdown-item" href="#">Option 2-2</a></li>
+                        <li><a class="dropdown-item" href="#">Option 2-3</a></li>
                     </ul>
                 </div>
             </div>
-
 
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -99,16 +100,27 @@
 
 <script>
     $(document).ready(function () {
-        $('#dropdownInput').on('keyup', function () {
-            var filter = $(this).val().toLowerCase();
-            $('.dropdown-menu li').each(function () {
-                var text = $(this).text().toLowerCase();
-                $(this).toggle(text.indexOf(filter) > -1);
-            });
-        });
+        // Function to handle dropdown filtering
 
-        $('.dropdown-item').on('click', function () {
-            $('#dropdownInput').val($(this).text());
-        });
+        function handleDropdownFilter(inputId, dropdownClass) {
+            $(inputId).on('keyup', function () {
+                var filter = this.value.toLowerCase();
+                var items = document.querySelectorAll(dropdownClass + ' li');
+                items.forEach(function (item) {
+                    var text = item.textContent.toLowerCase();
+                    item.style.display = text.includes(filter) ? '' : 'none';
+                });
+            });
+
+            $(dropdownClass + ' .dropdown-item').on('click', function () {
+                $(inputId).val($(this).text());
+            });
+        }
+
+        // Apply the function to each dropdown
+        handleDropdownFilter('#colorInput', '.dropdown-menu[aria-labelledby="colorInput"]');
+        handleDropdownFilter('#catogoryInput', '.dropdown-menu[aria-labelledby="catogoryInput"]');
+        handleDropdownFilter('#subCatogoryInput', '.dropdown-menu[aria-labelledby="subCatogoryInput"]');
     });
+
 </script>
