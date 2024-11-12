@@ -19,77 +19,82 @@
 
 <h4>Product</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+
+    
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ProductName" class="control-label"></label>
-                <input asp-for="ProductName" class="form-control" />
-                <span asp-validation-for="ProductName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Quantity" class="control-label"></label>
-                <input asp-for="Quantity" class="form-control" />
-                <span asp-validation-for="Quantity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Brand" class="control-label"></label>
-                <input asp-for="Brand" class="form-control" />
-                <span asp-validation-for="Brand" class="text-danger"></span>
-            </div>           
-        
-            <div class="input-group mb-3 mt-3">
-                <label class="input-group-text" for="inputGroupFile01">Product Picture</label>
-                <input type="file" class="form-control" id="inputGroupFile01">
-            </div>
-              
-                <div class="dropdown">
-                    <label for="colorInput">Color</label>
-                    <input type="text" class="form-control dropdown-toggle" id="colorInput" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
-                    <ul class="dropdown-menu" aria-labelledby="colorInput">
-                        <li><a class="dropdown-item" href="#">Option 1-1</a></li>
-                        <li><a class="dropdown-item" href="#">Option 1-2</a></li>
-                        <li><a class="dropdown-item" href="#">Option 1-3</a></li>
-                    </ul>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="ProductName" class="control-label"></label>
+                        <input asp-for="ProductName" class="form-control" />
+                        <span asp-validation-for="ProductName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Price" class="control-label"></label>
+                        <input asp-for="Price" class="form-control" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Quantity" class="control-label"></label>
+                        <input asp-for="Quantity" class="form-control" />
+                        <span asp-validation-for="Quantity" class="text-danger"></span>
+                    </div>                  
+                    <label for="inputGroupFile01">Product Picture</label>
+                    <input type="file" class="form-control" id="inputGroupFile01">
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary mt-4" />
+                    </div>
                 </div>
-                <div class="dropdown mt-3">
-                    <label for="categoryInput">Category</label>
-                    <input type="text" class="form-control dropdown-toggle" id="catogoryInput" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
-                    <ul class="dropdown-menu" aria-labelledby="catogoryInput">
-                        <li><a class="dropdown-item" href="#">Option 2-1</a></li>
-                        <li><a class="dropdown-item" href="#">Option 2-2</a></li>
-                        <li><a class="dropdown-item" href="#">Option 2-3</a></li>
-                    </ul>
-                </div>
-                <div class="dropdown mt-3">
-                    <label for="subCategoryInput">Category</label>
-                    <input type="text" class="form-control dropdown-toggle" id="subCatogoryInput" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
-                    <ul class="dropdown-menu" aria-labelledby="subCatogoryInput">
-                        <li><a class="dropdown-item" href="#">Option 2-1</a></li>
-                        <li><a class="dropdown-item" href="#">Option 2-2</a></li>
-                        <li><a class="dropdown-item" href="#">Option 2-3</a></li>
-                    </ul>
-                </div>
-          
+                <div class="col-md-8">
+                   
 
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary mt-4" />
+                    <div class="dropdown">
+                        <label for="Color">Color</label>
+                        <input name="Color" type="text" class="form-control dropdown-toggle" id="Color" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                         <ul class="dropdown-menu" aria-labelledby="Color">
+                            <li><a class="dropdown-item" href="#">Option 1-1</a></li>
+                            <li><a class="dropdown-item" href="#">Option 1-2</a></li>
+                            <li><a class="dropdown-item" href="#">Option 1-3</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                    <label for="Category">Category</label>
+                    <input name="Category" type="text" class="form-control dropdown-toggle" id="Category" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                        <ul class="dropdown-menu" aria-labelledby="Category">
+                            <li><a class="dropdown-item" href="#">Option 2-1</a></li>
+                            <li><a class="dropdown-item" href="#">Option 2-2</a></li>
+                            <li><a class="dropdown-item" href="#">Option 2-3</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                    <label for="SubCategory">Category</label>
+                    <input name="SubCategory" type="text" class="form-control dropdown-toggle" id="SubCategory" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                    <ul class="dropdown-menu" aria-labelledby="SubCategory">
+                            <li><a class="dropdown-item" href="#">Option 3-1</a></li>
+                            <li><a class="dropdown-item" href="#">Option 3-2</a></li>
+                            <li><a class="dropdown-item" href="#">Option 3-3</a></li>
+                    </ul>
+                    </div>
+                    <div class="dropdown">
+                <label for="Brand">Brand</label>
+                        <input name="Brand" type="text" class="form-control dropdown-toggle" id="Brand" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                        <ul class="dropdown-menu" aria-labelledby="Brand">
+                            <li><a class="dropdown-item" href="#">Option 4-1</a></li>
+                            <li><a class="dropdown-item" href="#">Option 4-2</a></li>
+                            <li><a class="dropdown-item" href="#">Option 4-3</a></li>
+                            <li><a class="dropdown-item" href="#">Option 4-4</a></li>
+                        </ul>
+                    </div>
+                  
+                </div>
             </div>
         </form>
-    </div>
-</div>
-
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
@@ -120,9 +125,10 @@
         }
 
         // Apply the function to each dropdown
-        handleDropdownFilter('#colorInput', '.dropdown-menu[aria-labelledby="colorInput"]');
-        handleDropdownFilter('#catogoryInput', '.dropdown-menu[aria-labelledby="catogoryInput"]');
-        handleDropdownFilter('#subCatogoryInput', '.dropdown-menu[aria-labelledby="subCatogoryInput"]');
+        handleDropdownFilter('#Color', '.dropdown-menu[aria-labelledby="Color"]');
+        handleDropdownFilter('#Category', '.dropdown-menu[aria-labelledby="Category"]');
+        handleDropdownFilter('#SubCategory', '.dropdown-menu[aria-labelledby="SubCategory"]');
+        handleDropdownFilter('#Brand', '.dropdown-menu[aria-labelledby="Brand"]');
     });
 
 </script>
