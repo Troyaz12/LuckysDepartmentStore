@@ -53,7 +53,7 @@ namespace LuckysDepartmentStore.Data
         }
 
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Color> Colors { get; set; }
+        public virtual DbSet<Color> Colors { get; set; }
         public DbSet<ColorProduct> ColorProducts { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<CustomerOrderItem> CustomerOrderItems { get; set; }

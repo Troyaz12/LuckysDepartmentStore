@@ -3,11 +3,17 @@ using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service;
+using SQLitePCL;
 
 namespace LuckysDepartmentStore.Service
 {
-    public class ProductService(LuckysContext _context, IMapper _mapper) : IProductService
+    public class ProductService : IProductService
     {
+        public LuckysContext _context;
+        public ProductService(LuckysContext context)
+        {
+            _context = context;
+        }
         public async Task Create(ProductVM product)
         {
             
@@ -22,22 +28,24 @@ namespace LuckysDepartmentStore.Service
 
             if(obj.GetType() == typeof(ProductVM))
             {
-                Product product = new Product();
-                product = (Product) obj;
+                ProductVM productVm = new ProductVM();
+                productVm = (ProductVM) obj;
 
                 var color = _context.Colors
-                         .Where(p => p.Name.ToLower() == product.ProductName.ToLower())
+                         .Where(p => p.Name.ToLower() == productVm.Color.ToLower())
                          .ToList();
 
+                Product product = new Product();
+                product.ColorProductID = color[0].ColorID;
 
 
-                return (T)Convert.ChangeType(product, typeof(T));
+                return product as T;
             }
-                
 
 
 
-            return (T)Convert.ChangeType(obj, typeof(T));
+
+            return obj as T;
 
         }
       
