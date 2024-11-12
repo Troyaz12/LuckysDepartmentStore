@@ -1,7 +1,9 @@
 using LuckysDepartmentStore.Data;
+using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using System.Reflection;
 //using LuckysDepartmentStore.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +16,8 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<LuckysContext>();
 builder.Services.AddRazorPages();
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddScoped<IProductService, ProductService>();
 
 //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

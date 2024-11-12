@@ -1,10 +1,12 @@
-﻿using LuckysDepartmentStore.Models.ViewModels.Product;
+﻿using AutoMapper;
+using LuckysDepartmentStore.Models.ViewModels.Product;
+using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LuckysDepartmentStore.Controllers
 {
-    public class ProductController : Controller
+    public class ProductController(IProductService _productService) : Controller
     {
         // GET: Product
         public ActionResult Index()
@@ -36,6 +38,10 @@ namespace LuckysDepartmentStore.Controllers
         {
             try
             {
+                
+                _productService.Create(product);
+
+
                 return RedirectToAction(nameof(Index));
             }
             catch

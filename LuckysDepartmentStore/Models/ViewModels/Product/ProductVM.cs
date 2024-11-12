@@ -17,9 +17,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
         public string Category { get; set; }
         [Display(Name = "Brand")]
         public string Brand { get; set; }
-        public int CategoryID { get; set; }
-        public int ColorProductID { get; set; }
-        public int SubCategoryID { get; set; }
+
         [Display(Name = "Color")]
         public string Color { get; set; }
         [Display(Name = "SubCategory")]
