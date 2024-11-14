@@ -3,6 +3,7 @@ using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LuckysDepartmentStore.Controllers
 {
@@ -28,19 +29,24 @@ namespace LuckysDepartmentStore.Controllers
         // GET: Product/Create
         public ActionResult Create()
         {
-            return View();
+            ProductVM product = new ProductVM();
+            product.Color = _productService.GetColors();
+            product.Category = _productService.GetCategory();
+            product.SubCategory = _productService.GetSubCategory();
+
+            return View(product);
         }
 
         // POST: Product/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("ProductID,Price,Description,Quantity,ProductName,Category,Brand,CategoryID,ColorProductID,SubCategoryID,Color,SubCategory,ProductPicture,CreatedDate")] ProductVM product)
+        public ActionResult Create([Bind("ProductID,Price,Description,Quantity,ProductName,CategorySelection,BrandSelection," +
+            "ColorSelection,SubCategorySelection,ProductPicture,CreatedDate,Category,Color,ColorSelectionId,SubCategory,CategorySelectionId," +
+            "SubCategorySelectionId")] ProductVM product)
         {
             try
             {
-                
                 _productService.Create(product);
-
 
                 return RedirectToAction(nameof(Index));
             }

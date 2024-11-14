@@ -14,14 +14,21 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
         [Display(Name = "ProductName")]
         public string ProductName { get; set; }
         [Display(Name = "Category")]
-        public string Category { get; set; }
+        public List<Category> Category { get; set; }
+        public string CategorySelection { get; set; }
+        public string CategorySelectionId { get; set; }
         [Display(Name = "Brand")]
         public string Brand { get; set; }
 
         [Display(Name = "Color")]
-        public string Color { get; set; }
+        public List<Color> Color { get; set; }
+
+        public int ColorSelectionId {get;set;}
+        public string ColorSelection { get; set; }
         [Display(Name = "SubCategory")]
-        public string SubCategory { get; set; }
+        public List<SubCategory> SubCategory { get; set; }
+        public string SubCategorySelection { get; set; }
+        public string SubCategorySelectionId { get; set; }
         [Display(Name = "ProductPicture")]
         public byte[]? ProductPicture { get; set; }
         [Display(Name = "CreatedDate")]

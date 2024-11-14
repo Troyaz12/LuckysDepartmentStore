@@ -21,33 +21,53 @@ namespace LuckysDepartmentStore.Service
             _context.Add(product);
             await _context.SaveChangesAsync();
         }
-        public T GetItemAs<T> (object obj) where T : class 
-        { 
+        //public T GetItemAs<T> (object obj) where T : class 
+        //{ 
            
 
 
-            if(obj.GetType() == typeof(ProductVM))
-            {
-                ProductVM productVm = new ProductVM();
-                productVm = (ProductVM) obj;
+        //    if(obj.GetType() == typeof(ProductVM))
+        //    {
+        //        ProductVM productVm = new ProductVM();
+        //        productVm = (ProductVM) obj;
 
-                var color = _context.Colors
-                         .Where(p => p.Name.ToLower() == productVm.Color.ToLower())
-                         .ToList();
+        //        var color = _context.Colors
+        //                 .Where(p => p.Name.ToLower() == productVm.Color.ToLower())
+        //                 .ToList();
 
-                Product product = new Product();
-                product.ColorProductID = color[0].ColorID;
-
-
-                return product as T;
-            }
+        //        Product product = new Product();
+        //        product.ColorProductID = color[0].ColorID;
 
 
+        //        return product as T;
+        //    }
 
 
-            return obj as T;
 
+
+        //    return obj as T;
+
+        //}
+        public List<Color> GetColors()
+        {
+            var color = _context.Colors               
+                .ToList();
+
+            return color;
         }
-      
+        public List<Category> GetCategory()
+        {
+            var categories = _context.Categories
+                .ToList();
+
+            return categories;
+        }
+        public List<SubCategory> GetSubCategory()
+        {
+            var subCategory = _context.SubCategories
+                .ToList();
+
+            return subCategory;
+        }
     }
 }

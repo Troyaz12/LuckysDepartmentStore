@@ -16,8 +16,8 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<LuckysContext>();
 builder.Services.AddRazorPages();
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
