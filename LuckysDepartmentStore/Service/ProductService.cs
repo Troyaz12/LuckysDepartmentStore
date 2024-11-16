@@ -3,6 +3,7 @@ using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service;
+using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
 
 namespace LuckysDepartmentStore.Service
@@ -10,16 +11,51 @@ namespace LuckysDepartmentStore.Service
     public class ProductService : IProductService
     {
         public LuckysContext _context;
-        public ProductService(LuckysContext context)
+        public IMapper _mapper;
+        public IColorService _colorService;
+        public ICategoryService _categoryService;
+
+        public ISubCategoryService _subCategoryService;
+        public ProductService(LuckysContext context, IMapper mapper, IColorService colorService, ICategoryService categoryService, ISubCategoryService subCategoryService)
         {
             _context = context;
+            _mapper = mapper;
+            _colorService = colorService;
+            _categoryService = categoryService;
+            _subCategoryService = subCategoryService;
         }
         public async Task Create(ProductVM product)
         {
-            
 
-            _context.Add(product);
-            await _context.SaveChangesAsync();
+            try
+            {
+                if ((product != null && product.ColorId == null) || product.ColorId == 0)
+                {
+                    product.ColorId = _colorService.Create(product);
+                }
+                if ((product != null && product.CategoryId == null) || product.CategoryId == 0)
+                {
+                    product.CategoryId = _categoryService.Create(product);
+                }
+                if ((product != null && product.SubCategoryId == null) || product.SubCategoryId == 0)
+                {
+                    product.SubCategoryId = _subCategoryService.Create(product);
+                }
+
+                var newProduct = _mapper.Map<Product>(product);
+
+                _context.Add(newProduct);
+                await _context.SaveChangesAsync();
+
+            }
+            catch (DbUpdateException ex)
+            {             
+                throw new InvalidOperationException("Error saving product to database", ex);
+            }
+            catch (Exception ex)
+            {             
+                throw new Exception("An error occurred while processing your request", ex);
+            }
         }
         //public T GetItemAs<T> (object obj) where T : class 
         //{ 

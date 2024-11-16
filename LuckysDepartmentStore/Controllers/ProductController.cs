@@ -41,12 +41,12 @@ namespace LuckysDepartmentStore.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind("ProductID,Price,Description,Quantity,ProductName,CategorySelection,BrandSelection," +
-            "ColorSelection,SubCategorySelection,ProductPicture,CreatedDate,Category,Color,ColorSelectionId,SubCategory,CategorySelectionId," +
-            "SubCategorySelectionId")] ProductVM product)
+            "ColorSelection,SubCategoryId,ProductPicture,CreatedDate,Category,Color,ColorId,SubCategory,CategoryId," +
+            "SubCategorySelection")] ProductVM product)
         {
             try
             {
-                _productService.Create(product);
+                var productSent = _productService.Create(product);
 
                 return RedirectToAction(nameof(Index));
             }

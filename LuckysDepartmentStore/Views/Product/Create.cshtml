@@ -20,8 +20,8 @@
 <h4>Product</h4>
 <hr />
 
-    
-        <form asp-action="Create">
+
+    <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>            
 
             <div class="row">
@@ -45,18 +45,19 @@
                         <label asp-for="Quantity" class="control-label"></label>
                         <input asp-for="Quantity" class="form-control" />
                         <span asp-validation-for="Quantity" class="text-danger"></span>
-                    </div>                  
-                    <label for="inputGroupFile01">Product Picture</label>
-                    <input type="file" class="form-control" id="inputGroupFile01">
+                    </div>
+                    <label for="ProductPicture">Product Picture</label>
+                    <input type="file" class="form-control" id="ProductPicture" name="ProductPicture">
+
                     <div class="form-group">
                         <input type="submit" value="Create" class="btn btn-primary mt-4" />
                     </div>
                 </div>
                 <div class="col-md-8">
 
-                    <input type="hidden" id="ColorSelectionId" name="ColorSelectionId">
-                    <input type="hidden" id="CategorySelectionId" name="CategorySelectionId">
-                    <input type="hidden" id="SubCategorySelectionId" name="SubCategorySelectionId">
+                    <input type="hidden" id="ColorId" name="ColorId">
+                    <input type="hidden" id="CategoryId" name="CategoryId">
+                    <input type="hidden" id="SubCategoryId" name="SubCategoryId">
 
                     <div class="dropdown">
                         <label for="Color">Color</label>
@@ -64,7 +65,7 @@
                          <ul class="dropdown-menu" aria-labelledby="Color">
                             @foreach (var color in Model.Color) {
                         <li><a class="dropdown-item" data-stored-value="@color.ColorID">@color.Name</a></li>
-                    }
+                            }
                         </ul>
                     </div>
                     <div class="dropdown">
@@ -73,16 +74,16 @@
                         <ul class="dropdown-menu" aria-labelledby="Category">
                            @foreach (var color in Model.Category) {
                             <li><a class="dropdown-item" data-stored-value="@color.CategoryID">@color.CategoryName</a></li>
-                    }
+                           }
                         </ul>
                     </div>
                     <div class="dropdown">
                     <label for="SubCategory">SubCategory</label>
                     <input name="SubCategorySelection" type="text" class="form-control dropdown-toggle" id="SubCategory" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
                     <ul class="dropdown-menu" aria-labelledby="SubCategory" name="color">
-                           @foreach (var color in Model.SubCategory) {
+                        @foreach (var color in Model.SubCategory) {
                         <li><a class="dropdown-item" data-stored-value="@color.SubCategoryID">@color.SubCategoryName</a></li>
-                    }
+                        }
                     </ul>
                     </div>
                     <div class="dropdown">
@@ -132,9 +133,9 @@
         }
 
         // Apply the function to each dropdown
-        handleDropdownFilter('#Color', '#ColorSelectionId', '.dropdown-menu[aria-labelledby="Color"]');
-        handleDropdownFilter('#Category', '#CategorySelectionId', '.dropdown-menu[aria-labelledby="Category"]');
-        handleDropdownFilter('#SubCategory', '#SubCategorySelectionId', '.dropdown-menu[aria-labelledby="SubCategory"]');
+        handleDropdownFilter('#Color', '#ColorId', '.dropdown-menu[aria-labelledby="Color"]');
+        handleDropdownFilter('#Category', '#CategoryId', '.dropdown-menu[aria-labelledby="Category"]');
+        handleDropdownFilter('#SubCategory', '#SubCategoryId', '.dropdown-menu[aria-labelledby="SubCategory"]');
         //handleDropdownFilter('#Brand', '.dropdown-menu[aria-labelledby="Brand"]');
     });
 
