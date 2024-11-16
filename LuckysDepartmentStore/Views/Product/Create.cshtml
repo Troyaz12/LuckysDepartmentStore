@@ -58,42 +58,55 @@
                     <input type="hidden" id="ColorId" name="ColorId">
                     <input type="hidden" id="CategoryId" name="CategoryId">
                     <input type="hidden" id="SubCategoryId" name="SubCategoryId">
+                    <input type="hidden" id="BrandId" name="BrandId">
 
                     <div class="dropdown">
                         <label for="Color">Color</label>
                         <input name="ColorSelection" type="text" class="form-control dropdown-toggle" id="Color" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
                          <ul class="dropdown-menu" aria-labelledby="Color">
+                        @if (Model.Category != null)
+                        {
                             @foreach (var color in Model.Color) {
-                        <li><a class="dropdown-item" data-stored-value="@color.ColorID">@color.Name</a></li>
+                                <li><a class="dropdown-item" data-stored-value="@color.ColorID">@color.Name</a></li>
                             }
+                        }
                         </ul>
                     </div>
                     <div class="dropdown">
                     <label for="Category">Category</label>
                     <input name="CategorySelection" type="text" class="form-control dropdown-toggle" id="Category" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
                         <ul class="dropdown-menu" aria-labelledby="Category">
+                    @if (Model.Category != null)
+                        {
                            @foreach (var color in Model.Category) {
                             <li><a class="dropdown-item" data-stored-value="@color.CategoryID">@color.CategoryName</a></li>
                            }
+                        }
                         </ul>
                     </div>
                     <div class="dropdown">
                     <label for="SubCategory">SubCategory</label>
                     <input name="SubCategorySelection" type="text" class="form-control dropdown-toggle" id="SubCategory" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
                     <ul class="dropdown-menu" aria-labelledby="SubCategory" name="color">
+                    @if (Model.SubCategory != null)
+                     {
                         @foreach (var color in Model.SubCategory) {
                         <li><a class="dropdown-item" data-stored-value="@color.SubCategoryID">@color.SubCategoryName</a></li>
                         }
+                     }
                     </ul>
                     </div>
                     <div class="dropdown">
                 <label for="Brand">Brand</label>
                         <input name="BrandSelection" type="text" class="form-control dropdown-toggle" id="Brand" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
                         <ul class="dropdown-menu" aria-labelledby="Brand">
-                            <li><a class="dropdown-item" href="#">Option 4-1</a></li>
-                            <li><a class="dropdown-item" href="#">Option 4-2</a></li>
-                            <li><a class="dropdown-item" href="#">Option 4-3</a></li>
-                            <li><a class="dropdown-item" href="#">Option 4-4</a></li>
+                        @if(Model.Brand != null)
+                        {
+                            @foreach (var color in Model.Brand)
+                            {
+                                <li><a class="dropdown-item" data-stored-value="@color.BrandId">@color.BrandName</a></li>
+                            }
+                        }
                         </ul>
                     </div>
                   
@@ -136,7 +149,7 @@
         handleDropdownFilter('#Color', '#ColorId', '.dropdown-menu[aria-labelledby="Color"]');
         handleDropdownFilter('#Category', '#CategoryId', '.dropdown-menu[aria-labelledby="Category"]');
         handleDropdownFilter('#SubCategory', '#SubCategoryId', '.dropdown-menu[aria-labelledby="SubCategory"]');
-        //handleDropdownFilter('#Brand', '.dropdown-menu[aria-labelledby="Brand"]');
+        handleDropdownFilter('#Brand', '#BrandId','.dropdown-menu[aria-labelledby="Brand"]');
     });
 
 </script>
