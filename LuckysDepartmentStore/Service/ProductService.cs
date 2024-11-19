@@ -14,15 +14,18 @@ namespace LuckysDepartmentStore.Service
         public IMapper _mapper;
         public IColorService _colorService;
         public ICategoryService _categoryService;
-
         public ISubCategoryService _subCategoryService;
-        public ProductService(LuckysContext context, IMapper mapper, IColorService colorService, ICategoryService categoryService, ISubCategoryService subCategoryService)
+        public IBrandService _brandService;
+
+        public ProductService(LuckysContext context, IMapper mapper, IColorService colorService, 
+            ICategoryService categoryService, ISubCategoryService subCategoryService, IBrandService brandService)
         {
             _context = context;
             _mapper = mapper;
             _colorService = colorService;
             _categoryService = categoryService;
             _subCategoryService = subCategoryService;
+            _brandService = brandService;
         }
         public async Task Create(ProductVM product)
         {
@@ -41,6 +44,12 @@ namespace LuckysDepartmentStore.Service
                 {
                     product.SubCategoryId = _subCategoryService.Create(product);
                 }
+                if ((product != null && product.BrandId == null) || product.BrandId == 0)
+                {
+                    product.BrandId = _brandService.Create(product);
+                }
+
+
 
                 var newProduct = _mapper.Map<Product>(product);
 

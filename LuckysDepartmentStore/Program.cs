@@ -22,6 +22,8 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IColorService, ColorService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISubCategoryService, SubCategoryService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
+
 
 //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

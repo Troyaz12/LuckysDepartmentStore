@@ -19,6 +19,7 @@ namespace LuckysDepartmentStore.Service
         {
             var newCategory = new Category();
             newCategory.CategoryName = product.CategorySelection;
+            newCategory.CategoryDescription = product.CategorySelection;
 
             _context.Add(newCategory);
             var categoryResult = _context.SaveChanges();

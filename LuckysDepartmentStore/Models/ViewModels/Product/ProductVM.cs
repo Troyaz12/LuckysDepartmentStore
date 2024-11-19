@@ -19,10 +19,10 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
         public int? CategoryId { get; set; }
         [Display(Name = "Brand")]
         public List<Brand> Brand { get; set; }
-
+        public int? BrandId { get; set; }
+        public string BrandSelection { get; set; }
         [Display(Name = "Color")]
         public List<Color> Color { get; set; }
-
         public int? ColorId {get;set;}
         public string ColorSelection { get; set; }
         [Display(Name = "SubCategory")]

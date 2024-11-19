@@ -30,6 +30,9 @@ namespace XunitTestProject
             var subCatService = new Mock<ISubCategoryService>();
             subCatService.Setup(subCat => subCat.Create(vm)).Returns(5);
 
+            var brandService = new Mock<IBrandService>();
+            brandService.Setup(brandCat => brandCat.Create(vm)).Returns(5);
+
 
             var mapper = new Mock<IMapper>();
 
@@ -50,7 +53,7 @@ namespace XunitTestProject
             mockContext.Setup(c => c.Colors).Returns(mockColorTable.Object);
 
             // Create the service or repository that uses the context
-            var service = new LuckysDepartmentStore.Service.ProductService(mockContext.Object, mapper.Object, colorService.Object, catService.Object, subCatService.Object);
+            var service = new LuckysDepartmentStore.Service.ProductService(mockContext.Object, mapper.Object, colorService.Object, catService.Object, subCatService.Object, brandService.Object);
 
             
             var res= service.Create(vm);
@@ -74,6 +77,9 @@ namespace XunitTestProject
             var subCatService = new Mock<ISubCategoryService>();
             subCatService.Setup(subCat => subCat.Create(vm)).Returns(5);
 
+            var brandService = new Mock<IBrandService>();
+            brandService.Setup(brandCat => brandCat.Create(vm)).Returns(5);
+
 
             var mapper = new Mock<IMapper>();
 
@@ -94,7 +100,7 @@ namespace XunitTestProject
             mockContext.Setup(c => c.Colors).Returns(mockColorTable.Object);
 
             // Create the service or repository that uses the context
-            var service = new LuckysDepartmentStore.Service.ProductService(mockContext.Object, mapper.Object, colorService.Object, catService.Object, subCatService.Object);
+            var service = new LuckysDepartmentStore.Service.ProductService(mockContext.Object, mapper.Object, colorService.Object, catService.Object, subCatService.Object, brandService.Object);
 
 
             var res = service.Create(vm);
@@ -119,6 +125,9 @@ namespace XunitTestProject
             var subCatService = new Mock<ISubCategoryService>();
             subCatService.Setup(subCat => subCat.Create(vm)).Returns(5);
 
+            var brandService = new Mock<IBrandService>();
+            brandService.Setup(brandCat => brandCat.Create(vm)).Returns(5);
+
 
             var mapper = new Mock<IMapper>();
 
@@ -139,7 +148,7 @@ namespace XunitTestProject
             mockContext.Setup(c => c.Colors).Returns(mockColorTable.Object);
 
             // Create the service or repository that uses the context
-            var service = new LuckysDepartmentStore.Service.ProductService(mockContext.Object, mapper.Object, colorService.Object, catService.Object, subCatService.Object);
+            var service = new LuckysDepartmentStore.Service.ProductService(mockContext.Object, mapper.Object, colorService.Object, catService.Object, subCatService.Object, brandService.Object);
 
 
             var res = service.Create(vm);
@@ -165,6 +174,9 @@ namespace XunitTestProject
             var subCatService = new Mock<ISubCategoryService>();
             subCatService.Setup(subCat => subCat.Create(vm)).Returns(5);
 
+            var brandService = new Mock<IBrandService>();
+            brandService.Setup(brandCat => brandCat.Create(vm)).Returns(5);
+
 
             var mapper = new Mock<IMapper>();
 
@@ -185,7 +197,7 @@ namespace XunitTestProject
             mockContext.Setup(c => c.Colors).Returns(mockColorTable.Object);
 
             // Create the service or repository that uses the context
-            var service = new LuckysDepartmentStore.Service.ProductService(mockContext.Object, mapper.Object, colorService.Object, catService.Object, subCatService.Object);
+            var service = new LuckysDepartmentStore.Service.ProductService(mockContext.Object, mapper.Object, colorService.Object, catService.Object, subCatService.Object, brandService.Object);
 
 
             var res = service.Create(vm);
@@ -211,6 +223,8 @@ namespace XunitTestProject
             var subCatService = new Mock<ISubCategoryService>();
             subCatService.Setup(subCat => subCat.Create(vm)).Throws(new Exception("Timed out"));
 
+            var brandService = new Mock<IBrandService>();
+            brandService.Setup(brandCat => brandCat.Create(vm)).Returns(5);
 
             var mapper = new Mock<IMapper>();
 
@@ -231,7 +245,7 @@ namespace XunitTestProject
             mockContext.Setup(c => c.Colors).Returns(mockColorTable.Object);
 
             // Create the service or repository that uses the context
-            var service = new LuckysDepartmentStore.Service.ProductService(mockContext.Object, mapper.Object, colorService.Object, catService.Object, subCatService.Object);
+            var service = new LuckysDepartmentStore.Service.ProductService(mockContext.Object, mapper.Object, colorService.Object, catService.Object, subCatService.Object, brandService.Object);
 
 
             var res = service.Create(vm);
