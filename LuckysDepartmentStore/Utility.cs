@@ -11,23 +11,49 @@ namespace LuckysDepartmentStore
         public IFormFile FileUpload { get; private set; }
         public IConfiguration Config { get; private set; }   
 
-        public byte[] ImageBytes(IFormFile fileImport, IConfiguration config)
+        public byte[] ImageBytes(IFormFile? fileImport, IConfiguration config)
         {
             byte[]? imageBytes = null;
-            var defaultImage = Config["ImagePaths:ShoppingImages"];
+            var defaultImage = config["ImagePaths:ShoppingImageEmpty"];
 
             using (var memoryStream = new MemoryStream())
             {
-                //await file.form FormFile.CopyToAsync(memoryStream);
-                fileImport.CopyTo(memoryStream);
-                // Upload the file if less than 2 MB
-                if (memoryStream.Length < 2097152)
+                if (fileImport != null)
                 {
-                    imageBytes = memoryStream.ToArray();
+                    //await file.form FormFile.CopyToAsync(memoryStream);
+                    fileImport.CopyTo(memoryStream);
+                    // Upload the file if less than 2 MB
+                    if (memoryStream.Length < 2097152)
+                    {
+                        imageBytes = memoryStream.ToArray();
+                    }
+                    else
+                    {
+
+                    }
                 }
                 else
                 {
-                    
+                    var fileInfo = new FileInfo(defaultImage);
+                    var fileStream = new FileStream(defaultImage, FileMode.Open);
+
+                    var formFile = new FormFile(fileStream, 0, fileInfo.Length, fileInfo.Name, fileInfo.Name)
+                    {
+                        Headers = new HeaderDictionary(),
+                        ContentType = "image/jpeg" // Or whatever the MIME type of the image is
+                    };
+
+                    //await file.form FormFile.CopyToAsync(memoryStream);
+                    fileImport.CopyTo(memoryStream);
+                    // Upload the file if less than 2 MB
+                    if (memoryStream.Length < 2097152)
+                    {
+                        imageBytes = memoryStream.ToArray();
+                    }
+                    else
+                    {
+
+                    }
                 }
             }
 

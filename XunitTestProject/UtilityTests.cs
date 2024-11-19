@@ -25,7 +25,7 @@ namespace XunitTestProject
         [Fact]
         public void ImageConversionTest()
         {
-            var defaultImage = _config["ImagePaths:ShoppingImageEmpty"];
+            var defaultImage = "img\\NoImage.jpg";
 
 
             var fileInfo = new FileInfo(defaultImage);
@@ -37,9 +37,11 @@ namespace XunitTestProject
                 ContentType = "image/jpeg" // Or whatever the MIME type of the image is
             };
 
+            IFormFile formFileNew = null;
+
             var util = new Utility();
 
-            byte[] imageBytes = util.ImageBytes(formFile, _config);
+            byte[] imageBytes = util.ImageBytes(formFileNew, _config);
         }
 
 
