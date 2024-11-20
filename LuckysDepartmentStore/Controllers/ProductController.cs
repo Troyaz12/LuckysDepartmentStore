@@ -40,13 +40,13 @@ namespace LuckysDepartmentStore.Controllers
         // POST: Product/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("ProductID,Price,Description,Quantity,ProductName,CategorySelection,BrandSelection," +
+        public async Task<IActionResult> Create([Bind("ProductID,Price,Description,Quantity,ProductName,CategorySelection,BrandSelection," +
             "ColorSelection,SubCategoryId,ProductPicture,CreatedDate,Category,Color,ColorId,SubCategory,CategoryId," +
             "SubCategorySelection")] ProductVM product)
         {
             try
             {
-                var productSent = _productService.Create(product);
+                var productSent = await _productService.CreateAsync(product);
 
                 return RedirectToAction(nameof(Index));
             }

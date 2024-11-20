@@ -1,4 +1,5 @@
 ﻿using LuckysDepartmentStore;
+using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -25,25 +26,13 @@ namespace XunitTestProject
         [Fact]
         public void ImageConversionTest()
         {
-            var defaultImage = "img\\NoImage.jpg";
-
-
-            var fileInfo = new FileInfo(defaultImage);
-            var fileStream = new FileStream(defaultImage, FileMode.Open);
-
-            var formFile = new FormFile(fileStream, 0, fileInfo.Length, fileInfo.Name, fileInfo.Name)
-            {
-                Headers = new HeaderDictionary(),
-                ContentType = "image/jpeg" // Or whatever the MIME type of the image is
-            };
-
             IFormFile formFileNew = null;
 
-            var util = new Utility();
+            var util = new Utility(_config);
 
-            byte[] imageBytes = util.ImageBytes(formFileNew, _config);
+            var imageBytes = util.ImageBytes(formFileNew);
+
+            Assert.True(imageBytes.IsSuccess);
         }
-
-
     }
 }

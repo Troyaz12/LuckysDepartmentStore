@@ -3,6 +3,7 @@ using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service;
+using LuckysDepartmentStore.Utilities;
 using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
 
@@ -16,9 +17,11 @@ namespace LuckysDepartmentStore.Service
         public ICategoryService _categoryService;
         public ISubCategoryService _subCategoryService;
         public IBrandService _brandService;
+        public IConfiguration _config;
 
         public ProductService(LuckysContext context, IMapper mapper, IColorService colorService, 
-            ICategoryService categoryService, ISubCategoryService subCategoryService, IBrandService brandService)
+            ICategoryService categoryService, ISubCategoryService subCategoryService, IBrandService brandService
+            , IConfiguration config)
         {
             _context = context;
             _mapper = mapper;
@@ -26,8 +29,9 @@ namespace LuckysDepartmentStore.Service
             _categoryService = categoryService;
             _subCategoryService = subCategoryService;
             _brandService = brandService;
+            _config = config;
         }
-        public async Task Create(ProductVM product)
+        public async Task<Product> CreateAsync(ProductVM product)
         {
 
             try
@@ -49,13 +53,14 @@ namespace LuckysDepartmentStore.Service
                     product.BrandId = _brandService.Create(product);
                 }
 
-
-
                 var newProduct = _mapper.Map<Product>(product);
+
+                newProduct.ProductPicture = ImageBytes(product.ProductPictureFile);
 
                 _context.Add(newProduct);
                 await _context.SaveChangesAsync();
 
+                return newProduct;
             }
             catch (DbUpdateException ex)
             {             
@@ -113,6 +118,54 @@ namespace LuckysDepartmentStore.Service
                 .ToList();
 
             return subCategory;
+        }
+        public byte[] ImageBytes(IFormFile? fileImport)
+        {
+            byte[]? imageBytes = null;
+            //var defaultImage = _config["ImagePaths:ShoppingImageEmpty"];
+
+            //using (var memoryStream = new MemoryStream())
+            //{
+            //    if (fileImport != null)
+            //    {
+            //        //await file.form FormFile.CopyToAsync(memoryStream);
+            //        fileImport.CopyTo(memoryStream);
+            //        // Upload the file if less than 2 MB
+            //        if (memoryStream.Length < 2097152)
+            //        {
+            //            imageBytes = memoryStream.ToArray();
+            //        }
+            //        else
+            //        {
+            //            throw new Exception("Insufficient Memory");
+            //        }
+            //    }
+            //    else
+            //    {
+            //        var fileInfo = new FileInfo(defaultImage);
+            //        var fileStream = new FileStream(defaultImage, FileMode.Open);
+
+            //        var formFile = new FormFile(fileStream, 0, fileInfo.Length, fileInfo.Name, fileInfo.Name)
+            //        {
+            //            Headers = new HeaderDictionary(),
+            //            ContentType = "image/jpeg" // Or whatever the MIME type of the image is
+            //        };
+
+            //        //await file.form FormFile.CopyToAsync(memoryStream);
+            //        formFile.CopyTo(memoryStream);
+            //        // Upload the file if less than 2 MB
+            //        if (memoryStream.Length < 2097152)
+            //        {
+            //            imageBytes = memoryStream.ToArray();
+            //        }
+            //        else
+            //        {
+            //            throw new Exception("Insufficient Memory");
+            //        }
+            //    }
+            //}
+
+            return imageBytes;
         }
     }
 }

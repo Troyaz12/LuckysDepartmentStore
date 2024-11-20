@@ -60,18 +60,7 @@
                     <input type="hidden" id="SubCategoryId" name="SubCategoryId">
                     <input type="hidden" id="BrandId" name="BrandId">
 
-                    <div class="dropdown">
-                        <label for="Color">Color</label>
-                        <input name="ColorSelection" type="text" class="form-control dropdown-toggle" id="Color" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
-                         <ul class="dropdown-menu" aria-labelledby="Color">
-                        @if (Model.Category != null)
-                        {
-                            @foreach (var color in Model.Color) {
-                                <li><a class="dropdown-item" data-stored-value="@color.ColorID">@color.Name</a></li>
-                            }
-                        }
-                        </ul>
-                    </div>
+                    
                     <div class="dropdown">
                     <label for="Category">Category</label>
                     <input name="CategorySelection" type="text" class="form-control dropdown-toggle" id="Category" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
@@ -97,7 +86,7 @@
                     </ul>
                     </div>
                     <div class="dropdown">
-                <label for="Brand">Brand</label>
+                        <label for="Brand">Brand</label>
                         <input name="BrandSelection" type="text" class="form-control dropdown-toggle" id="Brand" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
                         <ul class="dropdown-menu" aria-labelledby="Brand">
                         @if(Model.Brand != null)
@@ -111,6 +100,52 @@
                     </div>
                   
                 </div>
+
+
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            Launch static backdrop modal
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Quantity By Color</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="dropdown">
+                        <label for="Color">Color</label>
+                        <input name="ColorSelection" type="text" class="form-control dropdown-toggle" id="Color" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                        <ul class="dropdown-menu" aria-labelledby="Color">
+                            @if (Model.Category != null)
+                            {
+                                @foreach (var color in Model.Color)
+                                {
+                                    <li><a class="dropdown-item" data-stored-value="@color.ColorID">@color.Name</a></li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                    <div class="modal-body">
+                        <label for="Quantity">Quantity</label>
+                        <input name="Quantity" type="text" id="Quantity">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button id="save" type="button" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
             </div>
         </form>
 <div>
@@ -150,6 +185,14 @@
         handleDropdownFilter('#Category', '#CategoryId', '.dropdown-menu[aria-labelledby="Category"]');
         handleDropdownFilter('#SubCategory', '#SubCategoryId', '.dropdown-menu[aria-labelledby="SubCategory"]');
         handleDropdownFilter('#Brand', '#BrandId','.dropdown-menu[aria-labelledby="Brand"]');
+
+        $('#save').on('click', function (e) {
+            e.preventDefault();
+            console.log("test");
+        });
     });
+
+    
+
 
 </script>

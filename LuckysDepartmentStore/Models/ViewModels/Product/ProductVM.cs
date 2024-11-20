@@ -30,7 +30,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
         public string SubCategorySelection { get; set; }
         public int? SubCategoryId { get; set; }
         [Display(Name = "ProductPicture")]
-        public IFormFile? ProductPicture { get; set; }
+        public IFormFile? ProductPictureFile { get; set; }
         [Display(Name = "CreatedDate")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
     }

@@ -11,7 +11,8 @@ namespace LuckysDepartmentStore.Service
         public IMapper _mapper;
         public SubCategoryService(LuckysContext context, IMapper mapper) 
         {
-        
+            _context = context;
+            _mapper = mapper;
         }
 
         public int? Create(ProductVM product)

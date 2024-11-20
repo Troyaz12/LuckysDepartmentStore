@@ -14,7 +14,7 @@ namespace LuckysDepartmentStore.Service
         {
             _context = context;
             _mapper = mapper;
-        }   
+        }
         public int? Create(ProductVM product)
         {
             var newColor = new Color();
