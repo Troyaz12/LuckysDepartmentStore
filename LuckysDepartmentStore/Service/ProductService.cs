@@ -36,9 +36,9 @@ namespace LuckysDepartmentStore.Service
 
             try
             {
-                if ((product != null && product.ColorId == null) || product.ColorId == 0)
+                if ((product != null && product.ColorProduct == null))
                 {
-                    product.ColorId = _colorService.Create(product);
+                    product.ColorId = _colorService.AddProductColor(product.ColorProduct);
                 }
                 if ((product != null && product.CategoryId == null) || product.CategoryId == 0)
                 {

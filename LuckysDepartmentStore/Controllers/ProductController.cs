@@ -35,10 +35,6 @@ namespace LuckysDepartmentStore.Controllers
             product.Category = _productService.GetCategory();
             product.SubCategory = _productService.GetSubCategory();
 
-           //product.ColorProduct = new ColorProductVM();
-           // product.ColorProduct.Name = "Red";
-           // product.ColorProduct.ColorID = 1;
-
             return View(product);
         }
 
@@ -47,7 +43,7 @@ namespace LuckysDepartmentStore.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductID,Price,Description,Quantity,ProductName,CategorySelection,BrandSelection," +
             "ColorSelection,SubCategoryId,ProductPicture,CreatedDate,Category,Color,ColorId,SubCategory,CategoryId," +
-            "SubCategorySelection")] ProductVM product)
+            "SubCategorySelection, ColorProduct")] ProductVM product)
         {
             try
             {
@@ -108,13 +104,16 @@ namespace LuckysDepartmentStore.Controllers
         public ActionResult UpdateList([FromBody] ColorProductVM product)
         {
             productVM.ColorProduct.Add(product);
-
-            ColorProductVM colorProduct = new ColorProductVM();
-
-            colorProduct.Quantity = product.Quantity;
-            colorProduct.ColorID = product.ColorID;
-            colorProduct.Name = product.Name;
                                 
+            return PartialView("_DynamicPartialList", productVM);
+        }
+        [HttpPost]
+        public ActionResult DeleteItem(int index)
+        {
+            if (index >= 0 && index <= productVM.ColorProduct.Count)
+            {
+                productVM.ColorProduct.RemoveAt(index);
+            }
             return PartialView("_DynamicPartialList", productVM);
         }
     }

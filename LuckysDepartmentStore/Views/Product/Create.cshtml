@@ -131,8 +131,8 @@
                                     </ul>
                                 </div>
                             
-                                <label for="Quantity">Quantity</label>
-                                <input name="Quantity" type="number" id="Quantity">
+                                <label for="QuantityInput">Quantity</label>
+                                <input name="QuantityInput" type="number" id="QuantityInput">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -196,7 +196,7 @@
 
             var name = $('#Color').val(); // Assuming data-selected is set when color is selected
             var colorID = $('#ColorId').val(); // Assuming data-selected is set when color is selected
-            var quantity = $('#Quantity').val();
+            var quantity = $('#QuantityInput').val();
 
             console.log("test " + name + " " + colorID + " " + quantity);
     
@@ -231,6 +231,22 @@
             });
         });
 
+        $("#dynamicList").on("click", ".delete-button", function () {
+            e.preventDefault();
+            var index = $(this).data("index");
+            console.log("index " + index);
+            $.ajax({
+                url: '@Url.Action("DeleteItem", "Product")',
+                type: 'POST',
+                data: { index: index },
+                success: function (data) {
+                    $("#dynamicList").html(data);
+                },
+                error: function () {
+                    alert("Error deleting item");
+                }
+            });
+        });
 
 
     });

@@ -11,24 +11,21 @@
       
     @if (Model != null)
     {
-        
-        @foreach(var item in Model.ColorProduct)
+
+        @for (int i = 0; i < Model.ColorProduct.Count; i++)
         {
-
-            <li>
-
+            <li id="item-@i">
                 <label for="ColorID">ColorID</label>
-                @Html.TextBoxFor(model => @item.ColorID, new { @readonly = "readonly" })
-
-               
+                @Html.TextBoxFor(model => @Model.ColorProduct[i].ColorID, new { @readonly = "readonly" })               
 
                 <label for="Name">Name</label>
-                <input name="Name" type="text" value="@item.Name" readonly="readonly">
+                <input name="Name" type="text" value="@Model.ColorProduct[i].Name" readonly="readonly">
 
                 <label for="Quantity">Quantity</label>
-                <input name="Quantity" type="number" value="@item.Quantity">
+                @Html.TextBoxFor(model => @Model.ColorProduct[i].Quantity, new { @readonly = "readonly" })
+
+                <button class="btn btn-danger delete-button" data-index="@i">Delete</button>
             </li>
         }
     }
-
     </ul>

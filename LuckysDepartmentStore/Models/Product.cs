@@ -9,7 +9,6 @@
         public string ProductName { get; set; }
         public int CategoryID { get; set; }
         public int? BrandID { get; set; }
-        public int? ColorProductID { get; set; }
         public int SubCategoryID { get; set; }
         public byte[]? ProductPicture { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
