@@ -84,3 +84,10 @@ body {
     padding-top: .5rem;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+.scrollable-section {
+    height: 200px; /* Set your desired height */
+    overflow-y: scroll;
+    border: 1px solid #ccc; /* Optional: Add a border for visual clarity */
+    padding: 10px; /* Optional: Add padding for spacing */
+}

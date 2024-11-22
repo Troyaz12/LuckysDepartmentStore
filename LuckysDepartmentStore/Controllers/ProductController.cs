@@ -9,6 +9,7 @@ namespace LuckysDepartmentStore.Controllers
 {
     public class ProductController(IProductService _productService) : Controller
     {
+        public static ProductVM productVM = new ProductVM();
         // GET: Product
         public ActionResult Index()
         {
@@ -33,6 +34,10 @@ namespace LuckysDepartmentStore.Controllers
             product.Color = _productService.GetColors();
             product.Category = _productService.GetCategory();
             product.SubCategory = _productService.GetSubCategory();
+
+           //product.ColorProduct = new ColorProductVM();
+           // product.ColorProduct.Name = "Red";
+           // product.ColorProduct.ColorID = 1;
 
             return View(product);
         }
@@ -96,6 +101,21 @@ namespace LuckysDepartmentStore.Controllers
             {
                 return View();
             }
+        }
+
+        [HttpPost]
+       // [ValidateAntiForgeryToken]
+        public ActionResult UpdateList([FromBody] ColorProductVM product)
+        {
+            productVM.ColorProduct.Add(product);
+
+            ColorProductVM colorProduct = new ColorProductVM();
+
+            colorProduct.Quantity = product.Quantity;
+            colorProduct.ColorID = product.ColorID;
+            colorProduct.Name = product.Name;
+                                
+            return PartialView("_DynamicPartialList", productVM);
         }
     }
 }

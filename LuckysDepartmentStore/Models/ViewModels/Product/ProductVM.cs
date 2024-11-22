@@ -23,6 +23,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
         public string BrandSelection { get; set; }
         [Display(Name = "Color")]
         public List<Color> Color { get; set; }
+        public List<ColorProductVM> ColorProduct { get; set; } = new List<ColorProductVM>();
         public int? ColorId {get;set;}
         public string ColorSelection { get; set; }
         [Display(Name = "SubCategory")]
