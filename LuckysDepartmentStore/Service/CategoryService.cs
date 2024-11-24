@@ -15,7 +15,7 @@ namespace LuckysDepartmentStore.Service
             _context = context;
             _mapper = mapper;
         }
-        public int? Create(ProductVM product)
+        public int Create(ProductVM product)
         {
             var newCategory = new Category();
             newCategory.CategoryName = product.CategorySelection;

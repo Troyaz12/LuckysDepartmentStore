@@ -1,4 +1,6 @@
 ﻿using LuckysDepartmentStore.Data;
+using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -65,10 +67,37 @@ namespace LuckysDepartmentStore.Utilities
 
         //    return Result<byte[]>.Success(imageBytes);
         //}
+        public static List<ProductVM> MapProduct(List<Product> products)
+        {
+
+            var productsVM = new List<ProductVM>();
+
+            foreach(Product product in products) 
+            {
+                ProductVM productVM = new ProductVM();
+                
+                productVM.Price = product.Price;
+                productVM.ProductID = product.ProductID;
+                productVM.Description = product.Description;
+                productVM.Quantity = product.Quantity;
+                productVM.ProductName = product.ProductName;
+                productVM.CategoryID = product.CategoryID;
+                productVM.BrandID = product.BrandID;
+                productVM.SubCategoryID = product.SubCategoryID;
+                productVM.ProductPicture = product.ProductPicture;
+                productVM.CreatedDate = product.CreatedDate;
+                productVM.DiscountID = product.DiscountID;
+
+                productsVM.Add(productVM);
+            }
+
+            return productsVM;
+        }
     }
     public class AppFile
     {
         //public int Id { get; set; }
         //public byte[] Content { get; set; }
     }
+  
 }

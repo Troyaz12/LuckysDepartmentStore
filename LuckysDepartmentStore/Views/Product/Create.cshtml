@@ -75,7 +75,7 @@
                     <div class="dropdown">
                     <label asp-for="SubCategory">SubCategory</label>
                     <input asp-for="SubCategorySelection" type="text" class="form-control dropdown-toggle" id="SubCategory" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
-                <span asp-validation-for="SubCategorySelection" class="text-danger"></span>
+                    <span asp-validation-for="SubCategorySelection" class="text-danger"></span>
                     <ul class="dropdown-menu" aria-labelledby="SubCategory" name="color">
                     @if (Model.SubCategory != null)
                      {

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Http;
@@ -13,9 +14,9 @@ namespace LuckysDepartmentStore.Controllers
         // GET: Product
         public ActionResult Index()
         {
-
             ProductListVM productList = new ProductListVM();
-            List<ProductVM> products = new List<ProductVM>();
+
+            var products = _productService.GetProducts();
             productList.Products = products;
 
             return View(productList);
@@ -50,6 +51,7 @@ namespace LuckysDepartmentStore.Controllers
             {
                 try
                 {
+
                     var productSent = await _productService.CreateAsync(product);
 
                     return RedirectToAction(nameof(Index));

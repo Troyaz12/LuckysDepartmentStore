@@ -2,7 +2,7 @@
 
 namespace LuckysDepartmentStore.Models.ViewModels.Product
 {
-    public class ProductVM
+    public class ProductVMCreate
     {
         public int ProductID { get; set; }
 
@@ -15,14 +15,14 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
         public string Description { get; set; }
 
         [Display(Name = "Quantity")]
-        [Required(ErrorMessage = "Quantity is required")] 
+        [Required(ErrorMessage = "Quantity is required")]
         public int Quantity { get; set; }
 
         [Display(Name = "ProductName")]
         [Required(ErrorMessage = "Name is required")]
         public string ProductName { get; set; }
 
-        [Display(Name = "Category")]        
+        [Display(Name = "Category")]
         public List<Category> Category { get; set; }
 
         [Required(ErrorMessage = "Category is required")]
@@ -39,7 +39,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
         [Display(Name = "Color")]
         public List<Color> Color { get; set; }
         public List<ColorProductVM> ColorProduct { get; set; } = new List<ColorProductVM>();
-        public int? ColorId {get;set;}
+        public int? ColorId { get; set; }
         public string ColorSelection { get; set; }
 
         [Display(Name = "SubCategory")]

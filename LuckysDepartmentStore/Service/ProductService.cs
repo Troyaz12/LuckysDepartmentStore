@@ -5,6 +5,7 @@ using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging.Signing;
 using SQLitePCL;
 
 namespace LuckysDepartmentStore.Service
@@ -48,17 +49,17 @@ namespace LuckysDepartmentStore.Service
                         }
                     }
                 }
-                if ((product != null && product.CategoryId == null) || product.CategoryId == 0)
+                if ((product != null && product.CategoryID == null) || product.CategoryID == 0)
                 {
-                    product.CategoryId = _categoryService.Create(product);
+                    product.CategoryID = _categoryService.Create(product);
                 }
-                if ((product != null && product.SubCategoryId == null) || product.SubCategoryId == 0)
+                if ((product != null && product.SubCategoryID == null) || product.SubCategoryID == 0)
                 {
-                    product.SubCategoryId = _subCategoryService.Create(product);
+                    product.SubCategoryID = _subCategoryService.Create(product);
                 }
-                if ((product != null && product.BrandId == null) || product.BrandId == 0)
+                if ((product != null && product.BrandID == null) || product.BrandID == 0)
                 {
-                    product.BrandId = _brandService.Create(product);
+                    product.BrandID = _brandService.Create(product);
                 }
 
                 var newProduct = _mapper.Map<Product>(product);
@@ -192,6 +193,33 @@ namespace LuckysDepartmentStore.Service
             }
 
             return imageBytes;
+        }
+        public List<ProductVM> GetProducts()
+        {
+            //var products = _context.Products
+            //    .ToList();
+
+            var products = 
+                from Product in _context.Products
+                join Category in _context.Categories on Product.CategoryID equals Category.CategoryID
+                select new
+                {
+                    ProductID = Product.ProductID,
+                    ProductName = Product.ProductName,
+                    Price = Product.Price,
+                    Description = Product.Description,
+                    Quantity = Product.Quantity,
+                    CategoryId = Category.CategoryID,
+                    ProductPicture = Product.ProductPicture,
+                    CreatedDate = Product.CreatedDate,
+                    DiscountID = Product.DiscountID
+                };
+
+            var name = products.FirstOrDefault();
+          //  var productsVMList = Utilities.Utility.MapProduct(products);
+          List<ProductVM> list = new List<ProductVM>();
+
+            return list;
         }
     }
 }

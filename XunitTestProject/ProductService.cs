@@ -1,14 +1,9 @@
-
-
 using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Service;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Net.Sockets;
 using LuckysDepartmentStore.Models.ViewModels.Product;
-using NuGet.Packaging.Licenses;
 using AutoMapper;
 using Microsoft.Extensions.Configuration;
 
@@ -172,7 +167,7 @@ namespace XunitTestProject
         {
             ProductVM vm = new ProductVM();
             vm.ColorSelection = "RED";
-            vm.CategoryId = 1;
+            vm.CategoryID = 1;
 
             var catService = new Mock<ICategoryService>();
             catService.Setup(cat => cat.Create(vm)).Throws(new Exception("Timed out"));
@@ -221,7 +216,7 @@ namespace XunitTestProject
         {
             ProductVM vm = new ProductVM();
             vm.ColorSelection = "RED";
-            vm.SubCategoryId = 1;
+            vm.SubCategoryID = 1;
 
             var catService = new Mock<ICategoryService>();
             catService.Setup(cat => cat.Create(vm)).Returns(5);

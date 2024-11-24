@@ -1,0 +1,107 @@
+﻿@model List<LuckysDepartmentStore.Models.ViewModels.Discount.DiscountVM>
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-controller="Product" asp-action="Create" method="get">Create New</a>
+</p>
+
+<form asp-controller="Product" asp-action="Index" method="get">
+    <p>
+        <div class="row g-3 align-items-center">
+          @*   <div class="col-auto">
+                <select asp-for="Category" asp-items="Model.Categories!">
+                    <option value="">All</option>
+                </select>
+            </div>
+
+            <div class="col-auto">
+                <input class="form-control" type="text" asp-for="SearchString" placeholder="Enter Movie Title" />
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-dark">Filter</button>
+            </div>
+ *@
+        </div>
+
+    </p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model[0].DiscountAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].DiscountPercent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].DiscountActive)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].CreatedDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model!=null)
+        { 
+            @foreach (var item in Model!)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DiscountAmount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DiscountPercent)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DiscountActive)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedDate)
+                    </td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic outlined example">
+                         @*    <form asp-controller="Movies" asp-action="Edit" asp-route-id="@item.ProductID" method="get">
+                                <button id="edit" type="submit" class="btn btn-outline-primary">Edit</button>
+                            </form>
+                            <a asp-action="Details" asp-route-id="@item.ProductID" class="btn btn-outline-primary">Details</a>
+                            <a asp-action="Delete" asp-route-id="@item.ProductID" class="btn btn-outline-primary">Delete</a> *@
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script>
+    // the below can be used for reloading a partial view
+    /* use with this:  <button id="edit" onclick="editButton(*put at here*item.Id)" type="button" class="btn btn-outline-primary">Edit</button>  */
+    function editButton(id) {
+
+        var myId = id;
+
+        var urlMy = "@Url.Action("Edit", "Product", new { id = "ID" })";
+        urlMy = urlMy.replace("ID", myId);
+
+        $.ajax({
+            url: urlMy,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            success: function (result) {
+                console.log(result);
+            }
+
+        });
+    }
+    
+</script>

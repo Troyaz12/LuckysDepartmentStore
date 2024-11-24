@@ -15,7 +15,7 @@ namespace LuckysDepartmentStore.Service
             _mapper = mapper;
         }
 
-        public int? Create(ProductVM product)
+        public int Create(ProductVM product)
         {
             var subCategory = new SubCategory();
             subCategory.SubCategoryName = product.SubCategorySelection;
