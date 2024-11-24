@@ -34,6 +34,7 @@ namespace LuckysDepartmentStore.Controllers
             product.Color = _productService.GetColors();
             product.Category = _productService.GetCategory();
             product.SubCategory = _productService.GetSubCategory();
+            product.Brand = _productService.GetBrand();
 
             return View(product);
         }
@@ -45,16 +46,20 @@ namespace LuckysDepartmentStore.Controllers
             "ColorSelection,SubCategoryId,ProductPicture,CreatedDate,Category,Color,ColorId,SubCategory,CategoryId," +
             "SubCategorySelection, ColorProduct")] ProductVM product)
         {
-            try
+            if (ModelState.IsValid)
             {
-                var productSent = await _productService.CreateAsync(product);
+                try
+                {
+                    var productSent = await _productService.CreateAsync(product);
 
-                return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Index));
+                }
+                catch
+                {
+                    return View();
+                }
             }
-            catch
-            {
-                return View();
-            }
+            return View(product);
         }
 
         // GET: Product/Edit/5

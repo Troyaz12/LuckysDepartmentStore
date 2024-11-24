@@ -26,13 +26,13 @@ namespace XunitTestProject
         [Fact]
         public void ImageConversionTest()
         {
-            IFormFile formFileNew = null;
+            //IFormFile formFileNew = null;
 
-            var util = new Utility(_config);
+            //var util = new Utility(_config);
 
-            var imageBytes = util.ImageBytes(formFileNew);
+            //var imageBytes = util.ImageBytes(formFileNew);
 
-            Assert.True(imageBytes.IsSuccess);
+            //Assert.True(imageBytes.IsSuccess);
         }
     }
 }

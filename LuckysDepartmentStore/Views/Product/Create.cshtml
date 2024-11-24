@@ -9,11 +9,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bootstrap 5 Input Dropdown</title>
+    <title>Add a product</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta1/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta1/js/bootstrap.min.js"></script>
+    <!-- Ensure these scripts are included for client-side validation -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
+
 </head>
 <h1>Create</h1>
 
@@ -41,19 +46,12 @@
                         <input asp-for="Price" class="form-control" />
                         <span asp-validation-for="Price" class="text-danger"></span>
                     </div>
-                   @*  <div class="form-group">
-                        <label asp-for="Quantity" class="control-label"></label>
-                        <input asp-for="Quantity" class="form-control" />
-                        <span asp-validation-for="Quantity" class="text-danger"></span>
-                    </div> *@
                     <label for="ProductPicture">Product Picture</label>
                     <input type="file" class="form-control" id="ProductPicture" name="ProductPicture">
 
-                    <div class="form-group">
-                        <input type="submit" value="Create" class="btn btn-primary mt-4" />
-                    </div>
-                </div>
-                <div class="col-md-8">
+                   
+               </div>
+               <div class="col-md-8">
 
                     <input type="hidden" id="ColorId" name="ColorId">
                     <input type="hidden" id="CategoryId" name="CategoryId">
@@ -62,10 +60,11 @@
 
                     
                     <div class="dropdown">
-                    <label for="Category">Category</label>
-                    <input name="CategorySelection" type="text" class="form-control dropdown-toggle" id="Category" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                    <label asp-for="Category">Category</label>
+                    <input asp-for="CategorySelection" type="text" class="form-control dropdown-toggle" id="Category" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                    <span asp-validation-for="CategorySelection" class="text-danger"></span>
                         <ul class="dropdown-menu" aria-labelledby="Category">
-                    @if (Model.Category != null)
+                        @if (Model.Category != null)
                         {
                            @foreach (var color in Model.Category) {
                             <li><a class="dropdown-item" data-stored-value="@color.CategoryID">@color.CategoryName</a></li>
@@ -74,8 +73,9 @@
                         </ul>
                     </div>
                     <div class="dropdown">
-                    <label for="SubCategory">SubCategory</label>
-                    <input name="SubCategorySelection" type="text" class="form-control dropdown-toggle" id="SubCategory" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                    <label asp-for="SubCategory">SubCategory</label>
+                    <input asp-for="SubCategorySelection" type="text" class="form-control dropdown-toggle" id="SubCategory" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                <span asp-validation-for="SubCategorySelection" class="text-danger"></span>
                     <ul class="dropdown-menu" aria-labelledby="SubCategory" name="color">
                     @if (Model.SubCategory != null)
                      {
@@ -86,8 +86,9 @@
                     </ul>
                     </div>
                     <div class="dropdown">
-                        <label for="Brand">Brand</label>
-                        <input name="BrandSelection" type="text" class="form-control dropdown-toggle" id="Brand" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                        <label asp-for="Brand">Brand</label>
+                        <input asp-for="BrandSelection" type="text" class="form-control dropdown-toggle" id="Brand" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                        <span asp-validation-for="BrandSelection" class="text-danger"></span>
                         <ul class="dropdown-menu" aria-labelledby="Brand">
                         @if(Model.Brand != null)
                         {
@@ -100,57 +101,62 @@
                     </div>
                   
                 </div>
+            </div>
 
+            <div class="row">
+                 <div class="col-md-12">
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                        Colors and Quantity
+                    </button>
 
-
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                    Launch static backdrop modal
-                </button>
-
-                <!-- Modal -->
-                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Quantity By Color</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="dropdown">
-                                    <label for="Color">Color</label>
-                                    <input name="ColorSelection" type="text" class="form-control dropdown-toggle" id="Color" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
-                                    <ul class="dropdown-menu" aria-labelledby="Color">
-                                        @if (Model.Category != null)
-                                        {
-                                            @foreach (var color in Model.Color)
-                                            {
-                                                <li><a class="dropdown-item" data-stored-value="@color.ColorID">@color.Name</a></li>
-                                            }
-                                        }
-                                    </ul>
+                    <!-- Modal -->
+                    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Quantity By Color</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
+                                <div class="modal-body">
+                                    <div class="dropdown">
+                                        <label for="Color">Color</label>
+                                        <input name="ColorSelection" type="text" class="form-control dropdown-toggle mb-2" id="Color" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                                        <ul class="dropdown-menu" aria-labelledby="Color">
+                                            @if (Model.Category != null)
+                                            {
+                                                @foreach (var color in Model.Color)
+                                                {
+                                                    <li><a class="dropdown-item" data-stored-value="@color.ColorID">@color.Name</a></li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
                             
-                                <label for="QuantityInput">Quantity</label>
-                                <input name="QuantityInput" type="number" id="QuantityInput">
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button id="save" type="button" class="btn btn-primary">Save</button>
+                                    <label for="QuantityInput">Quantity</label>
+                                    <input name="QuantityInput" type="number" id="QuantityInput" class="form-control">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button id="save" type="button" class="btn btn-primary">Save</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="scrollable-section" id="dynamicList"> 
+                    <div class="scrollable-section mt-2" id="dynamicList"> 
                    
-                    @Html.Partial("_DynamicPartialList", Model)
+                        @Html.Partial("_DynamicPartialList", Model)
+                    </div>
                 </div>
-
-
-
-
-
             </div>
+
+            <div class="row">
+                 <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary mt-4" />
+                 </div>
+            </div>
+
+
         </form>
 <div>
     <a asp-action="Index">Back to List</a>
@@ -164,8 +170,7 @@
 
 <script>
     $(document).ready(function () {
-        // Function to handle dropdown filtering
-
+        
         function handleDropdownFilter(inputId, inputNum, dropdownClass) {
             $(inputId).on('keyup', function () {
                 var filter = this.value.toLowerCase();
@@ -191,22 +196,17 @@
         handleDropdownFilter('#Brand', '#BrandId','.dropdown-menu[aria-labelledby="Brand"]');
 
         $('#save').on('click', function (e) {
-            e.preventDefault();
-            //console.log("test" + $('#Quantity').val() + " " + $('#Color').val() + " " + $('#ColorId').val());
+            e.preventDefault();            
 
             var name = $('#Color').val(); // Assuming data-selected is set when color is selected
             var colorID = $('#ColorId').val(); // Assuming data-selected is set when color is selected
             var quantity = $('#QuantityInput').val();
-
-            console.log("test " + name + " " + colorID + " " + quantity);
     
             var item = {
                 ColorID: colorID,
                 Quantity: quantity,
                 Name: name
-            };
-
-            
+            };            
             
             $.ajax({
                 url: '@Url.Action("UpdateList", "Product")',
@@ -234,7 +234,7 @@
         $("#dynamicList").on("click", ".delete-button", function () {
             e.preventDefault();
             var index = $(this).data("index");
-            console.log("index " + index);
+
             $.ajax({
                 url: '@Url.Action("DeleteItem", "Product")',
                 type: 'POST',

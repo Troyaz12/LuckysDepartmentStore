@@ -27,8 +27,10 @@ namespace XunitTestProject
             var options = new DbContextOptionsBuilder<LuckysContext>().UseInMemoryDatabase(databaseName: "TestDatabase").Options;
             var mockContext = new Mock<LuckysContext>(options);
 
+
             ColorService colorService = new ColorService(mockContext.Object, mapper.Object);
-            var colorServ = colorService.Create(productVM);
+
+            var colorServ = colorService.Create("Violet");
 
             var colorsList = mockContext.Object.Colors.ToList();
 

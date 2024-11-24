@@ -4,7 +4,7 @@ namespace LuckysDepartmentStore.Service
 {
     public interface IColorService
     {
-        public int? Create(ProductVM product);
-        public int? AddProductColor(List<ColorProductVM> product);
+        public int Create(string name);
+      //  public ProductVM AddProductColor(ProductVM product);
     }
 }

@@ -38,7 +38,15 @@ namespace LuckysDepartmentStore.Service
             {
                 if ((product != null && product.ColorProduct == null))
                 {
-                    product.ColorId = _colorService.AddProductColor(product.ColorProduct);
+                    for (int x = 0; x > product.ColorProduct.Count; x++)
+                    {
+                        if (product.ColorProduct[x].ColorID == 0)
+                        {
+                            var colorId = _colorService.Create(product.ColorProduct[x].Name);
+                            
+                            product.ColorProduct[x].ColorID = colorId;
+                        }
+                    }
                 }
                 if ((product != null && product.CategoryId == null) || product.CategoryId == 0)
                 {
@@ -59,6 +67,17 @@ namespace LuckysDepartmentStore.Service
 
                 _context.Add(newProduct);
                 await _context.SaveChangesAsync();
+
+                int productId = newProduct.ProductID;
+                
+                foreach(ColorProductVM colors in product.ColorProduct)
+                {                    
+                    var newColorProduct = _mapper.Map<ColorProduct>(colors);
+                    newColorProduct.ProductID = productId;
+
+                    _context.Add(newColorProduct);
+                    await _context.SaveChangesAsync();
+                }
 
                 return newProduct;
             }
@@ -119,51 +138,58 @@ namespace LuckysDepartmentStore.Service
 
             return subCategory;
         }
+        public List<Brand> GetBrand()
+        {
+            var brands = _context.Brand
+                .ToList();
+
+            return brands;
+        }
         public byte[] ImageBytes(IFormFile? fileImport)
         {
             byte[]? imageBytes = null;
-            //var defaultImage = _config["ImagePaths:ShoppingImageEmpty"];
+            var defaultImage = _config["ImagePaths:ShoppingImageEmpty"];
 
-            //using (var memoryStream = new MemoryStream())
-            //{
-            //    if (fileImport != null)
-            //    {
-            //        //await file.form FormFile.CopyToAsync(memoryStream);
-            //        fileImport.CopyTo(memoryStream);
-            //        // Upload the file if less than 2 MB
-            //        if (memoryStream.Length < 2097152)
-            //        {
-            //            imageBytes = memoryStream.ToArray();
-            //        }
-            //        else
-            //        {
-            //            throw new Exception("Insufficient Memory");
-            //        }
-            //    }
-            //    else
-            //    {
-            //        var fileInfo = new FileInfo(defaultImage);
-            //        var fileStream = new FileStream(defaultImage, FileMode.Open);
+            using (var memoryStream = new MemoryStream())
+            {
+                if (fileImport != null)
+                {
+                    //await file.form FormFile.CopyToAsync(memoryStream);
+                    fileImport.CopyTo(memoryStream);
+                    // Upload the file if less than 2 MB
+                    if (memoryStream.Length < 2097152)
+                    {
+                        imageBytes = memoryStream.ToArray();
+                    }
+                    else
+                    {
+                        throw new Exception("Insufficient Memory");
+                    }
+                }
+                else
+                {
+                    var fileInfo = new FileInfo(defaultImage);
+                    var fileStream = new FileStream(defaultImage, FileMode.Open);
 
-            //        var formFile = new FormFile(fileStream, 0, fileInfo.Length, fileInfo.Name, fileInfo.Name)
-            //        {
-            //            Headers = new HeaderDictionary(),
-            //            ContentType = "image/jpeg" // Or whatever the MIME type of the image is
-            //        };
+                    var formFile = new FormFile(fileStream, 0, fileInfo.Length, fileInfo.Name, fileInfo.Name)
+                    {
+                        Headers = new HeaderDictionary(),
+                        ContentType = "image/jpeg" // Or whatever the MIME type of the image is
+                    };
 
-            //        //await file.form FormFile.CopyToAsync(memoryStream);
-            //        formFile.CopyTo(memoryStream);
-            //        // Upload the file if less than 2 MB
-            //        if (memoryStream.Length < 2097152)
-            //        {
-            //            imageBytes = memoryStream.ToArray();
-            //        }
-            //        else
-            //        {
-            //            throw new Exception("Insufficient Memory");
-            //        }
-            //    }
-            //}
+                    //await file.form FormFile.CopyToAsync(memoryStream);
+                    formFile.CopyTo(memoryStream);
+                    // Upload the file if less than 2 MB
+                    if (memoryStream.Length < 2097152)
+                    {
+                        imageBytes = memoryStream.ToArray();
+                    }
+                    else
+                    {
+                        throw new Exception("Insufficient Memory");
+                    }
+                }
+            }
 
             return imageBytes;
         }

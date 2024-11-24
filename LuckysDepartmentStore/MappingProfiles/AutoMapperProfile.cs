@@ -10,6 +10,7 @@ namespace LuckysDepartmentStore.MappingProfiles
         public AutoMapperProfile()
         {
             CreateMap<ProductVM, Product>();
+            CreateMap<ColorProductVM, ColorProduct>();
         }
     }
 }
