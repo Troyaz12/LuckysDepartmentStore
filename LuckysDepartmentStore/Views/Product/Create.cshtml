@@ -1,4 +1,4 @@
-﻿@model LuckysDepartmentStore.Models.ViewModels.Product.ProductVM
+﻿@model LuckysDepartmentStore.Models.ViewModels.Product.ProductCreateVM
 
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -53,10 +53,10 @@
                </div>
                <div class="col-md-8">
 
-                    <input type="hidden" id="ColorId" name="ColorId">
-                    <input type="hidden" id="CategoryId" name="CategoryId">
-                    <input type="hidden" id="SubCategoryId" name="SubCategoryId">
-                    <input type="hidden" id="BrandId" name="BrandId">
+                    <input type="hidden" id="ColorID" name="ColorID">
+                    <input type="hidden" id="CategoryID" name="CategoryID">
+                    <input type="hidden" id="SubCategoryID" name="SubCategoryID">
+                    <input type="hidden" id="BrandID" name="BrandID">
 
                     
                     <div class="dropdown">
@@ -190,18 +190,18 @@
         }
 
         // Apply the function to each dropdown
-        handleDropdownFilter('#Color', '#ColorId', '.dropdown-menu[aria-labelledby="Color"]');
-        handleDropdownFilter('#Category', '#CategoryId', '.dropdown-menu[aria-labelledby="Category"]');
-        handleDropdownFilter('#SubCategory', '#SubCategoryId', '.dropdown-menu[aria-labelledby="SubCategory"]');
-        handleDropdownFilter('#Brand', '#BrandId','.dropdown-menu[aria-labelledby="Brand"]');
+        handleDropdownFilter('#Color', '#ColorID', '.dropdown-menu[aria-labelledby="Color"]');
+        handleDropdownFilter('#Category', '#CategoryID', '.dropdown-menu[aria-labelledby="Category"]');
+        handleDropdownFilter('#SubCategory', '#SubCategoryID', '.dropdown-menu[aria-labelledby="SubCategory"]');
+        handleDropdownFilter('#Brand', '#BrandID','.dropdown-menu[aria-labelledby="Brand"]');
 
         $('#save').on('click', function (e) {
-            e.preventDefault();            
+            e.preventDefault();
 
             var name = $('#Color').val(); // Assuming data-selected is set when color is selected
-            var colorID = $('#ColorId').val(); // Assuming data-selected is set when color is selected
+            var colorID = $('#ColorID').val()||null; // Assuming data-selected is set when color is selected
             var quantity = $('#QuantityInput').val();
-    
+            console.log("onSave: " + name + " " + colorID);
             var item = {
                 ColorID: colorID,
                 Quantity: quantity,
@@ -219,13 +219,13 @@
                     $("#dynamicList").html(data);
 
                     $("#Color").val('');
-                    $("#ColorId").val('');
-                    $("#Quantity").val('');
+                    $("#ColorID").val('');
+                    $("#QuantityInput").val('');
 
                     $('#staticBackdrop').modal('hide');
                 },
                 error: function (jqXHR, textStatus, errorThrown)
-                    { 
+                { 
                     alert("Error updating list: " + errorThrown);
                 }
             });

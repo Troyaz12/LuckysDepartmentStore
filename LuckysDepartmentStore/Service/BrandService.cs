@@ -16,7 +16,7 @@ namespace LuckysDepartmentStore.Service
             _mapper = mapper;
         }
 
-        public int Create(ProductVM product)
+        public int Create(ProductCreateVM product)
         {
             var newBrand = new Brand();
             newBrand.BrandName = product.BrandSelection;

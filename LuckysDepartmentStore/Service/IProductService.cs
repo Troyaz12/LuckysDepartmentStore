@@ -6,7 +6,7 @@ namespace LuckysDepartmentStore.Service
 {
     public interface IProductService
     {
-        public Task<Product> CreateAsync(ProductVM product);
+        public Task<Product> CreateAsync(ProductCreateVM product);
         public List<Color> GetColors();
         public List<Category> GetCategory();
         public List<SubCategory> GetSubCategory();

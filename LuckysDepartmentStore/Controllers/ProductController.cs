@@ -10,7 +10,7 @@ namespace LuckysDepartmentStore.Controllers
 {
     public class ProductController(IProductService _productService) : Controller
     {
-        public static ProductVM productVM = new ProductVM();
+        public static ProductCreateVM productVM = new ProductCreateVM();
         // GET: Product
         public ActionResult Index()
         {
@@ -31,7 +31,7 @@ namespace LuckysDepartmentStore.Controllers
         // GET: Product/Create
         public ActionResult Create()
         {
-            ProductVM product = new ProductVM();
+            ProductCreateVM product = new ProductCreateVM();
             product.Color = _productService.GetColors();
             product.Category = _productService.GetCategory();
             product.SubCategory = _productService.GetSubCategory();
@@ -44,8 +44,8 @@ namespace LuckysDepartmentStore.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductID,Price,Description,Quantity,ProductName,CategorySelection,BrandSelection," +
-            "ColorSelection,SubCategoryId,ProductPicture,CreatedDate,Category,Color,ColorId,SubCategory,CategoryId," +
-            "SubCategorySelection, ColorProduct")] ProductVM product)
+            "ColorSelection,SubCategoryID,ProductPicture,CreatedDate,Category,Color,ColorID,CategoryID," +
+            "SubCategorySelection, ColorProduct,BrandID")] ProductCreateVM product)
         {
             if (ModelState.IsValid)
             {

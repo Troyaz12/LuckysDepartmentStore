@@ -67,32 +67,32 @@ namespace LuckysDepartmentStore.Utilities
 
         //    return Result<byte[]>.Success(imageBytes);
         //}
-        public static List<ProductVM> MapProduct(List<Product> products)
-        {
+    //    public static List<ProductVM> MapProduct(List<Product> products)
+    //    {
 
-            var productsVM = new List<ProductVM>();
+    //        var productsVM = new List<ProductVM>();
 
-            foreach(Product product in products) 
-            {
-                ProductVM productVM = new ProductVM();
+    //        foreach(Product product in products) 
+    //        {
+    //            ProductVM productVM = new ProductVM();
                 
-                productVM.Price = product.Price;
-                productVM.ProductID = product.ProductID;
-                productVM.Description = product.Description;
-                productVM.Quantity = product.Quantity;
-                productVM.ProductName = product.ProductName;
-                productVM.CategoryID = product.CategoryID;
-                productVM.BrandID = product.BrandID;
-                productVM.SubCategoryID = product.SubCategoryID;
-                productVM.ProductPicture = product.ProductPicture;
-                productVM.CreatedDate = product.CreatedDate;
-                productVM.DiscountID = product.DiscountID;
+    //            productVM.Price = product.Price;
+    //            productVM.ProductID = product.ProductID;
+    //            productVM.Description = product.Description;
+    //            productVM.Quantity = product.Quantity;
+    //            productVM.ProductName = product.ProductName;
+    //            productVM.CategoryID = product.CategoryID;
+    //            productVM.BrandID = product.BrandID;
+    //            productVM.SubCategoryID = product.SubCategoryID;
+    //            productVM.ProductPicture = product.ProductPicture;
+    //            productVM.CreatedDate = product.CreatedDate;
+    //            productVM.DiscountID = product.DiscountID;
 
-                productsVM.Add(productVM);
-            }
+    //            productsVM.Add(productVM);
+    //        }
 
-            return productsVM;
-        }
+    //        return productsVM;
+    //    }
     }
     public class AppFile
     {

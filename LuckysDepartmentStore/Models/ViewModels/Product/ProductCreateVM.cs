@@ -2,7 +2,7 @@
 
 namespace LuckysDepartmentStore.Models.ViewModels.Product
 {
-    public class ProductVMCreate
+    public class ProductCreateVM
     {
         public int ProductID { get; set; }
 
@@ -15,7 +15,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
         public string Description { get; set; }
 
         [Display(Name = "Quantity")]
-        [Required(ErrorMessage = "Quantity is required")]
+        [Required(ErrorMessage = "Quantity is required")] 
         public int Quantity { get; set; }
 
         [Display(Name = "ProductName")]
@@ -23,38 +23,39 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
         public string ProductName { get; set; }
 
         [Display(Name = "Category")]
-        public List<Category> Category { get; set; }
+        public List<Category>? Category { get; set; }
 
         [Required(ErrorMessage = "Category is required")]
-        public string CategorySelection { get; set; }
-        [Required(ErrorMessage = "Category is required")]
-        public int CategoryID { get; set; }
+        public string? CategorySelection { get; set; }
+        public int? CategoryID { get; set; }
 
         [Display(Name = "Brand")]
-        public List<Brand> Brand { get; set; }
-        public int BrandID { get; set; }
+        public List<Brand>? Brand { get; set; }
+        public int? BrandID { get; set; }
         [Display(Name = "Brand")]
-        public string BrandSelection { get; set; }
+        [Required(ErrorMessage = "Category is required")]
+        public string? BrandSelection { get; set; }
 
         [Display(Name = "Color")]
-        public List<Color> Color { get; set; }
+        public List<Color>? Color { get; set; }
         public List<ColorProductVM> ColorProduct { get; set; } = new List<ColorProductVM>();
-        public int? ColorId { get; set; }
-        public string ColorSelection { get; set; }
+        public int? ColorID {get;set;}
+        public string? ColorSelection { get; set; }
 
+        [Display(Name = "SubCategory")]        
+        public List<SubCategory>? SubCategory { get; set; }
         [Display(Name = "SubCategory")]
         [Required(ErrorMessage = "SubCategory is required")]
-        public List<SubCategory> SubCategory { get; set; }
-        [Display(Name = "SubCategory")]
-        public string SubCategorySelection { get; set; }
-        public int SubCategoryID { get; set; }
+        public string? SubCategorySelection { get; set; }
+        
+        public int? SubCategoryID { get; set; }
 
         [Display(Name = "ProductPicture")]
         public IFormFile? ProductPictureFile { get; set; }
 
         [Display(Name = "CreatedDate")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
-        public int DiscountID { get; set; }
+        public int? DiscountID { get; set; }
         public byte[]? ProductPicture { get; set; }
     }
 }

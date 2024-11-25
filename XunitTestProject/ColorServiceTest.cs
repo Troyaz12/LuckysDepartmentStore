@@ -19,7 +19,7 @@ namespace XunitTestProject
         [Fact]
         public void GetColor()
         {
-            ProductVM productVM = new ProductVM();
+            ProductCreateVM productVM = new ProductCreateVM();
             
             productVM.ColorSelection = "Purple";
             var mapper = new Mock<IMapper>();          

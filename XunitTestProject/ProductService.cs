@@ -23,7 +23,7 @@ namespace XunitTestProject
         [Fact]
         public void ProductServiceTestPass()
         {
-            ProductVM vm = new ProductVM();
+            ProductCreateVM vm = new ProductCreateVM();
             vm.ColorSelection = "RED";
 
             var catService = new Mock<ICategoryService>();
@@ -70,7 +70,7 @@ namespace XunitTestProject
         [Fact]
         public void ProductServiceTestFail()
         {
-            ProductVM vm = new ProductVM();
+            ProductCreateVM vm = new ProductCreateVM();
             vm.ColorSelection = "RED";
 
             var catService = new Mock<ICategoryService>();
@@ -117,9 +117,9 @@ namespace XunitTestProject
         [Fact]
         public void ColorIDProvidedPass() // since color has an id. this test should not make a color service request.
         {
-            ProductVM vm = new ProductVM();
+            ProductCreateVM vm = new ProductCreateVM();
             vm.ColorSelection = "RED";
-            vm.ColorId = 1;
+            vm.ColorID = 1;
 
             var catService = new Mock<ICategoryService>();
             catService.Setup(cat => cat.Create(vm)).Returns(5);
@@ -165,7 +165,7 @@ namespace XunitTestProject
         [Fact]
         public void CategroyIDProvidedPass() // since category has an id. this test should not make a category service request.
         {
-            ProductVM vm = new ProductVM();
+            ProductCreateVM vm = new ProductCreateVM();
             vm.ColorSelection = "RED";
             vm.CategoryID = 1;
 
@@ -214,7 +214,7 @@ namespace XunitTestProject
         [Fact]
         public void SubCategroyIDProvidedPass() // since subcategory has an id. this test should not make a subcategory service request.
         {
-            ProductVM vm = new ProductVM();
+            ProductCreateVM vm = new ProductCreateVM();
             vm.ColorSelection = "RED";
             vm.SubCategoryID = 1;
 

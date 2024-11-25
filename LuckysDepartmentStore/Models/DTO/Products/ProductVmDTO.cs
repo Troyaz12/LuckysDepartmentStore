@@ -1,35 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LuckysDepartmentStore.Models.ViewModels.Product
+namespace LuckysDepartmentStore.Models.DTO.Products
 {
-    public class ProductVM
+    public class ProductVmDTO
     {
         public int ProductID { get; set; }
 
-        [Display(Name = "ProductName")]      
         public string ProductName { get; set; }
 
-        [Display(Name = "Price")]
         public Decimal Price { get; set; }
 
-        [Display(Name = "Description")]
         public string Description { get; set; }
 
-        [Display(Name = "Quantity")]        
         public int Quantity { get; set; }
 
-        [Display(Name = "Category")]
         public string Category { get; set; }
 
-        [Display(Name = "SubCategory")]
         public string SubCategory { get; set; }
 
-        [Display(Name = "Brand")]
         public string Brand { get; set; }
-       
 
-        [Display(Name = "CreatedDate")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
-        
     }
 }

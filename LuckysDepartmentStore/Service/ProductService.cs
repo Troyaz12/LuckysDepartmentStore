@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.DTO.Products;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service;
 using LuckysDepartmentStore.Utilities;
@@ -32,7 +33,7 @@ namespace LuckysDepartmentStore.Service
             _brandService = brandService;
             _config = config;
         }
-        public async Task<Product> CreateAsync(ProductVM product)
+        public async Task<Product> CreateAsync(ProductCreateVM product)
         {
 
             try
@@ -196,30 +197,28 @@ namespace LuckysDepartmentStore.Service
         }
         public List<ProductVM> GetProducts()
         {
-            //var products = _context.Products
-            //    .ToList();
-
             var products = 
                 from Product in _context.Products
                 join Category in _context.Categories on Product.CategoryID equals Category.CategoryID
-                select new
+                join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID
+                join Brand in _context.Brand on Product.BrandID equals Brand.BrandId
+                select new ProductVmDTO
                 {
                     ProductID = Product.ProductID,
                     ProductName = Product.ProductName,
                     Price = Product.Price,
                     Description = Product.Description,
                     Quantity = Product.Quantity,
-                    CategoryId = Category.CategoryID,
-                    ProductPicture = Product.ProductPicture,
+                    Category = Category.CategoryName,
+                    SubCategory = SubCategory.SubCategoryName,
+                    Brand = Brand.BrandName,
                     CreatedDate = Product.CreatedDate,
-                    DiscountID = Product.DiscountID
                 };
 
-            var name = products.FirstOrDefault();
-          //  var productsVMList = Utilities.Utility.MapProduct(products);
-          List<ProductVM> list = new List<ProductVM>();
+            var list = products.ToList();
+            var prod = _mapper.Map<ProductVM>(list.FirstOrDefault());
 
-            return list;
+            return _mapper.Map<List<ProductVM>>(list);
         }
     }
 }

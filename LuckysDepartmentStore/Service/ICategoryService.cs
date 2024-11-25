@@ -4,6 +4,6 @@ namespace LuckysDepartmentStore.Service
 {
     public interface ICategoryService
     {
-       public int Create(ProductVM product);
+       public int Create(ProductCreateVM product);
     }
 }
