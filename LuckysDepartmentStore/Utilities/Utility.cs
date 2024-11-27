@@ -1,5 +1,6 @@
 ﻿using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.DTO.Products;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -67,32 +68,48 @@ namespace LuckysDepartmentStore.Utilities
 
         //    return Result<byte[]>.Success(imageBytes);
         //}
-    //    public static List<ProductVM> MapProduct(List<Product> products)
-    //    {
+        //    public static List<ProductVM> MapProduct(List<Product> products)
+        //    {
 
-    //        var productsVM = new List<ProductVM>();
+        //        var productsVM = new List<ProductVM>();
 
-    //        foreach(Product product in products) 
-    //        {
-    //            ProductVM productVM = new ProductVM();
-                
-    //            productVM.Price = product.Price;
-    //            productVM.ProductID = product.ProductID;
-    //            productVM.Description = product.Description;
-    //            productVM.Quantity = product.Quantity;
-    //            productVM.ProductName = product.ProductName;
-    //            productVM.CategoryID = product.CategoryID;
-    //            productVM.BrandID = product.BrandID;
-    //            productVM.SubCategoryID = product.SubCategoryID;
-    //            productVM.ProductPicture = product.ProductPicture;
-    //            productVM.CreatedDate = product.CreatedDate;
-    //            productVM.DiscountID = product.DiscountID;
+        //        foreach(Product product in products) 
+        //        {
+        //            ProductVM productVM = new ProductVM();
 
-    //            productsVM.Add(productVM);
-    //        }
+        //            productVM.Price = product.Price;
+        //            productVM.ProductID = product.ProductID;
+        //            productVM.Description = product.Description;
+        //            productVM.Quantity = product.Quantity;
+        //            productVM.ProductName = product.ProductName;
+        //            productVM.CategoryID = product.CategoryID;
+        //            productVM.BrandID = product.BrandID;
+        //            productVM.SubCategoryID = product.SubCategoryID;
+        //            productVM.ProductPicture = product.ProductPicture;
+        //            productVM.CreatedDate = product.CreatedDate;
+        //            productVM.DiscountID = product.DiscountID;
 
-    //        return productsVM;
-    //    }
+        //            productsVM.Add(productVM);
+        //        }
+
+        //        return productsVM;
+        //    }
+        public static ProductEditVM MapEditProduct(ProductEditDTO products)
+        {
+
+            var productsVM = new ProductEditVM();
+
+            productsVM.ProductID = products.ProductID;
+            productsVM.ProductName = products.ProductName;
+            productsVM.Price = products.Price;
+            productsVM.Description = products.Description;
+            productsVM.Quantity = products.Quantity;
+            productsVM.CategorySelection = products.Category;
+            productsVM.SubCategorySelection = products.SubCategory;
+            productsVM.BrandSelection = products.Brand;
+
+            return productsVM;
+        }
     }
     public class AppFile
     {
@@ -100,4 +117,5 @@ namespace LuckysDepartmentStore.Utilities
         //public byte[] Content { get; set; }
     }
   
+
 }

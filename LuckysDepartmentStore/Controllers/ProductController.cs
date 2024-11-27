@@ -12,11 +12,11 @@ namespace LuckysDepartmentStore.Controllers
     {
         public static ProductCreateVM productVM = new ProductCreateVM();
         // GET: Product
-        public ActionResult Index()
+        public ActionResult Index(string category, string searchString)
         {
             ProductListVM productList = new ProductListVM();
 
-            var products = _productService.GetProducts();
+            var products = _productService.GetProducts(category, searchString);
             productList.Products = products;
 
             return View(productList);
@@ -67,7 +67,11 @@ namespace LuckysDepartmentStore.Controllers
         // GET: Product/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            ProductEditVM productList = new ProductEditVM();
+
+            var products = _productService.GetAProduct(id);
+
+            return View(products);
         }
 
         // POST: Product/Edit/5

@@ -195,7 +195,7 @@ namespace LuckysDepartmentStore.Service
 
             return imageBytes;
         }
-        public List<ProductVM> GetProducts()
+        public List<ProductVM> GetProducts(string categorySearch, string searchString)
         {
             var products = 
                 from Product in _context.Products
@@ -215,10 +215,39 @@ namespace LuckysDepartmentStore.Service
                     CreatedDate = Product.CreatedDate,
                 };
 
-            var list = products.ToList();
-            var prod = _mapper.Map<ProductVM>(list.FirstOrDefault());
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                products = products.Where(s => s.ProductName!.ToUpper().Contains(searchString.ToUpper()));
+            }
+
+            var list = products.ToList();            
 
             return _mapper.Map<List<ProductVM>>(list);
+        }
+        public ProductEditVM GetAProduct(int productId)
+        {
+            var productDTO =
+                from Product in _context.Products
+                join Category in _context.Categories on Product.CategoryID equals Category.CategoryID
+                join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID
+                join Brand in _context.Brand on Product.BrandID equals Brand.BrandId
+                where Product.ProductID == productId
+                select new ProductEditDTO
+                {
+                    ProductID = Product.ProductID,
+                    ProductName = Product.ProductName,
+                    Price = Product.Price,
+                    Description = Product.Description,
+                    Quantity = Product.Quantity,
+                    Category = Category.CategoryName,
+                    SubCategory = SubCategory.SubCategoryName,
+                    Brand = Brand.BrandName,
+                    CreatedDate = Product.CreatedDate,
+                };
+           
+            var product = productDTO.FirstOrDefault();
+
+            return Utilities.Utility.MapEditProduct(product);
         }
     }
 }

@@ -11,6 +11,7 @@ namespace LuckysDepartmentStore.Service
         public List<Category> GetCategory();
         public List<SubCategory> GetSubCategory();
         public List<Brand> GetBrand();
-        public List<ProductVM> GetProducts();
+        public List<ProductVM> GetProducts(string categorySearch, string searchString);
+        public ProductEditVM GetAProduct(int productId);
     }
 }
