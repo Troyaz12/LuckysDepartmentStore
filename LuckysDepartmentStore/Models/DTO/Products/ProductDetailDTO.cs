@@ -1,6 +1,6 @@
 ﻿namespace LuckysDepartmentStore.Models.DTO.Products
 {
-    public class ProductEditDTO
+    public class ProductDetailDTO
     {
         public int ProductID { get; set; }
 

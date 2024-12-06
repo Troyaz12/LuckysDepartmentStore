@@ -1,10 +1,8 @@
-﻿@model LuckysDepartmentStore.Models.ViewModels.Product.ProductEditVM
-
+﻿@model LuckysDepartmentStore.Models.ViewModels.Product.ProductDetailVM
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    ViewData["Title"] = "Edit";
 }
 <head>
     <meta charset="UTF-8">
@@ -25,27 +23,21 @@
 <h4>Product</h4>
 <hr />
 
-
-<form asp-action="Edit" enctype="multipart/form-data">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     @Html.AntiForgeryToken()
 
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
                 <label asp-for="ProductName" class="control-label"></label>
-                <input asp-for="ProductName" class="form-control" />
-                <span asp-validation-for="ProductName" class="text-danger"></span>
+                <span class="form-control">@Model.ProductName</span>
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <span class="form-control">@Model.Description</span>
             </div>
             <div class="form-group">
                 <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
+                <span class="form-control">@Model.Price</span>
             </div>
             <label for="ProductPicture">Product Picture</label>
             <input type="file" class="form-control" id="ProductPicture" name="ProductPicture">
@@ -60,7 +52,7 @@
             <input type="hidden" id="BrandID" name="BrandID" value="@Model.BrandID">
             <input type="hidden" id="ProductID" name="ProductID" value="@Model.ProductID">
             <input type="hidden" id="DiscountID" name="DiscountID" value="@Model.DiscountID">
-            
+
 
             <div class="dropdown">
                 <label asp-for="Category">Category</label>
@@ -140,7 +132,7 @@
 
                             <label for="QuantityInput">Quantity</label>
                             <input name="QuantityInput" type="number" id="QuantityInput" class="form-control">
-                            
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -150,7 +142,7 @@
                 </div>
             </div>
             <div class="scrollable-section mt-2" id="dynamicList">
-                @Html.Partial("_DynamicPartialListEdit", Model)
+          
             </div>
         </div>
     </div>
@@ -161,8 +153,6 @@
         </div>
     </div>
 
-
-</form>
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
@@ -207,7 +197,7 @@
             var colorID = $('#ColorID').val() || null; // Assuming data-selected is set when color is selected
             var quantity = $('#QuantityInput').val();
             var productID = $('#ProductID').val();
-                        
+
             var item = {
                 ColorID: colorID,
                 Quantity: quantity,

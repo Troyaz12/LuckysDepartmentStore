@@ -8,6 +8,8 @@ using LuckysDepartmentStore.Utilities;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Packaging.Signing;
 using SQLitePCL;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LuckysDepartmentStore.Service
 {
@@ -243,11 +245,118 @@ namespace LuckysDepartmentStore.Service
                     SubCategory = SubCategory.SubCategoryName,
                     Brand = Brand.BrandName,
                     CreatedDate = Product.CreatedDate,
+                    BrandId = Product.BrandID,
+                    CategoryId = Category.CategoryID,
+                    SubCategoryId = SubCategory.SubCategoryID,
                 };
-           
+
+            var colorProductDTO =
+                from ColorProducts in _context.ColorProducts
+                join Colors in _context.Colors on ColorProducts.ColorID equals Colors.ColorID
+                where ColorProducts.ProductID == productId
+                select new ColorProductEditDTO
+                {
+                    ProductID = ColorProducts.ProductID,
+                    ColorID = ColorProducts.ColorID,
+                    Quantity = ColorProducts.Quantity,
+                    Name = Colors.Name,
+                    ColorProductID = ColorProducts.ColorProductID
+                };
+
+
             var product = productDTO.FirstOrDefault();
 
-            return Utilities.Utility.MapEditProduct(product);
+            var productModel = Utilities.Utility.MapEditProduct(product);
+
+            var colorProducts = _mapper.Map<List<ColorProductVM>>(colorProductDTO);
+
+            productModel.ColorProduct = colorProducts;
+            
+
+            return productModel;
+        }
+        public ProductEditVM EditProduct(ProductEditVM productEdit)
+        {
+            var productMap = _mapper.Map<Product>(productEdit);
+
+            var colorProductsEdit = _mapper.Map<List<ColorProduct>>(productEdit.ColorProduct);
+            
+
+            var productID = productEdit.ProductID;
+
+            var colorProductsDB = _context.ColorProducts.Where(e => e.ProductID == productID).ToList();
+
+            // check for product colors that have been removed
+            foreach (ColorProduct colorProduct in colorProductsDB)
+            {
+                if (!colorProductsEdit.Any(p => p.ColorProductID == colorProduct.ColorProductID) && colorProduct.ColorProductID != 0)
+                {
+                    _context.ColorProducts.Remove(colorProduct);
+                }
+            }
+
+            // check for product colors that have been added
+            foreach (ColorProduct colorProduct in colorProductsEdit)
+            {
+                if (colorProduct.ColorProductID == 0)
+                {
+                    _context.ColorProducts.Add(colorProduct);
+                }
+            }
+
+            var productSave = _context.SaveChanges();
+
+            return productEdit;
+        }
+
+        public ProductDetailVM GetDetails(int productId)
+        {          
+
+            var productDTO =
+             from Product in _context.Products
+             join Category in _context.Categories on Product.CategoryID equals Category.CategoryID
+             join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID
+             join Brand in _context.Brand on Product.BrandID equals Brand.BrandId
+             where Product.ProductID == productId
+             select new ProductDetailDTO
+             {
+                 ProductID = Product.ProductID,
+                 ProductName = Product.ProductName,
+                 Price = Product.Price,
+                 Description = Product.Description,
+                 Quantity = Product.Quantity,
+                 Category = Category.CategoryName,
+                 SubCategory = SubCategory.SubCategoryName,
+                 Brand = Brand.BrandName,
+                 CreatedDate = Product.CreatedDate,
+                 BrandId = Product.BrandID,
+                 CategoryId = Category.CategoryID,
+                 SubCategoryId = SubCategory.SubCategoryID,
+             };
+
+            var colorProductDTO =
+                from ColorProducts in _context.ColorProducts
+                join Colors in _context.Colors on ColorProducts.ColorID equals Colors.ColorID
+                where ColorProducts.ProductID == productId
+                select new ColorProductDetailDTO
+                {
+                    ProductID = ColorProducts.ProductID,
+                    ColorID = ColorProducts.ColorID,
+                    Quantity = ColorProducts.Quantity,
+                    Name = Colors.Name,
+                    ColorProductID = ColorProducts.ColorProductID
+                };
+
+
+            var product = productDTO.FirstOrDefault();
+
+            var productModel = Utilities.Utility.MapDetailProduct(product);
+
+            var colorProducts = _mapper.Map<List<ColorProductVM>>(colorProductDTO);
+
+            productModel.ColorProduct = colorProducts;
+
+            return productModel;
         }
     }
 }

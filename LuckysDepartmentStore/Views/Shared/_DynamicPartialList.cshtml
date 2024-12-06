@@ -26,8 +26,9 @@
                 <label for="Quantity">Quantity</label>
                 @Html.TextBoxFor(model => @Model.ColorProduct[i].Quantity, new { @readonly = "readonly" })
 
-                <button class="btn btn-danger delete-button" data-index="@i">Delete</button>
+                <button id="deleteColor" class="btn btn-danger" data-index="@i">Delete</button>
             </li>
         }
     }
     </ul>
+

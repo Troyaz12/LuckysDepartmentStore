@@ -10,12 +10,25 @@ namespace LuckysDepartmentStore.MappingProfiles
     {   
         public AutoMapperProfile()
         {
-            CreateMap<ColorProductVM, ColorProduct>();
+            CreateMap<ColorProductVM, ColorProduct>()
+                .ReverseMap();
 
             CreateMap<ProductCreateVM, Product>();
 
             CreateMap<ProductVmDTO, ProductVM>()
-                .ReverseMap();           
+                .ReverseMap();
+
+            CreateMap<ProductEditVM, Product>()
+                .ReverseMap();
+
+            CreateMap<ColorProductEditDTO, ColorProductVM>()
+                .ReverseMap();
+
+            CreateMap<ProductEditDTO, ProductVM>()
+                .ReverseMap();
+
+            CreateMap<ColorProductDetailDTO, ColorProductVM>()
+                .ReverseMap();
         }
     }
 }

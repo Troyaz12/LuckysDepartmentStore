@@ -5,12 +5,14 @@ using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.Emit;
 
 namespace LuckysDepartmentStore.Controllers
 {
     public class ProductController(IProductService _productService) : Controller
     {
         public static ProductCreateVM productVM = new ProductCreateVM();
+        public static ProductEditVM productEditVM = new ProductEditVM();
         // GET: Product
         public ActionResult Index(string category, string searchString)
         {
@@ -25,7 +27,12 @@ namespace LuckysDepartmentStore.Controllers
         // GET: Product/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var details = _productService.GetDetails(id);
+
+
+
+
+            return View(details);
         }
 
         // GET: Product/Create
@@ -67,20 +74,27 @@ namespace LuckysDepartmentStore.Controllers
         // GET: Product/Edit/5
         public ActionResult Edit(int id)
         {
-            ProductEditVM productList = new ProductEditVM();
+            productEditVM = _productService.GetAProduct(id);
 
-            var products = _productService.GetAProduct(id);
+            productEditVM.Color = _productService.GetColors();
+            productEditVM.Category = _productService.GetCategory();
+            productEditVM.SubCategory = _productService.GetSubCategory();
+            productEditVM.Brand = _productService.GetBrand();
 
-            return View(products);
+            productVM.ColorProduct = productEditVM.ColorProduct;
+
+            return View(productEditVM);
         }
 
         // POST: Product/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(ProductEditVM product)
         {
             try
             {
+                var editResult = _productService.EditProduct(product);                
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -119,6 +133,14 @@ namespace LuckysDepartmentStore.Controllers
             return PartialView("_DynamicPartialList", productVM);
         }
         [HttpPost]
+       // [ValidateAntiForgeryToken]
+        public ActionResult UpdateListForEdit([FromBody] ColorProductVM product)
+        {
+            productVM.ColorProduct.Add(product);
+
+            return PartialView("_DynamicPartialListEdit", productEditVM);
+        }
+        [HttpPost]
         public ActionResult DeleteItem(int index)
         {
             if (index >= 0 && index <= productVM.ColorProduct.Count)
@@ -127,5 +149,18 @@ namespace LuckysDepartmentStore.Controllers
             }
             return PartialView("_DynamicPartialList", productVM);
         }
+        [HttpPost]
+        public ActionResult DeleteEditItem(int index)
+        {
+            if (index >= 0 && index <= productEditVM.ColorProduct.Count)
+            {
+                productEditVM.ColorProduct.RemoveAt(index);
+            }
+            return PartialView("_DynamicPartialListEdit", productEditVM);
+        }
+
+
+
+
     }
 }
