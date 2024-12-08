@@ -8,10 +8,10 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-controller="Product" asp-action="Create" method="get">Create New</a>
+    <a asp-controller="Discount" asp-action="Create" method="get">Create New</a>
 </p>
 
-<form asp-controller="Product" asp-action="Index" method="get">
+<form asp-controller="Discount" asp-action="Index" method="get">
     <p>
         <div class="row g-3 align-items-center">
           @*   <div class="col-auto">
@@ -90,7 +90,7 @@
 
         var myId = id;
 
-        var urlMy = "@Url.Action("Edit", "Product", new { id = "ID" })";
+        var urlMy = "@Url.Action("Edit", "Discount", new { id = "ID" })";
         urlMy = urlMy.replace("ID", myId);
 
         $.ajax({

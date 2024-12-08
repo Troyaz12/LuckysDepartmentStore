@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.DTO.Products;
+using LuckysDepartmentStore.Models.ViewModels.Discount;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Utilities;
 
@@ -28,6 +29,9 @@ namespace LuckysDepartmentStore.MappingProfiles
                 .ReverseMap();
 
             CreateMap<ColorProductDetailDTO, ColorProductVM>()
+                .ReverseMap();
+
+            CreateMap<Discount, DiscountCreateVM>()
                 .ReverseMap();
         }
     }

@@ -15,6 +15,7 @@ namespace LuckysDepartmentStore.Service
         public ProductEditVM GetAProduct(int productId);
         public ProductEditVM EditProduct(ProductEditVM product);
         public ProductDetailVM GetDetails(int productId);
+        public void Delete(int productId);
 
     }
 }

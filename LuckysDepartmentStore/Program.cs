@@ -1,5 +1,6 @@
 using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Service;
+using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -24,7 +25,8 @@ builder.Services.AddScoped<IColorService, ColorService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISubCategoryService, SubCategoryService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
-
+builder.Services.AddScoped<IDiscountService, DiscountService>();
+builder.Services.AddSingleton<Utility>();
 
 //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

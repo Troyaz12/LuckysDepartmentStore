@@ -1,10 +1,12 @@
 ﻿using LuckysDepartmentStore.Models.ViewModels.Discount;
+using LuckysDepartmentStore.Models.ViewModels.Product;
+using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LuckysDepartmentStore.Controllers
 {
-    public class DiscountController : Controller
+    public class DiscountController(IProductService _productService, IDiscountService _discountService) : Controller
     {
         // GET: DiscountController
         public ActionResult Index()
@@ -21,23 +23,41 @@ namespace LuckysDepartmentStore.Controllers
         // GET: DiscountController/Create
         public ActionResult Create(DiscountVM discount)
         {
+            DiscountCreateVM product = new DiscountCreateVM();
+            product.Category = _productService.GetCategory();
+            product.SubCategory = _productService.GetSubCategory();
+            product.Brand = _productService.GetBrand();
 
-            return View();
+            return View(product);
         }
 
         // POST: DiscountController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(DiscountCreateVM discount)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    
+                    if (discount.ProductID.HasValue)
+                    {
+                        var productExists = _productService.GetDetails(discount.ProductID ?? 0);
+                    }
+                    else {
+                        var discountSent = await _discountService.CreateAsync(discount);
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+                catch
+                {
+                    return View(discount);
+                }
             }
-            catch
-            {
-                return View();
-            }
+            return View(discount);
+
         }
 
         // GET: DiscountController/Edit/5

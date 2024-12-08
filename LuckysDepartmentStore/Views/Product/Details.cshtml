@@ -17,14 +17,24 @@
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
 
+    <style>
+        .image-container {
+            width: 500px;
+            height: 500px;
+            border-radius: 10%;
+            margin:15px;
+        }           
+    </style>
 </head>
-<h1>Edit</h1>
+<h1>Product Detail</h1>
 
-<h4>Product</h4>
 <hr />
 
     @Html.AntiForgeryToken()
 
+    <div class="row">
+        <image src="@Model.ProductImage" id="ProductPicture" name="ProductPicture" class="image-container">
+    </div>
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
@@ -39,10 +49,6 @@
                 <label asp-for="Price" class="control-label"></label>
                 <span class="form-control">@Model.Price</span>
             </div>
-            <label for="ProductPicture">Product Picture</label>
-            <input type="file" class="form-control" id="ProductPicture" name="ProductPicture">
-
-
         </div>
         <div class="col-md-8">
 
@@ -96,155 +102,12 @@
                     }
                 </ul>
             </div>
-
+        
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                Colors and Quantity
-            </button>
-
-            <!-- Modal -->
-            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Quantity By Color</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="dropdown">
-                                <label for="Color">Color</label>
-                                <input name="ColorSelection" type="text" class="form-control dropdown-toggle mb-2" id="Color" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
-                                <ul class="dropdown-menu" aria-labelledby="Color">
-                                    @if (Model.Color != null)
-                                    {
-                                        @foreach (var color in Model.Color)
-                                        {
-                                            <li><a class="dropdown-item" data-stored-value="@color.ColorID">@color.Name</a></li>
-                                        }
-                                    }
-                                </ul>
-                            </div>
-
-                            <label for="QuantityInput">Quantity</label>
-                            <input name="QuantityInput" type="number" id="QuantityInput" class="form-control">
-
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button id="save" type="button" class="btn btn-primary">Save</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="scrollable-section mt-2" id="dynamicList">
-          
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="form-group">
-            <input type="submit" value="Save" class="btn btn-primary mt-4" />
-        </div>
-    </div>
-
+<div class="scrollable-section mt-2" id="dynamicList">
+    @Html.Partial("_DynamicPartialListDetail", Model)
+</div>
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
-
-<script>
-    $(document).ready(function () {
-
-        function handleDropdownFilter(inputId, inputNum, dropdownClass) {
-            $(inputId).on('keyup', function () {
-                var filter = this.value.toLowerCase();
-                var items = document.querySelectorAll(dropdownClass + ' li');
-                items.forEach(function (item) {
-                    var text = item.textContent.toLowerCase();
-                    item.style.display = text.includes(filter) ? '' : 'none';
-                });
-            });
-
-            $(dropdownClass + ' .dropdown-item').on('click', function () {
-                $(inputId).val($(this).text());
-                $(inputNum).val($(this).attr('data-stored-value'));
-
-                console.log("execute" + $(this).text() + " " + $(this).attr('data-stored-value'));
-            });
-        }
-
-        // Apply the function to each dropdown
-        handleDropdownFilter('#Color', '#ColorID', '.dropdown-menu[aria-labelledby="Color"]');
-        handleDropdownFilter('#Category', '#CategoryID', '.dropdown-menu[aria-labelledby="Category"]');
-        handleDropdownFilter('#SubCategory', '#SubCategoryID', '.dropdown-menu[aria-labelledby="SubCategory"]');
-        handleDropdownFilter('#Brand', '#BrandID', '.dropdown-menu[aria-labelledby="Brand"]');
-
-        $('#save').on('click', function (e) {
-            e.preventDefault();
-
-            var name = $('#Color').val(); // Assuming data-selected is set when color is selected
-            var colorID = $('#ColorID').val() || null; // Assuming data-selected is set when color is selected
-            var quantity = $('#QuantityInput').val();
-            var productID = $('#ProductID').val();
-
-            var item = {
-                ColorID: colorID,
-                Quantity: quantity,
-                Name: name,
-                ProductID: productID
-            };
-
-            $.ajax({
-                url: '@Url.Action("UpdateListForEdit", "Product")',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(item),
-                headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
-                },
-                success: function (data) {
-                    $("#dynamicList").html(data);
-
-                    $("#Color").val('');
-                    $("#ColorID").val('');
-                    $("#QuantityInput").val('');
-
-                    $('#staticBackdrop').modal('hide');
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert("Error updating list: " + errorThrown);
-                }
-            });
-        });
-
-        $("#dynamicList").on("click", "#deleteColor", function (e) {
-            e.preventDefault();
-            var index = $(this).data("index");
-            var model = $(this).data("model");
-            console.log("This is the Model: " + model);
-            $.ajax({
-                url: '@Url.Action("DeleteEditItem", "Product")',
-                type: 'POST',
-                data: { index: index },
-                success: function (data) {
-                    $("#dynamicList").html(data);
-                },
-                error: function () {
-                    alert("Error deleting item");
-                }
-            });
-        });
-
-
-    });
-</script>

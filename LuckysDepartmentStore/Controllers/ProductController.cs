@@ -51,7 +51,7 @@ namespace LuckysDepartmentStore.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductID,Price,Description,Quantity,ProductName,CategorySelection,BrandSelection," +
-            "ColorSelection,SubCategoryID,ProductPicture,CreatedDate,Category,Color,ColorID,CategoryID," +
+            "ColorSelection,SubCategoryID,ProductPictureFile,CreatedDate,Category,Color,ColorID,CategoryID," +
             "SubCategorySelection, ColorProduct,BrandID")] ProductCreateVM product)
         {
             if (ModelState.IsValid)
@@ -106,7 +106,15 @@ namespace LuckysDepartmentStore.Controllers
         // GET: Product/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            try
+            {
+                _productService.Delete(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
         }
 
         // POST: Product/Delete/5

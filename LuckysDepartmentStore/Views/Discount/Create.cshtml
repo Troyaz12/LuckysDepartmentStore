@@ -1,4 +1,4 @@
-﻿@model LuckysDepartmentStore.Models.ViewModels.Discount.DiscountVM
+﻿@model LuckysDepartmentStore.Models.ViewModels.Discount.DiscountCreateVM
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -8,19 +8,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add a product</title>
+    <title>Add a discount</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta1/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta1/js/bootstrap.min.js"></script>
+    <!-- Ensure these scripts are included for client-side validation -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
 
+
 </head>
 <h1>Create</h1>
 
-<h4>Product</h4>
+<h4>Discount</h4>
 
 
     <form asp-action="Create" enctype="multipart/form-data">
@@ -39,9 +41,9 @@
                     <span asp-validation-for="DiscountAmount" class="text-danger"></span>
                 </div>
                 <div class="form-group mt-2">
-                    <label asp-for="DiscountArt" class="control-label"></label>
-                    <input asp-for="DiscountArt" class="form-control" type="file"/>
-                    <span asp-validation-for="DiscountArt" class="text-danger"></span>
+                    <label asp-for="DiscountArtFile" class="control-label"></label>
+                    <input asp-for="DiscountArtFile" class="form-control" type="file"/>
+                    <span asp-validation-for="DiscountArtFile" class="text-danger"></span>
                 </div>
                 <div class="form-group mt-2">
                     <label asp-for="DiscountActive" class="control-label"></label>
@@ -49,4 +51,126 @@
                 </div>
             </div>
         </div>
+
+    <div class="col-md-8">
+
+        <input type="hidden" id="CategoryID" name="CategoryID">
+        <input type="hidden" id="SubCategoryID" name="SubCategoryID">
+        <input type="hidden" id="BrandID" name="BrandID">
+
+
+        <div class="dropdown">
+            <label asp-for="Category">Category</label>
+            <input asp-for="CategorySelection" type="text" class="form-control dropdown-toggle" id="Category" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+            <span asp-validation-for="CategorySelection" class="text-danger"></span>
+            <ul class="dropdown-menu" aria-labelledby="Category">
+                @if (Model.Category != null)
+                {
+                    @foreach (var color in Model.Category)
+                    {
+                        <li><a class="dropdown-item" data-stored-value="@color.CategoryID">@color.CategoryName</a></li>
+                    }
+                }
+            </ul>
+        </div>
+        <div class="dropdown">
+            <label asp-for="SubCategory">SubCategory</label>
+            <input asp-for="SubCategorySelection" type="text" class="form-control dropdown-toggle" id="SubCategory" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+            <span asp-validation-for="SubCategorySelection" class="text-danger"></span>
+            <ul class="dropdown-menu" aria-labelledby="SubCategory" name="color">
+                @if (Model.SubCategory != null)
+                {
+                    @foreach (var color in Model.SubCategory)
+                    {
+                        <li><a class="dropdown-item" data-stored-value="@color.SubCategoryID">@color.SubCategoryName</a></li>
+                    }
+                }
+            </ul>
+        </div>
+        <div class="dropdown">
+            <label asp-for="Brand">Brand</label>
+            <input asp-for="BrandSelection" type="text" class="form-control dropdown-toggle" id="Brand" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+            <span asp-validation-for="BrandSelection" class="text-danger"></span>
+            <ul class="dropdown-menu" aria-labelledby="Brand">
+                @if (Model.Brand != null)
+                {
+                    @foreach (var color in Model.Brand)
+                    {
+                        <li><a class="dropdown-item" data-stored-value="@color.BrandId">@color.BrandName</a></li>
+                    }
+                }
+            </ul>
+        </div>
+        <div class="form-group mt-2">
+            <label asp-for="ProductID" class="control-label"></label>
+            <input asp-for="ProductID" class="form-control" type="number" />
+        </div>
+
+    </div>
+
+        <div class="row">
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary mt-4" />
+            </div>
+        </div>
     </form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<script>
+    $(document).ready(function () {
+
+        function handleDropdownFilter(inputId, inputNum, dropdownClass) {
+            $(inputId).on('keyup', function () {
+                var filter = this.value.toLowerCase();
+                var items = document.querySelectorAll(dropdownClass + ' li');
+                items.forEach(function (item) {
+                    var text = item.textContent.toLowerCase();
+                    item.style.display = text.includes(filter) ? '' : 'none';
+                });
+            });
+
+            $(dropdownClass + ' .dropdown-item').on('click', function () {
+                $(inputId).val($(this).text());
+                $(inputNum).val($(this).attr('data-stored-value'));
+            });
+        }
+
+        // Apply the function to each dropdown     
+        handleDropdownFilter('#Category', '#CategoryID', '.dropdown-menu[aria-labelledby="Category"]');
+        handleDropdownFilter('#SubCategory', '#SubCategoryID', '.dropdown-menu[aria-labelledby="SubCategory"]');
+        handleDropdownFilter('#Brand', '#BrandID','.dropdown-menu[aria-labelledby="Brand"]');
+
+        const form = document.querySelector('form');
+        const discountPercentInput = document.querySelector('[name="DiscountPercent"]');
+        const discountAmountInput = document.querySelector('[name="DiscountAmount"]');
+        const discountPercentError = document.querySelector('span[asp-validation-for="DiscountPercent"]');
+        const discountAmountError = document.querySelector('span[asp-validation-for="DiscountAmount"]');
+
+        form.addEventListener('submit', function (event) {
+            discountPercentError.textContent = '';
+            discountAmountError.textContent = '';
+
+            const discountPercent = parseFloat(discountPercentInput.value);
+            const discountAmount = parseFloat(discountAmountInput.value);
+
+            if ((!discountPercent && discountPercent !== 0) && (!discountAmount && discountAmount !== 0)) {
+                event.preventDefault();
+                const errorMessage = 'A discount must have either a dollar amount or percent.';
+                discountPercentError.textContent = errorMessage;
+                discountAmountError.textContent = errorMessage;
+            }
+        });
+
+
+    });
+
+         
+
+</script>

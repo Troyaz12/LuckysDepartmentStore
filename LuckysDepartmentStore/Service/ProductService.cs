@@ -20,12 +20,12 @@ namespace LuckysDepartmentStore.Service
         public IColorService _colorService;
         public ICategoryService _categoryService;
         public ISubCategoryService _subCategoryService;
-        public IBrandService _brandService;
-        public IConfiguration _config;
+        public IBrandService _brandService;       
+        private readonly Utility _utility;
 
         public ProductService(LuckysContext context, IMapper mapper, IColorService colorService, 
             ICategoryService categoryService, ISubCategoryService subCategoryService, IBrandService brandService
-            , IConfiguration config)
+            , Utility utility)
         {
             _context = context;
             _mapper = mapper;
@@ -33,7 +33,7 @@ namespace LuckysDepartmentStore.Service
             _categoryService = categoryService;
             _subCategoryService = subCategoryService;
             _brandService = brandService;
-            _config = config;
+            _utility = utility;
         }
         public async Task<Product> CreateAsync(ProductCreateVM product)
         {
@@ -67,7 +67,7 @@ namespace LuckysDepartmentStore.Service
 
                 var newProduct = _mapper.Map<Product>(product);
 
-                newProduct.ProductPicture = ImageBytes(product.ProductPictureFile);
+                newProduct.ProductPicture = _utility.ImageBytes(product.ProductPictureFile);
 
                 _context.Add(newProduct);
                 await _context.SaveChangesAsync();
@@ -149,54 +149,7 @@ namespace LuckysDepartmentStore.Service
 
             return brands;
         }
-        public byte[] ImageBytes(IFormFile? fileImport)
-        {
-            byte[]? imageBytes = null;
-            var defaultImage = _config["ImagePaths:ShoppingImageEmpty"];
 
-            using (var memoryStream = new MemoryStream())
-            {
-                if (fileImport != null)
-                {
-                    //await file.form FormFile.CopyToAsync(memoryStream);
-                    fileImport.CopyTo(memoryStream);
-                    // Upload the file if less than 2 MB
-                    if (memoryStream.Length < 2097152)
-                    {
-                        imageBytes = memoryStream.ToArray();
-                    }
-                    else
-                    {
-                        throw new Exception("Insufficient Memory");
-                    }
-                }
-                else
-                {
-                    var fileInfo = new FileInfo(defaultImage);
-                    var fileStream = new FileStream(defaultImage, FileMode.Open);
-
-                    var formFile = new FormFile(fileStream, 0, fileInfo.Length, fileInfo.Name, fileInfo.Name)
-                    {
-                        Headers = new HeaderDictionary(),
-                        ContentType = "image/jpeg" // Or whatever the MIME type of the image is
-                    };
-
-                    //await file.form FormFile.CopyToAsync(memoryStream);
-                    formFile.CopyTo(memoryStream);
-                    // Upload the file if less than 2 MB
-                    if (memoryStream.Length < 2097152)
-                    {
-                        imageBytes = memoryStream.ToArray();
-                    }
-                    else
-                    {
-                        throw new Exception("Insufficient Memory");
-                    }
-                }
-            }
-
-            return imageBytes;
-        }
         public List<ProductVM> GetProducts(string categorySearch, string searchString)
         {
             var products = 
@@ -266,7 +219,7 @@ namespace LuckysDepartmentStore.Service
 
             var product = productDTO.FirstOrDefault();
 
-            var productModel = Utilities.Utility.MapEditProduct(product);
+            var productModel = _utility.MapEditProduct(product);
 
             var colorProducts = _mapper.Map<List<ColorProductVM>>(colorProductDTO);
 
@@ -332,6 +285,7 @@ namespace LuckysDepartmentStore.Service
                  BrandId = Product.BrandID,
                  CategoryId = Category.CategoryID,
                  SubCategoryId = SubCategory.SubCategoryID,
+                 ProductPicture = Product.ProductPicture
              };
 
             var colorProductDTO =
@@ -347,16 +301,31 @@ namespace LuckysDepartmentStore.Service
                     ColorProductID = ColorProducts.ColorProductID
                 };
 
-
             var product = productDTO.FirstOrDefault();
 
-            var productModel = Utilities.Utility.MapDetailProduct(product);
+            if(product == null)
+            {
+
+            }
+
+            var productModel = _utility.MapDetailProduct(product);
 
             var colorProducts = _mapper.Map<List<ColorProductVM>>(colorProductDTO);
+
+            productModel.ProductImage = _utility.BytesToImage(productModel.ProductPicture);
 
             productModel.ColorProduct = colorProducts;
 
             return productModel;
+        }
+        public void Delete(int productId)
+        {
+            var product = _context.Products.FirstOrDefault(p => p.ProductID == productId);
+            if (product != null)
+            {
+                _context.Products.Remove(product);
+                _context.SaveChanges();
+            }
         }
     }
 }

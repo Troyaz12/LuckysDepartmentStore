@@ -6,14 +6,24 @@ using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.Json;
-using System.Drawing;
+using SixLabors.ImageSharp.PixelFormats;
 using System.IO.Compression;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace LuckysDepartmentStore.Utilities
 {
     public class Utility
-    {      
-        public static ProductEditVM MapEditProduct(ProductEditDTO products)
+    {
+        private readonly IConfiguration _config;
+
+        public Utility(IConfiguration config)
+        {
+            _config = config;
+        }
+
+        public ProductEditVM MapEditProduct(ProductEditDTO products)
         {
 
             var productsVM = new ProductEditVM();
@@ -33,7 +43,7 @@ namespace LuckysDepartmentStore.Utilities
 
             return productsVM;
         }
-        public static ProductDetailVM MapDetailProduct(ProductDetailDTO products)
+        public ProductDetailVM MapDetailProduct(ProductDetailDTO products)
         {
 
             var productsVM = new ProductDetailVM();
@@ -49,21 +59,89 @@ namespace LuckysDepartmentStore.Utilities
             productsVM.CategoryID = products.CategoryId;
             productsVM.SubCategoryID = products.SubCategoryId;
             productsVM.BrandID = products.BrandId;
-
+            productsVM.ProductPicture = products.ProductPicture;
 
             return productsVM;
         }
-        public static Image BytesToImage(byte[] imageBytes)
+        public string BytesToImage(byte[] imageBytes)
         {
-            if(imageBytes == null)
+            try
             {
-                throw new ArgumentNullException("Error during Convertion");
+                if (imageBytes == null)
+                {
+                    return DefaultImage();
+                }
+                else
+                {
+                    string image64 = Convert.ToBase64String(imageBytes);
+                    string image = $"data:image/jpeg;base64,{image64}";
+
+                    return image;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentNullException("Error during Convertion: " + ex.Message);
+            }
+            
+        }
+        public byte[] ImageBytes(IFormFile? fileImport)
+        {
+            byte[]? imageBytes = null;
+            var defaultImage = _config["ImagePaths:ShoppingImageEmpty"];
+
+            using (var memoryStream = new MemoryStream())
+            {
+                if (fileImport != null)
+                {
+                    //await file.form FormFile.CopyToAsync(memoryStream);
+                    fileImport.CopyTo(memoryStream);
+                    // Upload the file if less than 2 MB
+                    if (memoryStream.Length < 2097152)
+                    {
+                        imageBytes = memoryStream.ToArray();
+                    }
+                    else
+                    {
+                        throw new Exception("Insufficient Memory");
+                    }
+                }
+                else
+                {
+                    var fileInfo = new FileInfo(defaultImage);
+                    var fileStream = new FileStream(defaultImage, FileMode.Open);
+
+                    var formFile = new FormFile(fileStream, 0, fileInfo.Length, fileInfo.Name, fileInfo.Name)
+                    {
+                        Headers = new HeaderDictionary(),
+                        ContentType = "image/jpeg" // Or whatever the MIME type of the image is
+                    };
+
+                    //await file.form FormFile.CopyToAsync(memoryStream);
+                    formFile.CopyTo(memoryStream);
+                    // Upload the file if less than 2 MB
+                    if (memoryStream.Length < 2097152)
+                    {
+                        imageBytes = memoryStream.ToArray();
+                    }
+                    else
+                    {
+                        throw new Exception("Insufficient Memory");
+                    }
+                }
             }
 
-            using (MemoryStream ms = new MemoryStream(imageBytes))
-            { 
-                return Image.FromStream(ms);            
-            }
+            return imageBytes;
+        }
+        public string DefaultImage()
+        {
+            var defaultImage = _config["ImagePaths:ShoppingImageEmpty"];
+
+            var pictureBase64 = Convert.ToBase64String(File.ReadAllBytes(defaultImage));
+            string image = $"data:image/jpeg;base64,{pictureBase64}";
+    
+            return image;
         }
     }
 }

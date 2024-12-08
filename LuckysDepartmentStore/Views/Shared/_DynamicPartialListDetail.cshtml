@@ -1,0 +1,34 @@
+﻿@model LuckysDepartmentStore.Models.ViewModels.Product.ProductDetailVM
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+
+<ul>
+
+    @if (Model != null)
+    {
+
+        @for (int i = 0; i < Model.ColorProduct.Count; i++)
+        {
+            <li id="item-@i">
+                <label for="ColorID">ColorID</label>
+                @if (@Model.ColorProduct[i].ColorID != null)
+                {
+                    @Html.TextBoxFor(model => @Model.ColorProduct[i].ColorID, new { @readonly = "readonly" })
+                }
+                <label for="Name">Name</label>
+                @Html.TextBoxFor(model => @Model.ColorProduct[i].Name, new { @readonly = "readonly" })
+
+                <label for="Quantity">Quantity</label>
+                @Html.TextBoxFor(model => @Model.ColorProduct[i].Quantity, new { @readonly = "readonly" })
+
+                @Html.HiddenFor(model => @Model.ColorProduct[i].ColorProductID, new { @readonly = "readonly" })
+                @Html.HiddenFor(model => @Model.ColorProduct[i].ProductID, new { @readonly = "readonly" })
+            </li>
+        }
+    }
+</ul>

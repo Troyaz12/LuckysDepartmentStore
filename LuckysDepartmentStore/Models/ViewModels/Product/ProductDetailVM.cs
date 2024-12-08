@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp;
+using System.ComponentModel.DataAnnotations;
 
 namespace LuckysDepartmentStore.Models.ViewModels.Product
 {
@@ -50,12 +52,10 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
 
         public int? SubCategoryID { get; set; }
 
-        [Display(Name = "ProductPicture")]
-        public IFormFile? ProductPictureFile { get; set; }
-
         [Display(Name = "CreatedDate")]
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; }
         public int? DiscountID { get; set; }
         public byte[]? ProductPicture { get; set; }
+        public string? ProductImage { get; set; }
     }
 }
