@@ -44,12 +44,19 @@ namespace LuckysDepartmentStore.Controllers
                     if (discount.ProductID.HasValue)
                     {
                         var productExists = _productService.GetDetails(discount.ProductID ?? 0);
-                    }
-                    else {
-                        var discountSent = await _discountService.CreateAsync(discount);
 
-                        return RedirectToAction(nameof(Index));
+                        if (!productExists.IsSuccess)
+                        {
+                            ViewBag.FailureMessage = productExists.ErrorMessage;
+
+                            return View(discount);
+                        }
+                        
                     }
+
+                    var discountSent = await _discountService.CreateAsync(discount);
+
+                    return RedirectToAction(nameof(Index));                    
                 }
                 catch
                 {

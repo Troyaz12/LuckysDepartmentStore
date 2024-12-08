@@ -1,5 +1,6 @@
 ﻿using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Product;
+using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LuckysDepartmentStore.Service
@@ -14,7 +15,7 @@ namespace LuckysDepartmentStore.Service
         public List<ProductVM> GetProducts(string categorySearch, string searchString);
         public ProductEditVM GetAProduct(int productId);
         public ProductEditVM EditProduct(ProductEditVM product);
-        public ProductDetailVM GetDetails(int productId);
+        public ExecutionResult<ProductDetailVM> GetDetails(int productId);
         public void Delete(int productId);
 
     }

@@ -10,7 +10,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Discount
         [OneChoiceRequired("DiscountAmount","DiscountPercent", ErrorMessage = "A discount must have either a dollar amount or percent.")]
         public decimal DiscountPercent { get; set; }
 
-        [Range(0.0, 1000.00, ErrorMessage = "Percent off must be between 0 and 100")]
+        [Range(0.0, 1000.00, ErrorMessage = "Must be greater than zero, and 1000 or less.")]
         [Display(Name = "Amount")]
         [OneChoiceRequired("DiscountAmount", "DiscountPercent", ErrorMessage = "A discount must have either a dollar amount or percent.")]
         public decimal DiscountAmount { get; set; }
@@ -22,7 +22,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Discount
         [Display(Name = "Category")]
         public List<Category>? Category { get; set; }
 
-        [Required(ErrorMessage = "Category is required")]
+        [OneChoiceRequired("CategorySelection", "SubCategorySelection", "BrandSelection", "ProductID", ErrorMessage = "A discount must have one or more of the following, Category, SubCategory, Brand, or ProductID.")]
         public string? CategorySelection { get; set; }
         public int? CategoryID { get; set; }
 
@@ -30,7 +30,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Discount
         public List<SubCategory>? SubCategory { get; set; }
 
         [Display(Name = "SubCategory")]
-        [Required(ErrorMessage = "SubCategory is required")]
+        [OneChoiceRequired("CategorySelection", "SubCategorySelection", "BrandSelection", "ProductID", ErrorMessage = "A discount must have one of the following, Category, SubCategory, Brand, or ProductID.")]
         public string? SubCategorySelection { get; set; }
         public int? SubCategoryID { get; set; }
 
@@ -38,11 +38,12 @@ namespace LuckysDepartmentStore.Models.ViewModels.Discount
         public List<Brand>? Brand { get; set; }
 
         [Display(Name = "Brand")]
-        [Required(ErrorMessage = "Category is required")]
+        [OneChoiceRequired("CategorySelection", "SubCategorySelection", "BrandSelection", "ProductID", ErrorMessage = "A discount must have one of the following, Category, SubCategory, Brand, or ProductID.")]
         public string? BrandSelection { get; set; }
 
         public int? BrandID { get; set; }
 
+        [OneChoiceRequired("CategorySelection", "SubCategorySelection", "BrandSelection", "ProductID", ErrorMessage = "A discount must have one of the following, Category, SubCategory, Brand, or ProductID.")]
         public int? ProductID { get; set; }
         
     }

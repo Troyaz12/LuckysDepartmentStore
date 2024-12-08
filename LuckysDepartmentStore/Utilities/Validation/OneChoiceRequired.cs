@@ -15,19 +15,38 @@ namespace LuckysDepartmentStore.Utilities.Validation
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            foreach (var propertyName in _propertyNames)
+            try
             {
-                var property = validationContext.ObjectType.GetProperty(propertyName);
-                if (property == null)
-                    return new ValidationResult($"Unknown property: {propertyName}");
-
-                var propertyValue = property.GetValue(validationContext.ObjectInstance, null);
-                if (propertyValue != null && (decimal) propertyValue != 0)
+                foreach (var propertyName in _propertyNames)
                 {
-                    return ValidationResult.Success;
+                    var property = validationContext.ObjectType.GetProperty(propertyName);
+                    if (property == null)
+                        return new ValidationResult($"Unknown property: {propertyName}");
+
+                    var propertyValue = property.GetValue(validationContext.ObjectInstance, null);
+
+                    if (propertyValue != null)
+                    {
+                        if(propertyValue is int intValue &&  intValue != 0)
+                        {
+                            return ValidationResult.Success;
+                        }
+                        if (propertyValue is decimal decimalValue && decimalValue != 0)
+                        {
+                            return ValidationResult.Success;
+                        }
+                        if (propertyValue is string stringValue && !string.IsNullOrWhiteSpace(stringValue))
+                        {
+                            return ValidationResult.Success;
+                        }
+                    }
                 }
+                return new ValidationResult(ErrorMessage ?? "At least one field is required.");
             }
-            return new ValidationResult(ErrorMessage ?? "A discount must have either a dollar amount or percent.");
+            catch (Exception ex)
+            { 
+                return new ValidationResult($"Validation error, contact support.");
+            }
         }
     }
 }

@@ -262,7 +262,7 @@ namespace LuckysDepartmentStore.Service
             return productEdit;
         }
 
-        public ProductDetailVM GetDetails(int productId)
+        public ExecutionResult<ProductDetailVM> GetDetails(int productId)
         {          
 
             var productDTO =
@@ -305,7 +305,7 @@ namespace LuckysDepartmentStore.Service
 
             if(product == null)
             {
-
+                return ExecutionResult<ProductDetailVM>.Failure("Cannot find product in database. Product ID does not exist."); 
             }
 
             var productModel = _utility.MapDetailProduct(product);
@@ -316,7 +316,7 @@ namespace LuckysDepartmentStore.Service
 
             productModel.ColorProduct = colorProducts;
 
-            return productModel;
+            return ExecutionResult<ProductDetailVM>.Success(productModel);
         }
         public void Delete(int productId)
         {
