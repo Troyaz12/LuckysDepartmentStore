@@ -51,7 +51,7 @@
 
 
 
-    <form asp-action="Create" enctype="multipart/form-data">
+    <form id="form" asp-action="Create" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="col-md-4">
             <div class="row">
@@ -59,11 +59,13 @@
                 <div class="form-group mt-2">
                     <label asp-for="DiscountPercent" class="control-label"></label>
                     <input asp-for="DiscountPercent" class="form-control" type="number" min="0"/>
+                    <span id="discountPercentEr" class="text-danger"></span>
                     <span asp-validation-for="DiscountPercent" class="text-danger"></span>
                 </div>
                 <div class="form-group mt-2">
                     <label asp-for="DiscountAmount" class="control-label"></label>
                     <input asp-for="DiscountAmount" class="form-control" type="number" min="0"/>
+                    <span id="discountAmountEr" class="text-danger"></span>
                     <span asp-validation-for="DiscountAmount" class="text-danger"></span>
                 </div>
                 <div class="form-group mt-2">
@@ -173,24 +175,31 @@
         handleDropdownFilter('#SubCategory', '#SubCategoryID', '.dropdown-menu[aria-labelledby="SubCategory"]');
         handleDropdownFilter('#Brand', '#BrandID','.dropdown-menu[aria-labelledby="Brand"]');
 
-        const form = document.querySelector('form');
-        const discountPercentInput = document.querySelector('[name="DiscountPercent"]');
-        const discountAmountInput = document.querySelector('[name="DiscountAmount"]');
-        const discountPercentError = document.querySelector('span[asp-validation-for="DiscountPercent"]');
-        const discountAmountError = document.querySelector('span[asp-validation-for="DiscountAmount"]');
+        const form = document.getElementById('form');
+        const discountPercentInput = document.getElementById('DiscountPercent');
+        const discountAmountInput = document.getElementById('DiscountAmount');
+        const discountPercentError = document.getElementById('discountPercentEr');
+        const discountAmountError = document.getElementById('discountAmountEr');
 
         form.addEventListener('submit', function (event) {
+            
+            console.log("hi " + discountPercentInput.value + " " + discountAmountInput.value);
+          
             discountPercentError.textContent = '';
             discountAmountError.textContent = '';
 
             const discountPercent = parseFloat(discountPercentInput.value);
             const discountAmount = parseFloat(discountAmountInput.value);
-
-            if ((!discountPercent && discountPercent !== 0) && (!discountAmount && discountAmount !== 0)) {
-                event.preventDefault();
+            console.log("hi2 " + discountPercent + " " + discountAmount);
+            if ((!discountPercent && discountPercent <= 0) && (!discountAmount && discountAmount <= 0)) {
+                console.log("hi again");
+                 event.preventDefault();
                 const errorMessage = 'A discount must have either a dollar amount or percent.';
+
                 discountPercentError.textContent = errorMessage;
                 discountAmountError.textContent = errorMessage;
+
+                console.log("hi last time: " + discountPercentError.textContent + " " + discountAmountError.textContent);
             }
         });
 
@@ -198,15 +207,15 @@
         {
             <text>
                 $('#failure').show();
-            </text>
-        }
-        else
-        {
+        </text>
+    }
+    else
+    {
         
-            <text>
-                $('#failure').hide();
-            </text>
-        }
+        <text>
+                        $('#failure').hide();
+        </text>
+    }
 
     });
 
