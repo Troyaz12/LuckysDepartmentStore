@@ -27,12 +27,18 @@ namespace LuckysDepartmentStore.Controllers
         // GET: Product/Details/5
         public ActionResult Details(int id)
         {
+
             var details = _productService.GetDetails(id);
 
+            if(details.IsSuccess == false)
+            {
+                TempData["FailureMessage"] = details.ErrorMessage;
+
+                return RedirectToAction(nameof(Index));
+            }
 
 
-
-            return View(details);
+            return View(details.Data);
         }
 
         // GET: Product/Create
@@ -59,7 +65,7 @@ namespace LuckysDepartmentStore.Controllers
                 try
                 {
 
-                    var productSent = await _productService.CreateAsync(product);
+                    var productSent = await _productService.CreateAsync(product);                    
 
                     return RedirectToAction(nameof(Index));
                 }
