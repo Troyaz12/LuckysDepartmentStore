@@ -1,22 +1,31 @@
 using LuckysDepartmentStore.Models;
-using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace LuckysDepartmentStore.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController(IDiscountService _discountService, ILogger<HomeController> _logger) : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        //private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        //public HomeController(ILogger<HomeController> logger)
+        //{
+        //    _logger = logger;
+        //}
 
         public IActionResult Index()
         {
-            return View();
+            var frontPageData = _discountService.GetActiveDiscounts();
+
+            if (!frontPageData.IsSuccess)
+            {
+                ViewBag.FailureMessage = frontPageData.ErrorMessage;
+
+                return View();
+            }
+
+            return View(frontPageData.Data);
         }
 
         public IActionResult Privacy()
@@ -29,11 +38,6 @@ namespace LuckysDepartmentStore.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        //[HttpPost]
-        //public IActionResult Search(string name)
-        //{
-        //    return View();
-        //}
 
         public IActionResult Search(string searchString)
         {

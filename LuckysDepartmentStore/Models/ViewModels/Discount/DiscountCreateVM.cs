@@ -45,6 +45,9 @@ namespace LuckysDepartmentStore.Models.ViewModels.Discount
 
         [OneChoiceRequired("CategorySelection", "SubCategorySelection", "BrandSelection", "ProductID", ErrorMessage = "A discount must have one of the following, Category, SubCategory, Brand, or ProductID.")]
         public int? ProductID { get; set; }
-        
+
+        [Display(Name = "Discount Description")]
+        public string? DiscountDescription { get; set; }
+
     }
 }

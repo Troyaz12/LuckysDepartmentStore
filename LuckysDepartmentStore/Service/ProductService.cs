@@ -318,14 +318,25 @@ namespace LuckysDepartmentStore.Service
 
             return ExecutionResult<ProductDetailVM>.Success(productModel);
         }
-        public void Delete(int productId)
+        public ExecutionResult<int> Delete(int productId)
         {
-            var product = _context.Products.FirstOrDefault(p => p.ProductID == productId);
-            if (product != null)
+            try
             {
+                var product = _context.Products.FirstOrDefault(p => p.ProductID == productId);
+                if (product == null)
+                {
+                    return ExecutionResult<int>.Failure("An error occured. Cannot find delete product.");
+                }
                 _context.Products.Remove(product);
                 _context.SaveChanges();
+
+                return ExecutionResult<int>.Success(productId);
             }
+            catch (Exception ex)
+            {
+                return ExecutionResult<int>.Failure("An error occured. Cannot find delete product.");
+            }
+
         }
     }
 }

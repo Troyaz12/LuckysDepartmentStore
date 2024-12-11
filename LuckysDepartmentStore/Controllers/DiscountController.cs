@@ -1,8 +1,10 @@
-﻿using LuckysDepartmentStore.Models.ViewModels.Discount;
+﻿using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.ViewModels.Discount;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace LuckysDepartmentStore.Controllers
 {
@@ -11,13 +13,34 @@ namespace LuckysDepartmentStore.Controllers
         // GET: DiscountController
         public ActionResult Index()
         {
-            return View();
+            var discounts = _discountService.GetActiveDiscounts();
+
+            if (!discounts.IsSuccess)
+            {
+                ViewBag.FailureMessage = discounts.ErrorMessage;
+
+                return View();
+            }
+
+            return View(discounts.Data);
         }
 
         // GET: DiscountController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+
+            var discount = _discountService.GetDiscount(id);
+
+            if (!discount.IsSuccess)
+            {
+                TempData["FailureMessage"] = discount.ErrorMessage;
+
+                return RedirectToAction(nameof(Index));
+            }
+
+
+
+            return View(discount.Data);
         }
 
         // GET: DiscountController/Create
@@ -86,27 +109,28 @@ namespace LuckysDepartmentStore.Controllers
             {
                 return View();
             }
-        }
-
-        // GET: DiscountController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+        }        
 
         // POST: DiscountController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+           
+                var result = _discountService.DeleteDiscount(id);
+
+                if (!result.IsSuccess)
+                {
+                    TempData["FailureMessage"] = result.ErrorMessage;
+
+                    return RedirectToAction(nameof(Index));
+                }
+
+
+            return RedirectToAction(nameof(Index));
+           
+           
+           
         }
     }
 }

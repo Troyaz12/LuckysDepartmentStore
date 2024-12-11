@@ -86,8 +86,46 @@ body {
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
 }
 .scrollable-section {
-    height: 200px; /* Set your desired height */
+    height: 200px;
     overflow-y: scroll;
-    border: 1px solid #ccc; /* Optional: Add a border for visual clarity */
-    padding: 10px; /* Optional: Add padding for spacing */
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+#failure {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#failure .icon, #failure .message {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#failure .close {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: auto;
+}
+
+.max-height {
+    max-height: 500px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto
+}
+
+.text-center {
+    text-align:center
+}
+
+.big-header {
+    font-size: 5.00rem;
+    font-family: "Bodoni Moda";
+}
+
+.small-header {
+   
+    font-family: "Bodoni Moda";
 }

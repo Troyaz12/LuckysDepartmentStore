@@ -2,6 +2,7 @@
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service;
+using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -107,21 +108,7 @@ namespace LuckysDepartmentStore.Controllers
             {
                 return View();
             }
-        }
-
-        // GET: Product/Delete/5
-        public ActionResult Delete(int id)
-        {
-            try
-            {
-                _productService.Delete(id);
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        }        
 
         // POST: Product/Delete/5
         [HttpPost]
@@ -130,6 +117,15 @@ namespace LuckysDepartmentStore.Controllers
         {
             try
             {
+                var result = _productService.Delete(id);
+
+                if (!result.IsSuccess)
+                {
+                    TempData["FailureMessage"] = result.ErrorMessage;
+
+                    return RedirectToAction(nameof(Index));
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             catch

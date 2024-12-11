@@ -1,13 +1,15 @@
 ﻿using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Discount;
+using LuckysDepartmentStore.Utilities;
 
 namespace LuckysDepartmentStore.Service
 {
     public interface IDiscountService
     {
         public void UpdateDiscount(Discount discount);
-        public void DeleteDiscount(Discount discount);
-        public Discount GetDiscount(int productID);
+        public ExecutionResult<int> DeleteDiscount(int discountId);
+        public ExecutionResult<DiscountVM> GetDiscount(int discountID);
         public Task<Discount> CreateAsync(DiscountCreateVM discount);
+        public ExecutionResult<List<DiscountVM>> GetActiveDiscounts();
     }
 }
