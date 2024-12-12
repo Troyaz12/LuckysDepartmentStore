@@ -69,7 +69,9 @@ namespace LuckysDepartmentStore.Service
                        SubCategory = SubCategory.SubCategoryName,
                        Category = Category.CategoryName,
                        ProductID = Discount.ProductID,
-                       Brand = Brand.BrandName
+                       Brand = Brand.BrandName,
+                       Keywords = Discount.Keywords,
+                       ExpirationDate = Discount.ExpirationDate
                    }).FirstOrDefault();
 
                 if (discount == null)
@@ -148,7 +150,9 @@ namespace LuckysDepartmentStore.Service
                         SubCategory = SubCategory.SubCategoryName,
                         Category = Category.CategoryName,
                         ProductID = Discount.ProductID,
-                        Brand = Brand.BrandName
+                        Brand = Brand.BrandName,
+                        Keywords = Discount.Keywords,
+                        ExpirationDate = Discount.ExpirationDate
                     };
 
                 if (discount == null)

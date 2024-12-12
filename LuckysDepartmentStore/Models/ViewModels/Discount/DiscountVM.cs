@@ -28,5 +28,9 @@ namespace LuckysDepartmentStore.Models.ViewModels.Discount
         public string? DiscountImage { get; set; }
         public string? DiscountDescription { get; set; }
         public int DiscountID { get; set; }
+        public string? Keywords { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime ExpirationDate { get; set; }
     }
 }

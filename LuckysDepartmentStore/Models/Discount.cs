@@ -13,5 +13,7 @@
         public int? CategoryID { get; set; }
         public int? ProductID { get; set; }
         public int? BrandID { get; set; }
+        public string? Keywords { get; set; }
+        public DateTime ExpirationDate { get; set; }
     }
 }

@@ -17,21 +17,29 @@
 <div id="carouselExample" class="carousel carousel-dark slide mt-2 mb-4" style="background-color: rgb(234,244,253)">
     <div class="carousel-inner">
         <div class="carousel-item active">
-            <a asp-action="Search" asp-route-searchString="Winter Coats">
+            <a asp-action="Search" asp-route-description="winter coats" asp-route-category="coats">
                 <img src="img/InUse/PromotionalAds/winterCoats.jpg" class="d-block max-height" alt="Winter Coats Ad">
             </a>
         </div>
         <div class="carousel-item">
-            <img src="img/InUse/PromotionalAds/MensPolarWearCoats.png" class="d-block max-height" alt="Mens Polar wear coats.">
+            <a asp-action="Search" asp-route-subCategory="mens" asp-route-brand="polar wear" asp-route-category="coats">
+                <img src="img/InUse/PromotionalAds/MensPolarWearCoats.png" class="d-block max-height" alt="Mens Polar wear coats.">
+            </a>
         </div>
         <div class="carousel-item">
-            <img src="img/InUse/PromotionalAds/WinterSweaters.png" class="d-block max-height" alt="Winter Sweaters.">
+            <a asp-action="Search" asp-route-category="sweaters">
+                <img src="img/InUse/PromotionalAds/WinterSweaters.png" class="d-block max-height" alt="sweaters.">
+            </a>
         </div>
         <div class="carousel-item">
-            <img src="img/InUse/PromotionalAds/kidsWinterWear.png" class="d-block max-height" alt="Kids WInter Coats.">
+            <a asp-action="Search" asp-route-description="winter wear" asp-route-subCategory="boys, girls, boys infant, girls infant">
+                <img src="img/InUse/PromotionalAds/kidsWinterWear.png" class="d-block max-height" alt="Kids Winter Coats.">
+            </a>
         </div>
         <div class="carousel-item">
-            <img src="img/InUse/PromotionalAds/menswinterboots.png" class="d-block max-height" alt="Mens Winter Boots.">
+            <a asp-action="Search" asp-route-subCategory="mens" asp-route-category="boots" asp-route-description="winter wear">
+                <img src="img/InUse/PromotionalAds/menswinterboots.png" class="d-block max-height" alt="Mens Winter Boots.">
+            </a>
         </div>
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
@@ -55,7 +63,9 @@
                 var test = discount.DiscountImage;
                 <div class="col-md-4 mb-4">
                     <div class="card">
-                        <img src="@discount.DiscountImage" id="DiscountImage" name="DiscountImage" class="image-container" alt="Discount Image">
+                        <a asp-action="search" asp-action-subCategory="@discount.SubCategory" asp-action-category="@discount.Category" asp-action-brand="@discount.Brand" asp-action-productID = "@discount.ProductID">
+                            <img src="@discount.DiscountImage" id="DiscountImage" name="DiscountImage" class="image-fluid image-container" alt="Discount Image">
+                        </a>
                     </div>
                 </div>
 
