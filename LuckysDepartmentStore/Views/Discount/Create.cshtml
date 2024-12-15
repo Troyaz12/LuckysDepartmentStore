@@ -74,6 +74,8 @@
                 <div class="form-group mt-2">
                     <label asp-for="ExpirationDate" class="control-label"></label>
                     @Html.TextBoxFor(m => m.ExpirationDate, new { @class = "form-control", @type="date"})
+                <span id="ExpirationDateEr" class="text-danger"></span>
+                <span asp-validation-for="ExpirationDate" class="text-danger"></span>
             </div>
             </div>
         </div>
@@ -191,6 +193,7 @@
         const productID = document.getElementById('ProductID');
 
         const categoryError = document.getElementById('CategoryIDEr');
+        const expirationDateError = document.getElementById('ExpirationDateEr');        
 
         form.addEventListener('submit', function (event) {
           
@@ -222,7 +225,15 @@
                 categoryError.textContent = errorMessage;
             }
 
+            const expirationDateValue = new Date(ExpirationDate.value);
+            const now = new Date();
+            
+            if (expirationDateValue <= now) {
+                event.preventDefault();
 
+                const errorMessage = 'Expiration date must be set in the future';
+                expirationDateError.textContent = errorMessage;
+            }
         });
 
 
@@ -238,9 +249,6 @@
                $('#failure').hide();
             </text>
         }
-        
-       
-            
     });
 
     $(function () {

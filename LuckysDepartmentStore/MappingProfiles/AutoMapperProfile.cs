@@ -38,6 +38,10 @@ namespace LuckysDepartmentStore.MappingProfiles
             CreateMap<DiscountDTO, DiscountVM>()
                .ForMember(dest => dest.DiscountImage, opt => opt.Ignore())
                .ReverseMap();
+
+            CreateMap<DiscountEditVM, DiscountVM>()
+                .ReverseMap();
+
         }
     }
 }

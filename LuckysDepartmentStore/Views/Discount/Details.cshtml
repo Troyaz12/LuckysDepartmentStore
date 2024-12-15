@@ -10,7 +10,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discount Details</title>   
+    <title>Discount Details</title>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 </head>
 <h1>Discount Detail</h1>
 
@@ -36,37 +38,37 @@
             <label asp-for="DiscountActive" class="control-label"></label>
             <span class="form-control">@Model.DiscountActive</span>
         </div>      
-        <div class="form-group">
+        <div class="form-group" id="DiscountAmountGroup">
             <label asp-for="DiscountAmount" class="control-label"></label>
-            <span class="form-control">@Model.DiscountAmount</span>
+            <span id="DiscountAmount" class="form-control">@Model.DiscountAmount</span>
         </div>
-        <div class="form-group">
+        <div class="form-group" id="DiscountPercentGroup">
             <label asp-for="DiscountPercent" class="control-label"></label>
-            <span class="form-control">@Model.DiscountPercent.ToString("0%")</span>
+            <span id="DiscountPercent" class="form-control">@Model.DiscountPercent.ToString("0%")</span>
         </div>
         <div class="form-group">
             <label asp-for="ExpirationDate" class="control-label"></label>
             <span class="form-control">@Model.ExpirationDate.ToString("yyyy-MM-dd")</span>
         </div>
-        <div class="form-group">
+        <div class="form-group" id="KeywordsGroup">
             <label asp-for="Keywords" class="control-label"></label>
             <span class="form-control">@Model.Keywords</span>
         </div>
-        <div class="form-group">
+        <div class="form-group" id="ProductIDGroup">
             <label asp-for="ProductID" class="control-label"></label>
-            <span class="form-control">@Model.ProductID</span>
+            <span id="ProductID" class="form-control">@Model.ProductID</span>
         </div>
-        <div class="form-group">
+        <div class="form-group" id="CategoryGroup">
             <label asp-for="Category" class="control-label"></label>
-            <span class="form-control">@Model.Category</span>
+            <span id="Category" class="form-control">@Model.CategorySelection</span>
         </div>
-        <div class="form-group">
+        <div class="form-group" id="SubCategoryGroup">
             <label asp-for="SubCategory" class="control-label"></label>
-            <span class="form-control">@Model.SubCategory</span>
+            <span id="SubCategory" class="form-control">@Model.SubCategorySelection</span>
         </div>      
-        <div class="form-group">
+        <div class="form-group" id="BrandGroup">
             <label asp-for="Brand" class="control-label"></label>
-            <span class="form-control">@Model.Brand</span>
+            <span id="Brand" class="form-control">@Model.BrandSelection</span>
         </div>
         <div class="form-group">
             <label asp-for="CreatedDate" class="control-label"></label>
@@ -78,3 +80,47 @@
     </div>
 </div>
 
+<script>
+
+    $(function () {
+        const discountAmount = $("#DiscountAmount").text();
+        const discountPercent = $("#DiscountPercent").text();
+        const Category = $("#Category").text();
+        const SubCategory = $("#SubCategory").text();
+        const Brand = $("#Brand").text();
+        const ProductID = $("#ProductID").val();
+        const Keywords = $("#Keywords").text();
+        
+        console.log(discountAmount + " " + discountPercent + " " + Category + " " + SubCategory + " " + Brand);
+
+        if (discountAmount === null || discountAmount === '') {
+            $("#DiscountAmountGroup").hide();
+        }
+
+        if (discountPercent === null || discountPercent === '') {
+            $("#DiscountPercentGroup").hide();
+        }
+
+        if (Category === null || Category === '') {
+            $("#CategoryGroup").hide();
+        }
+
+        if (SubCategory === null || SubCategory === '') {
+            $("#SubCategoryGroup").hide();
+        }
+
+        if (Brand === null || Brand === '') {
+            $("#BrandGroup").hide();
+        }
+
+        if (ProductID === null || ProductID === '') {
+            $("#ProductIDGroup").hide();
+        }
+
+        if (Keywords === null || Keywords === '') {
+            $("#KeywordsGroup").hide();
+        }
+    });
+
+
+</script>

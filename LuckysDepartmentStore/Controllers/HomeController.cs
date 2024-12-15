@@ -38,8 +38,8 @@ namespace LuckysDepartmentStore.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-        public IActionResult Search(string category, string subCategory, string brand, string description, int productID)
+        [HttpGet]
+        public IActionResult Search(string? categorSelection, string? subCategorySelection, string? brandSelection, string? description, int? productID, string? keywords)
         {
             return View();
         }

@@ -61,9 +61,12 @@
             @foreach(var discount in Model)
             {
                 var test = discount.DiscountImage;
+                var subSelect = discount.SubCategorySelection;
                 <div class="col-md-4 mb-4">
                     <div class="card">
-                        <a asp-action="search" asp-action-subCategory="@discount.SubCategory" asp-action-category="@discount.Category" asp-action-brand="@discount.Brand" asp-action-productID = "@discount.ProductID">
+                        <a asp-action="search" asp-route-subCategorySelection="@discount.SubCategorySelection" asp-route-categorSelection="@discount.CategorySelection"
+                           asp-route-brandSelection="@discount.BrandSelection" asp-route-productID="@discount.ProductID" asp-route-description="@discount.DiscountDescription"
+                           asp-route-keywords="@discount.Keywords">
                             <img src="@discount.DiscountImage" id="DiscountImage" name="DiscountImage" class="image-fluid image-container" alt="Discount Image">
                         </a>
                     </div>

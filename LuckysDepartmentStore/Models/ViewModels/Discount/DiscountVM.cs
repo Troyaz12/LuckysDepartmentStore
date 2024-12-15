@@ -32,5 +32,8 @@ namespace LuckysDepartmentStore.Models.ViewModels.Discount
 
         [DataType(DataType.Date)]
         public DateTime ExpirationDate { get; set; }
+        public string? BrandSelection { get; set; }
+        public string? SubCategorySelection { get; set; }
+        public string? CategorySelection { get; set; }
     }
 }

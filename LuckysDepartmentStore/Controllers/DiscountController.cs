@@ -1,14 +1,12 @@
-﻿using LuckysDepartmentStore.Models;
+﻿using AutoMapper;
 using LuckysDepartmentStore.Models.ViewModels.Discount;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace LuckysDepartmentStore.Controllers
 {
-    public class DiscountController(IProductService _productService, IDiscountService _discountService) : Controller
+    public class DiscountController(IProductService _productService, IDiscountService _discountService, IMapper _mapper) : Controller
     {
         // GET: DiscountController
         public ActionResult Index()
@@ -93,16 +91,34 @@ namespace LuckysDepartmentStore.Controllers
         // GET: DiscountController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var discount = _discountService.GetDiscount(id);          
+
+            if (!discount.IsSuccess)
+            {
+                TempData["FailureMessage"] = discount.ErrorMessage;
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            var discountProducts = _mapper.Map<DiscountEditVM>(discount.Data);
+            discountProducts.Category = _productService.GetCategory();
+            discountProducts.SubCategory = _productService.GetSubCategory();
+            discountProducts.Brand = _productService.GetBrand();
+
+
+            return View(discountProducts);
         }
 
         // POST: DiscountController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> EditAsync(DiscountEditVM discount)
         {
             try
             {
+                var discountEdited = await _discountService.UpdateDiscount(discount);
+
+
                 return RedirectToAction(nameof(Index));
             }
             catch

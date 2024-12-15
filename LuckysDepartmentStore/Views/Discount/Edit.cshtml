@@ -1,0 +1,151 @@
+﻿@model LuckysDepartmentStore.Models.ViewModels.Discount.DiscountEditVM
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discount Details</title>
+</head>
+<h1>Discount Detail</h1>
+
+<hr />
+
+
+<form asp-action="Edit" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <image src="@Model.DiscountImage" id="DiscountImage" name="DiscountImage" class="image-container">
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="DiscountDescription" class="control-label"></label>
+                <input asp-for="DiscountDescription" class="form-control"/>
+            </div>      
+            <div class="form-group">
+                <label asp-for="DiscountAmount" class="control-label"></label>
+                <input asp-for="DiscountAmount" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="DiscountPercent" class="control-label"></label>
+                <input asp-for="DiscountPercent" class="form-control" />
+            </div>
+            <div class="form-group mt-2">
+                <label asp-for="DiscountArtFile" class="control-label"></label>
+                <input asp-for="DiscountArtFile" class="form-control" type="file" />
+                <span asp-validation-for="DiscountArtFile" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DiscountActive" class="control-label"></label>
+                <input asp-for="DiscountActive" class="form-check-input" type="checkbox" />
+            </div>
+            <div class="form-group">
+                <label asp-for="ExpirationDate" class="control-label"></label>
+                <input asp-for="ExpirationDate" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Keywords" class="control-label"></label>
+                <input asp-for="Keywords" class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductID" class="control-label"></label>
+                <input asp-for="ProductID" class="form-control"/>
+            </div>
+            <div class="dropdown">
+                <label asp-for="Category">Category</label>
+                <input asp-for="CategorySelection" type="text" class="form-control dropdown-toggle" id="Category" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                <span id="CategoryIDEr" class="text-danger"></span>
+                <span asp-validation-for="CategorySelection" class="text-danger"></span>
+                <ul class="dropdown-menu" aria-labelledby="Category">
+                    @if (Model.Category != null)
+                    {
+                        @foreach (var color in Model.Category)
+                        {
+                            <li><a class="dropdown-item" data-stored-value="@color.CategoryID">@color.CategoryName</a></li>
+                        }
+                    }
+                </ul>
+            </div>
+            <div class="dropdown">
+                <label asp-for="SubCategory">SubCategory</label>
+                <input asp-for="SubCategorySelection" type="text" class="form-control dropdown-toggle" id="SubCategory" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                <span id="SubCategoryIDEr" class="text-danger"></span>
+                <span asp-validation-for="SubCategorySelection" class="text-danger"></span>
+                <ul class="dropdown-menu" aria-labelledby="SubCategory" name="color">
+                    @if (Model.SubCategory != null)
+                    {
+                        @foreach (var color in Model.SubCategory)
+                        {
+                            <li><a class="dropdown-item" data-stored-value="@color.SubCategoryID">@color.SubCategoryName</a></li>
+                        }
+                    }
+                </ul>
+            </div>
+            <div class="dropdown">
+                <label asp-for="Brand">Brand</label>
+                <input asp-for="BrandSelection" type="text" class="form-control dropdown-toggle" id="Brand" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                <span id="BrandIDEr" class="text-danger"></span>
+                <span asp-validation-for="BrandSelection" class="text-danger"></span>
+                <ul class="dropdown-menu" aria-labelledby="Brand">
+                    @if (Model.Brand != null)
+                    {
+                        @foreach (var color in Model.Brand)
+                        {
+                            <li><a class="dropdown-item" data-stored-value="@color.BrandId">@color.BrandName</a></li>
+                        }
+                    }
+                </ul>
+            </div>
+        
+            <div>
+                <a asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    </div>
+      <div class="row">
+        <div class="form-group">
+            <input type="submit" value="Save" class="btn btn-primary mt-4" />
+        </div>
+    </div>
+</form>
+
+
+
+<script>
+
+    $(function () {
+        function handleDropdownFilter(inputId, inputNum, dropdownClass) {
+            $(inputId).on('keyup', function () {
+                var filter = this.value.toLowerCase();
+                var items = document.querySelectorAll(dropdownClass + ' li');
+                items.forEach(function (item) {
+                    var text = item.textContent.toLowerCase();
+                    item.style.display = text.includes(filter) ? '' : 'none';
+                });
+            });
+
+            $(dropdownClass + ' .dropdown-item').on('click', function () {
+                $(inputId).val($(this).text());
+                $(inputNum).val($(this).attr('data-stored-value'));
+
+                const categorySelectionIn = document.getElementById('Category');
+
+            });
+        }
+
+        // Apply the function to each dropdown
+        handleDropdownFilter('#Category', '#CategoryID', '.dropdown-menu[aria-labelledby="Category"]');
+        handleDropdownFilter('#SubCategory', '#SubCategoryID', '.dropdown-menu[aria-labelledby="SubCategory"]');
+        handleDropdownFilter('#Brand', '#BrandID', '.dropdown-menu[aria-labelledby="Brand"]');
+    });
+</script>

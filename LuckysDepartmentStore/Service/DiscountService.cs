@@ -66,10 +66,10 @@ namespace LuckysDepartmentStore.Service
                        CreatedDate = Discount.CreatedDate,
                        DiscountArt = Discount.DiscountArt,
                        DiscountDescription = Discount.DiscountDescription,
-                       SubCategory = SubCategory.SubCategoryName,
-                       Category = Category.CategoryName,
+                       SubCategorySelection = SubCategory.SubCategoryName,
+                       CategorySelection = Category.CategoryName,
                        ProductID = Discount.ProductID,
-                       Brand = Brand.BrandName,
+                       BrandSelection = Brand.BrandName,
                        Keywords = Discount.Keywords,
                        ExpirationDate = Discount.ExpirationDate
                    }).FirstOrDefault();
@@ -92,9 +92,46 @@ namespace LuckysDepartmentStore.Service
             }
         }
 
-        public void UpdateDiscount(Discount discount)
+        public async Task<ExecutionResult<DiscountEditVM>> UpdateDiscount(DiscountEditVM discount)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (discount == null)
+                {
+                    return ExecutionResult<DiscountEditVM>.Failure("Unable to save discount.");
+                }          
+
+                var discountOld = await _context.Discounts.FindAsync(discount.DiscountID);
+
+                if (discountOld == null)
+                {
+                    return ExecutionResult<DiscountEditVM>.Failure("Unable find discount for update.");
+                }
+
+                discountOld.DiscountPercent = discount.DiscountPercent;
+                discountOld.DiscountAmount = discount.DiscountAmount;
+                discountOld.DiscountActive = discount.DiscountActive;
+
+                if (discount.DiscountArtFile != null)
+                {
+                    discountOld.DiscountArt = _utility.ImageBytes(discount.DiscountArtFile);
+                }
+                discountOld.DiscountDescription = discount.DiscountDescription;
+                discountOld.SubCategoryID = discount.SubCategoryID;
+                discountOld.CategoryID = discount.CategoryID;
+                discountOld.ProductID = discount.ProductID;
+                discountOld.BrandID = discount.BrandID;
+                discountOld.Keywords = discount.Keywords;
+                discountOld.ExpirationDate = discount.ExpirationDate;
+
+                await _context.SaveChangesAsync();
+
+                return ExecutionResult<DiscountEditVM>.Success(discount);
+            }
+            catch (Exception ex)
+            {
+                return ExecutionResult<DiscountEditVM>.Failure("Unable to save discount.");
+            }
         }
 
         public async Task<Discount> CreateAsync(DiscountCreateVM discount)
@@ -147,10 +184,10 @@ namespace LuckysDepartmentStore.Service
                         CreatedDate = Discount.CreatedDate,
                         DiscountArt = Discount.DiscountArt,
                         DiscountDescription = Discount.DiscountDescription,
-                        SubCategory = SubCategory.SubCategoryName,
-                        Category = Category.CategoryName,
+                        SubCategorySelection = SubCategory.SubCategoryName,
+                        CategorySelection = Category.CategoryName,
                         ProductID = Discount.ProductID,
-                        Brand = Brand.BrandName,
+                        BrandSelection = Brand.BrandName,
                         Keywords = Discount.Keywords,
                         ExpirationDate = Discount.ExpirationDate
                     };
