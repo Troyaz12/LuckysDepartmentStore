@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace LuckysDepartmentStore.Controllers
 {
-    public class HomeController(IDiscountService _discountService, ILogger<HomeController> _logger) : Controller
+    public class HomeController(IDiscountService _discountService, ILogger<HomeController> _logger, IProductService _productService) : Controller
     {
         //private readonly ILogger<HomeController> _logger;
 
@@ -39,8 +39,10 @@ namespace LuckysDepartmentStore.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
         [HttpGet]
-        public IActionResult Search(string? categorSelection, string? subCategorySelection, string? brandSelection, string? description, int? productID, string? keywords)
+        public IActionResult Search(string? categorySelection, string? subCategorySelection, string? brandSelection, int? productID, string? keywords)
         {
+            var productList = _productService.GetProductsByDiscount(categorySelection, subCategorySelection, brandSelection, productID, keywords);
+
             return View();
         }
         public IActionResult Login(string inputEmail, string inputPassword)

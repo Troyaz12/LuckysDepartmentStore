@@ -21,5 +21,6 @@ namespace LuckysDepartmentStore.Models.DTO.Products
         public string Brand { get; set; }
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public string? Keywords { get; set; }
     }
 }

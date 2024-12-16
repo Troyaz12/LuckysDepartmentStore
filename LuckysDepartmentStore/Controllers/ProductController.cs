@@ -19,7 +19,7 @@ namespace LuckysDepartmentStore.Controllers
         {
             ProductListVM productList = new ProductListVM();
 
-            var products = _productService.GetProducts(category, searchString);
+            var products = _productService.GetProductsSearchBar(category, searchString);
             productList.Products = products;
 
             return View(productList);
@@ -96,11 +96,11 @@ namespace LuckysDepartmentStore.Controllers
         // POST: Product/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(ProductEditVM product)
+        public async Task<ActionResult> EditAsync(ProductEditVM product)
         {
             try
             {
-                var editResult = _productService.EditProduct(product);                
+                var editResult = await _productService.EditProduct(product);                
 
                 return RedirectToAction(nameof(Index));
             }

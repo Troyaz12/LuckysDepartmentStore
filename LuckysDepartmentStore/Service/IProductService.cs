@@ -12,11 +12,13 @@ namespace LuckysDepartmentStore.Service
         public List<Category> GetCategory();
         public List<SubCategory> GetSubCategory();
         public List<Brand> GetBrand();
-        public List<ProductVM> GetProducts(string categorySearch, string searchString);
+        public List<ProductVM> GetProductsSearchBar(string categorySearch, string searchString);
         public ProductEditVM GetAProduct(int productId);
-        public ProductEditVM EditProduct(ProductEditVM product);
+        public Task<ExecutionResult<ProductEditVM>> EditProduct(ProductEditVM product);
         public ExecutionResult<ProductDetailVM> GetDetails(int productId);
         public ExecutionResult<int> Delete(int productId);
+        public List<ProductVM> GetProductsByDiscount(string? categorySelection, string? subCategorySelection, string? brandSelection,
+          int? productID, string? keywords);
 
     }
 }
