@@ -87,6 +87,7 @@ namespace LuckysDepartmentStore.Controllers
             productEditVM.Category = _productService.GetCategory();
             productEditVM.SubCategory = _productService.GetSubCategory();
             productEditVM.Brand = _productService.GetBrand();
+            productEditVM.Sizes = _productService.GetSize();
 
             productVM.ColorProduct = productEditVM.ColorProduct;
 
@@ -146,7 +147,8 @@ namespace LuckysDepartmentStore.Controllers
        // [ValidateAntiForgeryToken]
         public ActionResult UpdateListForEdit([FromBody] ColorProductVM product)
         {
-            productVM.ColorProduct.Add(product);
+            // productVM.ColorProduct.Add(product);
+            productEditVM.ColorProduct.Add(product);
 
             return PartialView("_DynamicPartialListEdit", productEditVM);
         }

@@ -17,8 +17,9 @@ namespace LuckysDepartmentStore.Service
         public Task<ExecutionResult<ProductEditVM>> EditProduct(ProductEditVM product);
         public ExecutionResult<ProductDetailVM> GetDetails(int productId);
         public ExecutionResult<int> Delete(int productId);
-        public List<ProductVM> GetProductsByDiscount(string? categorySelection, string? subCategorySelection, string? brandSelection,
+        public Task<ExecutionResult<List<ProductVM>>> GetProductsByDiscount(string? categorySelection, string? subCategorySelection, string? brandSelection,
           int? productID, string? keywords);
 
+        public List<Sizes> GetSize();
     }
 }

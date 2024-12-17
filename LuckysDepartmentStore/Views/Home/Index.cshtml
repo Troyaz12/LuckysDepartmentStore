@@ -59,9 +59,7 @@
     <div class="container text-center">
         <div class="row">
             @foreach(var discount in Model)
-            {
-                var test = discount.DiscountImage;
-                var subSelect = discount.SubCategorySelection;
+            {   
                 <div class="col-md-4 mb-4">
                     <div class="card">
                         <a asp-action="search" asp-route-subCategorySelection="@discount.SubCategorySelection" asp-route-categorSelection="@discount.CategorySelection"
@@ -70,8 +68,6 @@
                         </a>
                     </div>
                 </div>
-
-
             } 
         
         </div>

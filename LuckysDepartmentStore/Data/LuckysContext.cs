@@ -16,6 +16,18 @@ namespace LuckysDepartmentStore.Data
         {
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            builder.Entity<Discount>()
+                .Property(d => d.DiscountAmount)
+                .HasColumnType("decimal(18,2)");
+
+            builder.Entity<Discount>()
+              .Property(d => d.DiscountPercent)
+              .HasColumnType("decimal(18,2)");
+
+            builder.Entity<Product>()
+           .Property(d => d.Price)
+           .HasColumnType("decimal(18,2)");
         }
 
         public DbSet<Category> Categories { get; set; }
@@ -32,6 +44,7 @@ namespace LuckysDepartmentStore.Data
         public DbSet<Shipping> Shipping { get; set; }
         public DbSet<SubCategory> SubCategories { get; set; }
         public DbSet<Brand> Brand { get; set; }
+        public DbSet<Sizes> Sizes { get; set; }
 
     }
 }

@@ -57,5 +57,6 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public int? DiscountID { get; set; }
         public byte[]? ProductPicture { get; set; }
+        public int? SizeID { get; set; }
     }
 }

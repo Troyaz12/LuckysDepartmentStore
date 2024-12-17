@@ -183,68 +183,88 @@ namespace LuckysDepartmentStore.Service
 
             return _mapper.Map<List<ProductVM>>(list);
         }
-        public List<ProductVM> GetProductsByDiscount(string? categorySelection, string? subCategorySelection, string? brandSelection,
+        public async Task<ExecutionResult<List<ProductVM>>> GetProductsByDiscount(string? categorySelection, string? subCategorySelection, string? brandSelection,
             int? productID, string? keywords)
         {
-            var products =
-                from Product in _context.Products
-                join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
-                from Category in categories.DefaultIfEmpty()
-                join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID into subCategories
-                from SubCategory in subCategories.DefaultIfEmpty()
-                join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
-                from Brand in Brands.DefaultIfEmpty()
-                select new ProductVmDTO
+            try
+            {
+
+                var products =
+                    from Product in _context.Products
+                    join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
+                    from Category in categories.DefaultIfEmpty()
+                    join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID into subCategories
+                    from SubCategory in subCategories.DefaultIfEmpty()
+                    join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
+                    from Brand in Brands.DefaultIfEmpty()
+                    select new ProductVmDTO
+                    {
+                        ProductID = Product.ProductID,
+                        ProductName = Product.ProductName,
+                        Price = Product.Price,
+                        Description = Product.Description,
+                        Quantity = Product.Quantity,
+                        Category = Category.CategoryName,
+                        SubCategory = SubCategory.SubCategoryName,
+                        Brand = Brand.BrandName,
+                        CreatedDate = Product.CreatedDate,
+                        ProductImage = Product.ProductPicture.ToString()
+    };
+
+
+                if (!string.IsNullOrEmpty(categorySelection))
                 {
-                    ProductID = Product.ProductID,
-                    ProductName = Product.ProductName,
-                    Price = Product.Price,
-                    Description = Product.Description,
-                    Quantity = Product.Quantity,
-                    Category = Category.CategoryName,
-                    SubCategory = SubCategory.SubCategoryName,
-                    Brand = Brand.BrandName,
-                    CreatedDate = Product.CreatedDate,
-                };
+                    products = products.Where(s => s.Category != null && s.Category.ToUpper().Contains(categorySelection.ToUpper()));
+                }
+
+                if (!string.IsNullOrEmpty(subCategorySelection))
+                {
+                    products = products.Where(s => s.SubCategory != null && s.SubCategory.ToUpper() == subCategorySelection.ToUpper());
+                }
+
+                if (!string.IsNullOrEmpty(brandSelection))
+                {
+                    products = products.Where(s => s.Brand != null && s.Brand.ToUpper().Contains(brandSelection.ToUpper()));
+                }
+
+                if (productID != null)
+                {
+                    products = products.Where(s => s.ProductID.Equals(productID));
+                }
+
+                if (!string.IsNullOrEmpty(keywords) && keywords.Any())
+                {
+                    var keywordArray = keywords.Split(',').ToList();
+
+                    var upperKeywords = keywordArray.Select(k => k.ToUpper().Trim()).ToList();
+
+                    products = products.Where(p =>
+                      upperKeywords.Any(k =>
+                       (p.Description != null && p.Description.ToUpper().Contains(k)) ||
+                       (p.ProductName != null && p.ProductName.ToUpper().Contains(k))
+                        )
+                    );
+                }
+
+                var list = await products.ToListAsync();
+
+                var productListVM = _mapper.Map<List<ProductVM>>(list);
 
 
-            if (!string.IsNullOrEmpty(categorySelection))
-            {
-                products = products.Where(s => s.Category != null && s.Category.ToUpper().Contains(categorySelection.ToUpper()));
+                foreach (ProductVM singleProduct in productListVM)
+                {
+
+                    singleProduct.ProductImage = _utility.BytesToImage(singleProduct.ProductArt);
+
+                }
+
+                return ExecutionResult<List<ProductVM>>.Success(productListVM);
+
             }
-
-            if (!string.IsNullOrEmpty(subCategorySelection))
+            catch (Exception ex)
             {
-                products = products.Where(s => s.SubCategory != null && s.SubCategory.ToUpper() == subCategorySelection.ToUpper());
+                return ExecutionResult<List<ProductVM>>.Failure("Unable to search products.");
             }
-
-            if (!string.IsNullOrEmpty(brandSelection))
-            {
-                products = products.Where(s => s.Brand != null && s.Brand.ToUpper().Contains(brandSelection.ToUpper()));
-            }
-
-            if (productID != null)
-            {
-                products = products.Where(s => s.ProductID.Equals(productID));
-            }
-
-            if (!string.IsNullOrEmpty(keywords) && keywords.Any())
-            {
-                var keywordArray = keywords.Split(',').ToList();
-
-                var upperKeywords = keywordArray.Select(k => k.ToUpper().Trim()).ToList();
-
-                products = products.Where(p =>
-                  upperKeywords.Any(k =>
-                   (p.Description != null && p.Description.ToUpper().Contains(k)) ||
-                   (p.ProductName != null && p.ProductName.ToUpper().Contains(k))
-                    )
-                );
-            }
-
-            var list = products.ToList();
-
-            return _mapper.Map<List<ProductVM>>(list);
         }
         public ProductEditVM GetAProduct(int productId)
         {
@@ -267,7 +287,8 @@ namespace LuckysDepartmentStore.Service
                     CreatedDate = Product.CreatedDate,
                     BrandId = Product.BrandID,
                     CategoryId = Category.CategoryID,
-                    SubCategoryId = SubCategory.SubCategoryID,
+                    SubCategoryId = SubCategory.SubCategoryID
+
                 };
 
             var colorProductDTO =
@@ -280,7 +301,8 @@ namespace LuckysDepartmentStore.Service
                     ColorID = ColorProducts.ColorID,
                     Quantity = ColorProducts.Quantity,
                     Name = Colors.Name,
-                    ColorProductID = ColorProducts.ColorProductID
+                    ColorProductID = ColorProducts.ColorProductID,
+                    SizeID = ColorProducts.SizeID
                 };
 
 
@@ -433,6 +455,13 @@ namespace LuckysDepartmentStore.Service
                 return ExecutionResult<int>.Failure("An error occured. Cannot find delete product.");
             }
 
+        }
+        public List<Sizes> GetSize()
+        {
+            var size = _context.Sizes
+                .ToList();
+
+            return size;
         }
     }
 }

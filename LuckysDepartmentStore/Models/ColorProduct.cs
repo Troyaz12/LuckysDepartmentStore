@@ -7,5 +7,6 @@
         public int Quantity { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public int ProductID { get; set; }
+        public int SizeID { get; set; }
     }
 }

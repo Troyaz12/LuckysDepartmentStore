@@ -39,11 +39,11 @@ namespace LuckysDepartmentStore.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
         [HttpGet]
-        public IActionResult Search(string? categorySelection, string? subCategorySelection, string? brandSelection, int? productID, string? keywords)
+        public async Task<IActionResult> SearchAsync(string? categorySelection, string? subCategorySelection, string? brandSelection, int? productID, string? keywords)
         {
-            var productList = _productService.GetProductsByDiscount(categorySelection, subCategorySelection, brandSelection, productID, keywords);
+            var productList = await _productService.GetProductsByDiscount(categorySelection, subCategorySelection, brandSelection, productID, keywords);
 
-            return View();
+            return View(productList.Data);
         }
         public IActionResult Login(string inputEmail, string inputPassword)
         {
@@ -64,5 +64,12 @@ namespace LuckysDepartmentStore.Controllers
 
 			return View();
 		}
-	}
+        [HttpGet]
+        public async Task<IActionResult> Item(string? productId)
+        {
+            
+
+            return View();
+        }
+    }
 }

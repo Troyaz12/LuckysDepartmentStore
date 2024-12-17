@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html><html lang="en"><head>
+﻿@model IEnumerable<LuckysDepartmentStore.Models.ViewModels.Product.ProductVM>
+
+<!DOCTYPE html><html lang="en"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>jQuery UI Datepicker - Default functionality</title>
@@ -9,13 +11,32 @@
 
 </head>
 <body>
-    @* <input class="datefield" data-val="true" data-val-required="Date is required"
-           id="ReleaseDate" name="ReleaseDate" type="date" value="1/11/1989" /> *@
+    <div style="background-color: rgb(244,240,255)">
+        <h1 class="text-center big-header">Discounts</h1>
+        <h2 class="text-center small-header">Check out out weekly discounts.</h2>
 
-    @model DateTime
-    @Html.TextBox("", String.Format("{0:d}", Model.ToShortDateString()),
-            new { @class = "datefield", type = "date" })
- 
+        <div class="container text-center">
+            <div class="row">
+                @foreach (var product in Model)
+                {                    
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <a asp-action="Item" asp-route-productId="@product.ProductID">
+                                <img src="@product.ProductImage" id="ProductImage" name="ProductImage" class="image-fluid image-container" alt="Product Image">
+                            </a>
+                            <div>
+                                <h5 class="card-title">@product.ProductName </h5>
+                                <p calss="card-text">
+                                    @product.Description
+                                </p>
+                                <p>@string.Format("{0:C2}",@product.Price)</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>    
 </body>
 </html>
 
@@ -26,7 +47,5 @@
 
 
   <script>
-    $(function () {
-        $(".datefield").datepicker();
-    });
+  
   </script>
