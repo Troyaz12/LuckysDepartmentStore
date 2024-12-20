@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LuckysDepartmentStore.Models.ViewModels.Product;
+using System.ComponentModel.DataAnnotations;
 
-namespace LuckysDepartmentStore.Models.ViewModels.Product
+namespace LuckysDepartmentStore.Models.ViewModels.Home
 {
-    public class ProductDetailVM
+    public class ItemVM
     {
         public int ProductID { get; set; }
 
@@ -37,7 +38,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
         public string? BrandSelection { get; set; }
 
         [Display(Name = "Color")]
-        public List<Color>? Color { get; set; }
+        public List<string>? Color { get; set; }
         public List<ColorProductVM> ColorProduct { get; set; } = new List<ColorProductVM>();
         public int? ColorID { get; set; }
         public string? ColorSelection { get; set; }
@@ -55,5 +56,13 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
         public int? DiscountID { get; set; }
         public byte[]? ProductPicture { get; set; }
         public string? ProductImage { get; set; }
+
+        public List<Rating> Ratings { get; set; }
+        public int RatingsCount {  get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:F1}")]
+        public double? Stars { get; set; }
+        public List<Sizes>? Sizes { get; set; } = new List<Sizes>();
+
     }
 }

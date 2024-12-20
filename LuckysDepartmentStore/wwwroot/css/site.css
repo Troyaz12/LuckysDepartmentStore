@@ -143,3 +143,8 @@ body {
 .card-title {
     font-weight: bold;
 }
+
+.item{
+    width: 600px;
+    height: auto;
+}

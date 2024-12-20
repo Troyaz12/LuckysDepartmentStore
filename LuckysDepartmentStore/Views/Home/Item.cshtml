@@ -1,11 +1,135 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model LuckysDepartmentStore.Models.ViewModels.Home.ItemVM
 @{
+    ViewData["Title"] = "Item";
 }
-<div class="d-flex flex-column">
-    <div>Item1</div>
-    <div>Item1</div>
-    <div>Item1</div>
 
-</div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flex Column Example</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+    <div class="container">
+        <div class="d-flex flex-row">
+          
+            <img src="@Model.ProductImage" id="ProductImage" name="ProductImage" class="image-fluid image-container item" alt="Product Image">
+
+            <div class="d-flex flex-column">
+                <div class="p-2 bg-success text-white">
+                    <h1>@Model.BrandSelection</h1>
+                    <h2>@Model.ProductName</h2>
+                </div>
+                <div class="p-2 bg-primary text-white">
+                
+                    <p>
+                        <i class="fa-solid fa-star"></i> 
+                        <span>
+                            @string.Format("{0:F1}", @Model.Stars)                         
+                        </span>
+                    
+                        (@Model.RatingsCount)
+                    </p>
+                </div>
+                <div class="p-2 bg-secondary text-white">
+                    <span>
+                        @string.Format("{0:C}",@Model.Price)
+                    </span>
+                </div>
+                <div class="p-2 bg-success text-white" id="sizes">
+              @*   @if (Model.Sizes != null)
+                {
+                    
+                        @for (var x = 0; x < @Model.Sizes.Count; x++)
+                        {
+
+                                @if(Model.ColorProduct[x].Name == "f")
+                                {
+                                    <input type="radio" class="btn-check" name="options" id="option@(x)" autocomplete="off">
+                                    <label class="btn btn-secondary" for="option@(x)">@Model.Sizes[x].Size</label>
+                                }
+
+                        }
+                    
+                } *@
+                    
+                </div>
+                </div>
+                <div class="p-2 bg-success text-white">
+                    @if (Model.ColorProduct != null && @Model.Color != null)
+                    {
+                        @for (var x = 0; x < @Model.Color.Count; x++)
+                        {                            
+                            <input type="radio" class="btn-check options-radio" name="options" id="option@(x)" autocomplete="off" @(x == 0 ? "checked" : "")>
+                            <label class="btn btn-secondary" for="option@(x)">@Model.Color[x]</label>
+                        }
+                    }
+                </div>
+                <div class="p-2 bg-success text-white">
+                    QUANTITY
+                </div>
+                <div class="p-2 bg-success text-white">
+                <button type="button" class="btn">Add To Cart</button>
+                </div>
+                <div class="p-2 bg-success text-white">
+                    @Model.Description
+                
+                </div>
+                <div id="sizesContainer">
+
+                   
+
+
+
+
+                </div>
+        </div>
+    </div>
+   
+    <script>
+        $(document).ready(function () {
+            $('.options-radio').change(function () {
+
+                var selectedRadioId = $(this).attr('id');
+                var colorSelected = $('label[for="' + selectedRadioId + '"]').text();                
+
+                console.log(colorSelected);
+                var objectArray = [];
+
+                @foreach (var colorProduct in Model.ColorProduct)
+                {
+                    <text>
+                        objectArray.push({
+                                Name: "@colorProduct.Name",
+                                SizeID: @colorProduct.SizeID,
+                                SizeName: "@colorProduct.SizeName",
+                                Quantity: @colorProduct.Quantity,
+                                ColorProductID: @colorProduct.ColorProductID,
+                                ProductID: @colorProduct.ProductID,
+                                ColorID: @colorProduct.ColorID,
+                                SelectedColor: colorSelected
+                        });
+                    </text>
+                }
+
+                    $.ajax({
+                        url: '@Url.Action("GetSizeButtons", "Home")',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(objectArray),
+                        success: function (response) {
+                            $('#sizesContainer').html(response);
+                        },
+                        error: function (xhr, status, error) {
+                            var errorMessage = xhr.status + ': ' + xhr.statusText;
+                            alert('Error sending array of objects.' + errorMessage);
+                        }
+                    });
+            });
+
+        });
+    </script>
+

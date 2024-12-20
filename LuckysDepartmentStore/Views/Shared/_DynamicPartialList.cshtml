@@ -16,15 +16,18 @@
         {
             <li id="item-@i">
                 <label for="ColorID">ColorID</label>
-                @if(@Model.ColorProduct[i].ColorID != null)
-                {
-                    @Html.TextBoxFor(model => @Model.ColorProduct[i].ColorID, new { @readonly = "readonly" })
-                }               
+                  
                 <label for="Name">Name</label>                
                 @Html.TextBoxFor(model => @Model.ColorProduct[i].Name, new { @readonly = "readonly" })               
 
                 <label for="Quantity">Quantity</label>
                 @Html.TextBoxFor(model => @Model.ColorProduct[i].Quantity, new { @readonly = "readonly" })
+
+                <label for="SizeName">Size</label>
+                @Html.TextBoxFor(model => @Model.ColorProduct[i].SizeName, new { @readonly = "readonly" })
+
+                @Html.HiddenFor(model => @Model.ColorProduct[i].SizeID, new { @readonly = "readonly" })
+                @Html.HiddenFor(model => @Model.ColorProduct[i].ColorID, new { @readonly = "readonly" })
 
                 <button id="deleteColor" class="btn btn-danger" data-index="@i">Delete</button>
             </li>

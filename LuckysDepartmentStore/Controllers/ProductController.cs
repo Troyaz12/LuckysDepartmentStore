@@ -28,7 +28,6 @@ namespace LuckysDepartmentStore.Controllers
         // GET: Product/Details/5
         public ActionResult Details(int id)
         {
-
             var details = _productService.GetDetails(id);
 
             if(details.IsSuccess == false)
@@ -38,8 +37,25 @@ namespace LuckysDepartmentStore.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            var sizes = _productService.GetSize();
+            var allDetails = details.Data;
 
-            return View(details.Data);
+            for (int x = 0; x < allDetails.ColorProduct.Count; x++)
+            {
+                var selectedSize = sizes.FirstOrDefault(s => s.SizesID == allDetails.ColorProduct[x].SizeID);
+
+                if (selectedSize != null)
+                {
+                    allDetails.ColorProduct[x].SizeName = selectedSize.Size;
+                }
+                else
+                {
+                    allDetails.ColorProduct[x].SizeName = "Size not found";
+                }
+
+            }
+
+            return View(allDetails);
         }
 
         // GET: Product/Create
@@ -50,6 +66,7 @@ namespace LuckysDepartmentStore.Controllers
             product.Category = _productService.GetCategory();
             product.SubCategory = _productService.GetSubCategory();
             product.Brand = _productService.GetBrand();
+            product.Sizes = _productService.GetSize();
 
             return View(product);
         }
@@ -87,7 +104,24 @@ namespace LuckysDepartmentStore.Controllers
             productEditVM.Category = _productService.GetCategory();
             productEditVM.SubCategory = _productService.GetSubCategory();
             productEditVM.Brand = _productService.GetBrand();
-            productEditVM.Sizes = _productService.GetSize();
+
+            var sizes = _productService.GetSize();            
+            productEditVM.Sizes = sizes;
+
+            for (int x = 0; x < productEditVM.ColorProduct.Count; x++)
+            {
+                var selectedSize = sizes.FirstOrDefault(s => s.SizesID == productEditVM.ColorProduct[x].SizeID);
+
+                if (selectedSize != null)
+                {
+                    productEditVM.ColorProduct[x].SizeName = selectedSize.Size;
+                }
+                else
+                {
+                    productEditVM.ColorProduct[x].SizeName = "Size not found";
+                }
+
+            }
 
             productVM.ColorProduct = productEditVM.ColorProduct;
 

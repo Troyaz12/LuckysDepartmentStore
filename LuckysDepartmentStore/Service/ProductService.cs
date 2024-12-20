@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.DTO.Home;
 using LuckysDepartmentStore.Models.DTO.Products;
 using LuckysDepartmentStore.Models.ViewModels.Discount;
+using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.EntityFrameworkCore;
@@ -416,7 +418,8 @@ namespace LuckysDepartmentStore.Service
                     ColorID = ColorProducts.ColorID,
                     Quantity = ColorProducts.Quantity,
                     Name = Colors.Name,
-                    ColorProductID = ColorProducts.ColorProductID
+                    ColorProductID = ColorProducts.ColorProductID,
+                    SizeID  = ColorProducts.SizeID
                 };
 
             var product = productDTO.FirstOrDefault();
@@ -462,6 +465,105 @@ namespace LuckysDepartmentStore.Service
                 .ToList();
 
             return size;
+        }
+        public ExecutionResult<ItemVM> GetItem(int productId)
+        {
+
+            var productDTO =
+             from Product in _context.Products
+             join Category in _context.Categories on Product.CategoryID equals Category.CategoryID
+             join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID
+             join Brand in _context.Brand on Product.BrandID equals Brand.BrandId
+             where Product.ProductID == productId
+             select new ItemDTO
+             {
+                 ProductID = Product.ProductID,
+                 ProductName = Product.ProductName,
+                 Price = Product.Price,
+                 Description = Product.Description,
+                 Quantity = Product.Quantity,
+                 Category = Category.CategoryName,
+                 SubCategory = SubCategory.SubCategoryName,
+                 Brand = Brand.BrandName,
+                 CreatedDate = Product.CreatedDate,
+                 BrandId = Product.BrandID,
+                 CategoryId = Category.CategoryID,
+                 SubCategoryId = SubCategory.SubCategoryID,
+                 ProductPicture = Product.ProductPicture,
+             };
+
+            var colorProductDTO =
+                from ColorProducts in _context.ColorProducts
+                join Colors in _context.Colors on ColorProducts.ColorID equals Colors.ColorID
+                join Sizes in _context.Sizes on ColorProducts.SizeID equals Sizes.SizesID
+                where ColorProducts.ProductID == productId
+                select new ColorProductItemDTO
+                {
+                    ProductID = ColorProducts.ProductID,
+                    ColorID = ColorProducts.ColorID,
+                    Quantity = ColorProducts.Quantity,
+                    Name = Colors.Name,
+                    ColorProductID = ColorProducts.ColorProductID,
+                    SizeID = ColorProducts.SizeID,
+                    SizeName = Sizes.Size
+                };
+
+            var ratingProductDTO =
+               from Ratings in _context.Ratings
+               where Ratings.ProductID == productId
+               select new RatingsDTO
+               {
+                   ProductID = Ratings.ProductID,
+                   RatingID = Ratings.RatingID,
+                   RatingValue = Ratings.RatingValue,
+                   CreatedDate = Ratings.CreatedDate
+               };
+
+            var product = productDTO.FirstOrDefault();
+
+            if (product == null || colorProductDTO == null || ratingProductDTO == null)
+            {
+                return ExecutionResult<ItemVM>.Failure("Cannot find product in database. Product ID does not exist.");
+            }
+
+            var item = _utility.MapDetailItem(product);
+
+            var colorProducts = _mapper.Map<List<ColorProductVM>>(colorProductDTO);
+
+            if (ratingProductDTO != null)
+            {
+                var ratings = _mapper.Map<List<RatingVM>>(ratingProductDTO);
+                item.RatingsCount = ratings.Count;
+                item.Stars = _utility.ItemRating(ratings);
+            }
+
+            if (item.ProductPicture != null)
+            {
+                item.ProductImage = _utility.BytesToImage(item.ProductPicture);
+            }
+
+            item.ColorProduct = colorProducts;
+
+            foreach (var colors in colorProducts)
+            {
+                if (colors.SizeName != null && !item.Sizes.Any(p => p.Size == colors.SizeName))
+                {
+                    Sizes newSize = new Sizes();
+                    newSize.Size = colors.SizeName;
+
+                    if (colors.SizeID.HasValue) {
+                        newSize.SizesID = (int)colors.SizeID;
+                    }
+                    else
+                    {
+                        newSize.SizesID = 0;
+                    }
+
+                    item.Sizes.Add(newSize);
+                }
+            }
+
+            return ExecutionResult<ItemVM>.Success(item);
         }
     }
 }

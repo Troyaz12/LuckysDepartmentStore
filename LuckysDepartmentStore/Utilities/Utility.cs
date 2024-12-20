@@ -1,16 +1,7 @@
-﻿using LuckysDepartmentStore.Data;
-using LuckysDepartmentStore.Models;
-using LuckysDepartmentStore.Models.DTO.Products;
+﻿using LuckysDepartmentStore.Models.DTO.Products;
 using LuckysDepartmentStore.Models.ViewModels.Product;
-using LuckysDepartmentStore.Service;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.Json;
-using SixLabors.ImageSharp.PixelFormats;
-using System.IO.Compression;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
+using LuckysDepartmentStore.Models.DTO.Home;
+using LuckysDepartmentStore.Models.ViewModels.Home;
 
 namespace LuckysDepartmentStore.Utilities
 {
@@ -142,6 +133,43 @@ namespace LuckysDepartmentStore.Utilities
             string image = $"data:image/jpeg;base64,{pictureBase64}";
     
             return image;
+        }
+        public ItemVM MapDetailItem(ItemDTO item)
+        {
+
+            var itemVM = new ItemVM();
+
+            itemVM.ProductID = item.ProductID;
+            itemVM.ProductName = item.ProductName;
+            itemVM.Price = item.Price;
+            itemVM.Description = item.Description;
+            itemVM.Quantity = item.Quantity;
+            itemVM.CategorySelection = item.Category;
+            itemVM.SubCategorySelection = item.SubCategory;
+            itemVM.BrandSelection = item.Brand;
+            itemVM.CategoryID = item.CategoryId;
+            itemVM.SubCategoryID = item.SubCategoryId;
+            itemVM.BrandID = item.BrandId;
+            itemVM.ProductPicture = item.ProductPicture;
+
+            return itemVM;
+        }
+        public double ItemRating(List<RatingVM> ratings)
+        {
+            double ratingValTotal = 0;
+            double totalPossible = 5*ratings.Count;
+            double starPercent = 0;
+            double stars = 0;
+
+            foreach (var rating in ratings)
+            {
+                ratingValTotal += rating.RatingValue;
+            }
+
+            starPercent = ratingValTotal / totalPossible;
+            stars = 5 * starPercent;
+
+            return stars;
         }
     }
 }

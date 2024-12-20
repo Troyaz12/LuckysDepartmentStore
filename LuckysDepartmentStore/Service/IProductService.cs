@@ -1,4 +1,5 @@
 ﻿using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ namespace LuckysDepartmentStore.Service
         public ExecutionResult<int> Delete(int productId);
         public Task<ExecutionResult<List<ProductVM>>> GetProductsByDiscount(string? categorySelection, string? subCategorySelection, string? brandSelection,
           int? productID, string? keywords);
-
         public List<Sizes> GetSize();
+        public ExecutionResult<ItemVM> GetItem(int productId);
     }
 }

@@ -1,4 +1,6 @@
 using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.ViewModels.Home;
+using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -65,11 +67,32 @@ namespace LuckysDepartmentStore.Controllers
 			return View();
 		}
         [HttpGet]
-        public async Task<IActionResult> Item(string? productId)
+        public IActionResult Item(int? productId)
         {
-            
+            var product = _productService.GetItem((int) productId);
+            product.Data.Color = product.Data.ColorProduct.Select(product => product.Name)
+                .Distinct()
+                .ToList();
 
-            return View();
+
+
+            return View(product.Data);
+        }
+
+        [HttpPost] // get all sizes for each color
+        public IActionResult GetSizeButtons([FromBody] List<ColorSizesVM> color)
+        {
+            var sizes = color
+                .Where(product => product.Name == product.SelectedColor)
+                .Select(product => product.SizeName)
+                .Distinct()
+                .ToList();
+                
+
+
+
+
+            return PartialView("_ButtonPartial", sizes);            
         }
     }
 }

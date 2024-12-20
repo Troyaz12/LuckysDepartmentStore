@@ -106,22 +106,6 @@
                     }
                 </ul>
             </div>
-
-          @*   <div class="dropdown">
-                <label asp-for="Sizes">Sizes</label>
-                <input asp-for="SizesSelection" type="text" class="form-control dropdown-toggle" id="Sizes" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
-                <span asp-validation-for="SizesSelection" class="text-danger"></span>
-                <ul class="dropdown-menu" aria-labelledby="Sizes">
-                    @if(Model.Sizes != null)
-                    {
-                        @foreach(var size in Model.Sizes)
-                        {
-                            <li><a class="dropdown-item" data-stored-value="@size.Size">@size.Size</a></li>
-                        }
-                    }
-                </ul>
-            </div> *@
-
         </div>
     </div>
 
@@ -171,10 +155,6 @@
                                     }
                                 </ul>
                             </div>
-
-
-
-
 
                         </div>
                         <div class="modal-footer">

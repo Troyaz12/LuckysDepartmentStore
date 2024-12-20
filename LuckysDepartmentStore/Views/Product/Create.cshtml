@@ -57,6 +57,7 @@
                     <input type="hidden" id="CategoryID" name="CategoryID">
                     <input type="hidden" id="SubCategoryID" name="SubCategoryID">
                     <input type="hidden" id="BrandID" name="BrandID">
+                    <input type="hidden" id="SizeID" name="SizeID">
 
                     
                     <div class="dropdown">
@@ -135,6 +136,22 @@
                             
                                     <label for="QuantityInput">Quantity</label>
                                     <input name="QuantityInput" type="number" id="QuantityInput" class="form-control">
+
+                                <div class="dropdown">
+                                    <label asp-for="Sizes">Sizes</label>
+                                    <input asp-for="SizesSelection" type="text" class="form-control dropdown-toggle" id="Sizes" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
+                                    <ul class="dropdown-menu" aria-labelledby="Sizes">
+                                        @if (Model.Sizes != null)
+                                        {
+                                            @foreach (var size in Model.Sizes)
+                                            {
+                                                <li><a class="dropdown-item" data-stored-value="@size.SizesID">@size.Size</a></li>
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+
+
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -193,6 +210,7 @@
         handleDropdownFilter('#Category', '#CategoryID', '.dropdown-menu[aria-labelledby="Category"]');
         handleDropdownFilter('#SubCategory', '#SubCategoryID', '.dropdown-menu[aria-labelledby="SubCategory"]');
         handleDropdownFilter('#Brand', '#BrandID','.dropdown-menu[aria-labelledby="Brand"]');
+        handleDropdownFilter('#Sizes', '#SizeID', '.dropdown-menu[aria-labelledby="Sizes"]');
 
         $('#save').on('click', function (e) {
             e.preventDefault();
@@ -200,11 +218,16 @@
             var name = $('#Color').val(); // Assuming data-selected is set when color is selected
             var colorID = $('#ColorID').val()||null; // Assuming data-selected is set when color is selected
             var quantity = $('#QuantityInput').val();
+            var sizeID = $('#SizeID').val();
+            var sizeName = $('#Sizes').val();
+
             console.log("onSave: " + name + " " + colorID);
             var item = {
                 ColorID: colorID,
                 Quantity: quantity,
-                Name: name
+                Name: name,
+                SizeID: sizeID,
+                SizeName: sizeName
             };            
             
             $.ajax({
@@ -220,7 +243,8 @@
                     $("#Color").val('');
                     $("#ColorID").val('');
                     $("#QuantityInput").val('');
-
+                    $("#SizeID").val('');
+                    $('#Sizes').val('');
                     $('#staticBackdrop').modal('hide');
                 },
                 error: function (jqXHR, textStatus, errorThrown)
