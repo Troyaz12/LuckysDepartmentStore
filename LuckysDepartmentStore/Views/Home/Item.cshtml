@@ -91,44 +91,53 @@
    
     <script>
         $(document).ready(function () {
-            $('.options-radio').change(function () {
+            $('.options-radio').change(function (event) {
+                updateSizes(event);
+            });
 
-                var selectedRadioId = $(this).attr('id');
-                var colorSelected = $('label[for="' + selectedRadioId + '"]').text();                
 
-                console.log(colorSelected);
+            updateSizes();
+
+            function updateSizes(event){
+
+                var selectedRadio = event ? $(event.target) : $('.options-radio:checked');
+                var selectedRadioId = selectedRadio.attr('id');
+
+                var colorSelected = $('label[for="' + selectedRadioId + '"]').text();
+
+                console.log(colorSelected + " this " + selectedRadioId);
                 var objectArray = [];
 
                 @foreach (var colorProduct in Model.ColorProduct)
                 {
                     <text>
                         objectArray.push({
-                                Name: "@colorProduct.Name",
-                                SizeID: @colorProduct.SizeID,
-                                SizeName: "@colorProduct.SizeName",
-                                Quantity: @colorProduct.Quantity,
-                                ColorProductID: @colorProduct.ColorProductID,
-                                ProductID: @colorProduct.ProductID,
-                                ColorID: @colorProduct.ColorID,
-                                SelectedColor: colorSelected
-                        });
+                        Name: "@colorProduct.Name",
+                        SizeID: @colorProduct.SizeID,
+                        SizeName: "@colorProduct.SizeName",
+                        Quantity: @colorProduct.Quantity,
+                        ColorProductID: @colorProduct.ColorProductID,
+                        ProductID: @colorProduct.ProductID,
+                        ColorID: @colorProduct.ColorID,
+                        SelectedColor: colorSelected
+                    });
                     </text>
                 }
 
-                    $.ajax({
-                        url: '@Url.Action("GetSizeButtons", "Home")',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(objectArray),
-                        success: function (response) {
-                            $('#sizesContainer').html(response);
-                        },
-                        error: function (xhr, status, error) {
-                            var errorMessage = xhr.status + ': ' + xhr.statusText;
-                            alert('Error sending array of objects.' + errorMessage);
-                        }
-                    });
-            });
+                $.ajax({
+                    url: '@Url.Action("GetSizeButtons", "Home")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(objectArray),
+                    success: function (response) {
+                        $('#sizesContainer').html(response);
+                    },
+                    error: function (xhr, status, error) {
+                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        alert('Error sending array of objects.' + errorMessage);
+                    }
+                });
+            }
 
         });
     </script>
