@@ -3,18 +3,16 @@ using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LuckysDepartmentStore.Service
 {
-    public class ShoppingCartService :IShoppingCartService
+    public class ShoppingCartService : IShoppingCartService
     {
         public LuckysContext _context;
         public IMapper _mapper;      
-        public const string CartSessionKey = "CartId";
+        public const string CartSessionKey = "CartId";        
 
         public ShoppingCartService(LuckysContext context, IMapper mapper)
         {
@@ -34,33 +32,43 @@ namespace LuckysDepartmentStore.Service
             return GetCart(controller.HttpContext);
 
         }
-        public void AddToCart(Product product)
+        public async Task<Utilities.ExecutionResult<Carts>> AddToCartAsync(Product product, string ShoppingCartId)
         {
-            // Get the matching cart and album instances
-            var cartItem = _context.Cart.SingleOrDefault(
-                c => c. == ShoppingCartId
-                && c.AlbumId == album.AlbumId);
+            Carts cartItem = null;
+            try
+            {
+                // Get the matching cart and album instances
+                cartItem = await _context.Carts.SingleOrDefaultAsync(
+                    c => c.CartID == ShoppingCartId
+                    && c.ProductID == product.ProductID);
 
-            if (cartItem == null)
-            {
-                // Create a new cart item if no cart item exists
-                cartItem = new CustomerOrderItem
+                if (cartItem == null)
                 {
-                    AlbumId = album.AlbumId,
-                    CartId = ShoppingCartId,
-                    Count = 1,
-                    DateCreated = DateTime.Now
-                };
-                storeDB.Carts.Add(cartItem);
+                    // Create a new cart item if no cart item exists
+                    cartItem = new Carts
+                    {
+                        ProductID = product.ProductID,
+                        CartID = ShoppingCartId,
+                        Quantity = product.Quantity,
+                        CreatedDate = DateTime.Now
+                    };
+                    _context.Carts.Add(cartItem);
+                }
+                else
+                {
+                    // If the item does exist in the cart, 
+                    // then add one to the quantity
+                    cartItem.Quantity++;
+                }
+                // Save changes
+                await _context.SaveChangesAsync();
             }
-            else
+            catch(Exception ex)
             {
-                // If the item does exist in the cart, 
-                // then add one to the quantity
-                cartItem.Count++;
+                return Utilities.ExecutionResult<Carts>.Failure("Unable to add to cart.");
             }
-            // Save changes
-            storeDB.SaveChanges();
+
+            return Utilities.ExecutionResult<Carts>.Success(cartItem);
         }
 
     }

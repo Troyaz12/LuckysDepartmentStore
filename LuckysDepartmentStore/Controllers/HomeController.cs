@@ -1,6 +1,5 @@
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Home;
-using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;

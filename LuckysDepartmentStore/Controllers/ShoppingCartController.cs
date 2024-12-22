@@ -1,26 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Service;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LuckysDepartmentStore.Controllers
 {
-    public class ShoppingCartController : Controller
+    public class ShoppingCartController(IShoppingCartService _shoppingCartService) : Controller
     {
         public IActionResult Index()
         {
             return View();
         }
         // GET: /Store/AddToCart/5
-        public ActionResult AddToCart(int id)
-        {
-            // Retrieve the album from the database
-            var addedAlbum = storeDB.Albums
-                .Single(album => album.AlbumId == id);
+        public ActionResult AddToCart(Product product)
+        {       
+            var cart = ShoppingCartService.GetCart(this.HttpContext);
+            _shoppingCartService.AddToCartAsync(product, cart.ShoppingCartId);
 
-            // Add it to the shopping cart
-            var cart = ShoppingCart.GetCart(this.HttpContext);
-
-            cart.AddToCart(addedAlbum);
-
-            // Go back to the main store page for more shopping
             return RedirectToAction("Index");
         }
 

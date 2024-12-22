@@ -4,6 +4,7 @@ using LuckysDepartmentStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LuckysDepartmentStore.Migrations
 {
     [DbContext(typeof(LuckysContext))]
-    partial class LuckysContextModelSnapshot : ModelSnapshot
+    [Migration("20241222033934_RenameCart")]
+    partial class RenameCart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,9 +53,8 @@ namespace LuckysDepartmentStore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("CartID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CartID")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -100,21 +102,21 @@ namespace LuckysDepartmentStore.Migrations
                             CategoryID = 1,
                             CategoryDescription = "Jeans",
                             CategoryName = "Jeans",
-                            CreatedDate = new DateTime(2024, 12, 21, 22, 0, 9, 302, DateTimeKind.Local).AddTicks(3606)
+                            CreatedDate = new DateTime(2024, 12, 21, 21, 39, 33, 360, DateTimeKind.Local).AddTicks(9176)
                         },
                         new
                         {
                             CategoryID = 2,
                             CategoryDescription = "Shirts",
                             CategoryName = "Shirts",
-                            CreatedDate = new DateTime(2024, 12, 21, 22, 0, 9, 302, DateTimeKind.Local).AddTicks(3655)
+                            CreatedDate = new DateTime(2024, 12, 21, 21, 39, 33, 360, DateTimeKind.Local).AddTicks(9227)
                         },
                         new
                         {
                             CategoryID = 3,
                             CategoryDescription = "Shoes",
                             CategoryName = "Shoes",
-                            CreatedDate = new DateTime(2024, 12, 21, 22, 0, 9, 302, DateTimeKind.Local).AddTicks(3656)
+                            CreatedDate = new DateTime(2024, 12, 21, 21, 39, 33, 360, DateTimeKind.Local).AddTicks(9229)
                         });
                 });
 
@@ -141,19 +143,19 @@ namespace LuckysDepartmentStore.Migrations
                         new
                         {
                             ColorID = 1,
-                            CreatedDate = new DateTime(2024, 12, 21, 22, 0, 9, 302, DateTimeKind.Local).AddTicks(4744),
+                            CreatedDate = new DateTime(2024, 12, 21, 21, 39, 33, 361, DateTimeKind.Local).AddTicks(212),
                             Name = "Red"
                         },
                         new
                         {
                             ColorID = 2,
-                            CreatedDate = new DateTime(2024, 12, 21, 22, 0, 9, 302, DateTimeKind.Local).AddTicks(4759),
+                            CreatedDate = new DateTime(2024, 12, 21, 21, 39, 33, 361, DateTimeKind.Local).AddTicks(222),
                             Name = "Green"
                         },
                         new
                         {
                             ColorID = 3,
-                            CreatedDate = new DateTime(2024, 12, 21, 22, 0, 9, 302, DateTimeKind.Local).AddTicks(4761),
+                            CreatedDate = new DateTime(2024, 12, 21, 21, 39, 33, 361, DateTimeKind.Local).AddTicks(224),
                             Name = "Blue"
                         });
                 });
@@ -613,42 +615,42 @@ namespace LuckysDepartmentStore.Migrations
                         new
                         {
                             SubCategoryID = 1,
-                            CreatedDate = new DateTime(2024, 12, 21, 22, 0, 9, 302, DateTimeKind.Local).AddTicks(7878),
+                            CreatedDate = new DateTime(2024, 12, 21, 21, 39, 33, 361, DateTimeKind.Local).AddTicks(3177),
                             SubCategoryDescription = "Mens products.",
                             SubCategoryName = "Mens"
                         },
                         new
                         {
                             SubCategoryID = 2,
-                            CreatedDate = new DateTime(2024, 12, 21, 22, 0, 9, 302, DateTimeKind.Local).AddTicks(7896),
+                            CreatedDate = new DateTime(2024, 12, 21, 21, 39, 33, 361, DateTimeKind.Local).AddTicks(3192),
                             SubCategoryDescription = "Womens products.",
                             SubCategoryName = "Womens"
                         },
                         new
                         {
                             SubCategoryID = 3,
-                            CreatedDate = new DateTime(2024, 12, 21, 22, 0, 9, 302, DateTimeKind.Local).AddTicks(7898),
+                            CreatedDate = new DateTime(2024, 12, 21, 21, 39, 33, 361, DateTimeKind.Local).AddTicks(3194),
                             SubCategoryDescription = "Boys youths",
                             SubCategoryName = "Boys"
                         },
                         new
                         {
                             SubCategoryID = 4,
-                            CreatedDate = new DateTime(2024, 12, 21, 22, 0, 9, 302, DateTimeKind.Local).AddTicks(7899),
+                            CreatedDate = new DateTime(2024, 12, 21, 21, 39, 33, 361, DateTimeKind.Local).AddTicks(3195),
                             SubCategoryDescription = "Girls youths",
                             SubCategoryName = "Girls"
                         },
                         new
                         {
                             SubCategoryID = 5,
-                            CreatedDate = new DateTime(2024, 12, 21, 22, 0, 9, 302, DateTimeKind.Local).AddTicks(7901),
+                            CreatedDate = new DateTime(2024, 12, 21, 21, 39, 33, 361, DateTimeKind.Local).AddTicks(3197),
                             SubCategoryDescription = "Boys infant products",
                             SubCategoryName = "Boys Infant"
                         },
                         new
                         {
                             SubCategoryID = 6,
-                            CreatedDate = new DateTime(2024, 12, 21, 22, 0, 9, 302, DateTimeKind.Local).AddTicks(7902),
+                            CreatedDate = new DateTime(2024, 12, 21, 21, 39, 33, 361, DateTimeKind.Local).AddTicks(3198),
                             SubCategoryDescription = "Girls infant products",
                             SubCategoryName = "Girls Infant"
                         });
@@ -789,15 +791,15 @@ namespace LuckysDepartmentStore.Migrations
                         {
                             Id = "d601656b-5848-4236-96d5-d722d471089d",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5db27669-55d0-4d5b-8a1e-e4f52b8fe7a5",
+                            ConcurrencyStamp = "636bcdb4-507d-4e52-9437-702c414e9d36",
                             Email = "admin@localhost.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOy7g1odfLgPqqLh/88BCyrF08rhhyz5GPQJKxC0tBUYU2/q3HYSHp7376Sr7SekKw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEKSG5vC0X4epfY/1xUrC7pg1WkQRt4PaXL6jI8avBeRJDN+Gjf34VXbJvZfFHXKTA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "94ca6c1c-4838-4525-bb1a-09da67f16f0e",
+                            SecurityStamp = "30592f76-d112-474d-be1f-7656527af1c9",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         });

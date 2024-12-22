@@ -3,7 +3,7 @@
     public partial class ShoppingCart
     {
         public const string CartSessionKey = "CartId";
-        public string ShoppingCartId;
+        public string ShoppingCartId { get; set; }
         public ShoppingCart()
         {
         

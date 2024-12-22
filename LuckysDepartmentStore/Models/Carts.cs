@@ -1,9 +1,9 @@
 ﻿namespace LuckysDepartmentStore.Models
 {
-    public class Cart
+    public class Carts
     {
         public int ID { get; set; }
-        public int CartID { get; set; }
+        public string CartID { get; set; }
 
         public int ProductID { get; set; }
         public Decimal Price { get; set; }
