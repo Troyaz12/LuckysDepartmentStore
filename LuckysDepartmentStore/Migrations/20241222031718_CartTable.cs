@@ -11,101 +11,121 @@ namespace LuckysDepartmentStore.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Cart",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CartID = table.Column<int>(type: "int", nullable: false),
+                    ProductID = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cart", x => x.ID);
+                });
+
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: "d601656b-5848-4236-96d5-d722d471089d",
                 columns: new[] { "ConcurrencyStamp", "PasswordHash", "SecurityStamp" },
-                values: new object[] { "816c81c0-17fb-430a-98c1-daa7c3d8f66d", "AQAAAAIAAYagAAAAEHw+NKhfjfz2AjbTq5oTp/MyJ2dc8FXz4Ink3kATdMX6PIT82p4sL5WyUVQBhEt2zQ==", "d877c975-99f5-4c58-9147-7b844675b4a7" });
+                values: new object[] { "f26a0d5d-5b45-4e69-b5a7-8d14a70da750", "AQAAAAIAAYagAAAAELi64HqGEjETFD/2kYM7iwzHhis2/F2yilIKTHBgS63GDNWEHVJJZwKGVNtnX4CFwQ==", "fd48a569-2d85-4393-846b-07eb22770283" });
 
             migrationBuilder.UpdateData(
                 table: "Categories",
                 keyColumn: "CategoryID",
                 keyValue: 1,
                 column: "CreatedDate",
-                value: new DateTime(2024, 12, 21, 21, 11, 5, 200, DateTimeKind.Local).AddTicks(8800));
+                value: new DateTime(2024, 12, 21, 21, 17, 17, 272, DateTimeKind.Local).AddTicks(9693));
 
             migrationBuilder.UpdateData(
                 table: "Categories",
                 keyColumn: "CategoryID",
                 keyValue: 2,
                 column: "CreatedDate",
-                value: new DateTime(2024, 12, 21, 21, 11, 5, 200, DateTimeKind.Local).AddTicks(8859));
+                value: new DateTime(2024, 12, 21, 21, 17, 17, 272, DateTimeKind.Local).AddTicks(9754));
 
             migrationBuilder.UpdateData(
                 table: "Categories",
                 keyColumn: "CategoryID",
                 keyValue: 3,
                 column: "CreatedDate",
-                value: new DateTime(2024, 12, 21, 21, 11, 5, 200, DateTimeKind.Local).AddTicks(8863));
+                value: new DateTime(2024, 12, 21, 21, 17, 17, 272, DateTimeKind.Local).AddTicks(9756));
 
             migrationBuilder.UpdateData(
                 table: "Colors",
                 keyColumn: "ColorID",
                 keyValue: 1,
                 column: "CreatedDate",
-                value: new DateTime(2024, 12, 21, 21, 11, 5, 201, DateTimeKind.Local).AddTicks(623));
+                value: new DateTime(2024, 12, 21, 21, 17, 17, 273, DateTimeKind.Local).AddTicks(1013));
 
             migrationBuilder.UpdateData(
                 table: "Colors",
                 keyColumn: "ColorID",
                 keyValue: 2,
                 column: "CreatedDate",
-                value: new DateTime(2024, 12, 21, 21, 11, 5, 201, DateTimeKind.Local).AddTicks(654));
+                value: new DateTime(2024, 12, 21, 21, 17, 17, 273, DateTimeKind.Local).AddTicks(1025));
 
             migrationBuilder.UpdateData(
                 table: "Colors",
                 keyColumn: "ColorID",
                 keyValue: 3,
                 column: "CreatedDate",
-                value: new DateTime(2024, 12, 21, 21, 11, 5, 201, DateTimeKind.Local).AddTicks(656));
+                value: new DateTime(2024, 12, 21, 21, 17, 17, 273, DateTimeKind.Local).AddTicks(1027));
 
             migrationBuilder.UpdateData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryID",
                 keyValue: 1,
                 column: "CreatedDate",
-                value: new DateTime(2024, 12, 21, 21, 11, 5, 201, DateTimeKind.Local).AddTicks(4049));
+                value: new DateTime(2024, 12, 21, 21, 17, 17, 273, DateTimeKind.Local).AddTicks(4165));
 
             migrationBuilder.UpdateData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryID",
                 keyValue: 2,
                 column: "CreatedDate",
-                value: new DateTime(2024, 12, 21, 21, 11, 5, 201, DateTimeKind.Local).AddTicks(4064));
+                value: new DateTime(2024, 12, 21, 21, 17, 17, 273, DateTimeKind.Local).AddTicks(4181));
 
             migrationBuilder.UpdateData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryID",
                 keyValue: 3,
                 column: "CreatedDate",
-                value: new DateTime(2024, 12, 21, 21, 11, 5, 201, DateTimeKind.Local).AddTicks(4066));
+                value: new DateTime(2024, 12, 21, 21, 17, 17, 273, DateTimeKind.Local).AddTicks(4183));
 
             migrationBuilder.UpdateData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryID",
                 keyValue: 4,
                 column: "CreatedDate",
-                value: new DateTime(2024, 12, 21, 21, 11, 5, 201, DateTimeKind.Local).AddTicks(4067));
+                value: new DateTime(2024, 12, 21, 21, 17, 17, 273, DateTimeKind.Local).AddTicks(4184));
 
             migrationBuilder.UpdateData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryID",
                 keyValue: 5,
                 column: "CreatedDate",
-                value: new DateTime(2024, 12, 21, 21, 11, 5, 201, DateTimeKind.Local).AddTicks(4069));
+                value: new DateTime(2024, 12, 21, 21, 17, 17, 273, DateTimeKind.Local).AddTicks(4186));
 
             migrationBuilder.UpdateData(
                 table: "SubCategories",
                 keyColumn: "SubCategoryID",
                 keyValue: 6,
                 column: "CreatedDate",
-                value: new DateTime(2024, 12, 21, 21, 11, 5, 201, DateTimeKind.Local).AddTicks(4070));
+                value: new DateTime(2024, 12, 21, 21, 17, 17, 273, DateTimeKind.Local).AddTicks(4187));
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Cart");
+
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",

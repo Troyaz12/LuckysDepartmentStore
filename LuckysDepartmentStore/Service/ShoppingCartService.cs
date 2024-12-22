@@ -37,30 +37,30 @@ namespace LuckysDepartmentStore.Service
         public void AddToCart(Product product)
         {
             // Get the matching cart and album instances
-            //var cartItem = _context.CustomerOrderItems.SingleOrDefault(
-            //    c => c. == ShoppingCartId
-            //    && c.AlbumId == album.AlbumId);
+            var cartItem = _context.Cart.SingleOrDefault(
+                c => c. == ShoppingCartId
+                && c.AlbumId == album.AlbumId);
 
-            //if (cartItem == null)
-            //{
-            //    // Create a new cart item if no cart item exists
-            //    cartItem = new CustomerOrderItem
-            //    {
-            //        AlbumId = album.AlbumId,
-            //        CartId = ShoppingCartId,
-            //        Count = 1,
-            //        DateCreated = DateTime.Now
-            //    };
-            //    storeDB.Carts.Add(cartItem);
-            //}
-            //else
-            //{
-            //    // If the item does exist in the cart, 
-            //    // then add one to the quantity
-            //    cartItem.Count++;
-            //}
-            //// Save changes
-            //storeDB.SaveChanges();
+            if (cartItem == null)
+            {
+                // Create a new cart item if no cart item exists
+                cartItem = new CustomerOrderItem
+                {
+                    AlbumId = album.AlbumId,
+                    CartId = ShoppingCartId,
+                    Count = 1,
+                    DateCreated = DateTime.Now
+                };
+                storeDB.Carts.Add(cartItem);
+            }
+            else
+            {
+                // If the item does exist in the cart, 
+                // then add one to the quantity
+                cartItem.Count++;
+            }
+            // Save changes
+            storeDB.SaveChanges();
         }
 
     }

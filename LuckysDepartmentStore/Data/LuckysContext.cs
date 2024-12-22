@@ -45,6 +45,7 @@ namespace LuckysDepartmentStore.Data
         public DbSet<SubCategory> SubCategories { get; set; }
         public DbSet<Brand> Brand { get; set; }
         public DbSet<Sizes> Sizes { get; set; }
+        public DbSet<Cart> Cart { get; set; }
 
     }
 }

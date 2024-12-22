@@ -9,20 +9,20 @@ namespace LuckysDepartmentStore.Controllers
             return View();
         }
         // GET: /Store/AddToCart/5
-        //public ActionResult AddToCart(int id)
-        //{
-        //    // Retrieve the album from the database
-        //    var addedAlbum = storeDB.Albums
-        //        .Single(album => album.AlbumId == id);
+        public ActionResult AddToCart(int id)
+        {
+            // Retrieve the album from the database
+            var addedAlbum = storeDB.Albums
+                .Single(album => album.AlbumId == id);
 
-        //    // Add it to the shopping cart
-        //    var cart = ShoppingCart.GetCart(this.HttpContext);
+            // Add it to the shopping cart
+            var cart = ShoppingCart.GetCart(this.HttpContext);
 
-        //    cart.AddToCart(addedAlbum);
+            cart.AddToCart(addedAlbum);
 
-        //    // Go back to the main store page for more shopping
-        //    return RedirectToAction("Index");
-        //}
+            // Go back to the main store page for more shopping
+            return RedirectToAction("Index");
+        }
 
 
 
