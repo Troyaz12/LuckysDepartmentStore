@@ -2,8 +2,7 @@
 {
     public class Shipping
     {
-        public int ShippingID { get; set; }
-        public int CustomerOrderItemId { get; set; }
+        public int ShippingID { get; set; }       
         public DateTime ShipDate { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

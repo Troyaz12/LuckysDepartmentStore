@@ -39,53 +39,39 @@
                         @string.Format("{0:C}",@Model.Price)
                     </span>
                 </div>
-                <div class="p-2 bg-success text-white" id="sizes">
-              @*   @if (Model.Sizes != null)
-                {
-                    
-                        @for (var x = 0; x < @Model.Sizes.Count; x++)
-                        {
 
-                                @if(Model.ColorProduct[x].Name == "f")
-                                {
-                                    <input type="radio" class="btn-check" name="options" id="option@(x)" autocomplete="off">
-                                    <label class="btn btn-secondary" for="option@(x)">@Model.Sizes[x].Size</label>
-                                }
-
-                        }
-                    
-                } *@
+                <div class="p-2 bg-success text-white" id="sizesContainer">
+            
                     
                 </div>
-                </div>
+
                 <div class="p-2 bg-success text-white">
                     @if (Model.ColorProduct != null && @Model.Color != null)
                     {
                         @for (var x = 0; x < @Model.Color.Count; x++)
-                        {                            
+                        {
                             <input type="radio" class="btn-check options-radio" name="options" id="option@(x)" autocomplete="off" @(x == 0 ? "checked" : "")>
                             <label class="btn btn-secondary" for="option@(x)">@Model.Color[x]</label>
                         }
                     }
                 </div>
                 <div class="p-2 bg-success text-white">
-                    QUANTITY
+
+                    
+                    <label asp-for="Quantity" class="control-label" />
+                    <input asp-for="Quantity" type="number" class="form-control" id="Quantity" />
+
                 </div>
                 <div class="p-2 bg-success text-white">
-                <button type="button" class="btn">Add To Cart</button>
+                    <button type="button" class="btn" style="background-color: gold">Add To Cart</button>
                 </div>
                 <div class="p-2 bg-success text-white">
                     @Model.Description
+
+                </div>
+            </div>
                 
-                </div>
-                <div id="sizesContainer">
-
-                   
-
-
-
-
-                </div>
+               
         </div>
     </div>
    
@@ -94,7 +80,6 @@
             $('.options-radio').change(function (event) {
                 updateSizes(event);
             });
-
 
             updateSizes();
 

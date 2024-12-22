@@ -94,5 +94,11 @@ namespace LuckysDepartmentStore.Controllers
 
             return PartialView("_ButtonPartial", sizes);            
         }
+
+
+
+
+
+
     }
 }
