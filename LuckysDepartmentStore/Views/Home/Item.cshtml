@@ -15,7 +15,10 @@
 
     <div class="container">
         <div class="d-flex flex-row">
-          
+
+            <input type="hidden" id="ProductID" name="ProductID" value="@Model.ProductID">
+            <input type="hidden" id="Price" name="Price" value="@Model.Price">
+
             <img src="@Model.ProductImage" id="ProductImage" name="ProductImage" class="image-fluid image-container item" alt="Product Image">
 
             <div class="d-flex flex-column">
@@ -56,18 +59,17 @@
                     }
                 </div>
                 <div class="p-2 bg-success text-white">
-
                     
                     <label asp-for="Quantity" class="control-label" />
                     <input asp-for="Quantity" type="number" class="form-control" id="Quantity" />
 
                 </div>
                 <div class="p-2 bg-success text-white">
-                    <button type="button" class="btn" style="background-color: gold">Add To Cart</button>
+                    <button type="button" class="btn" style="background-color: gold" >Add To Cart</button>
+                    <a type="button" class="btn btn-info mt-3" asp-controller="ShoppingCart" asp-action="AddToCart" style="background-color: gold">Add To Cart</a>
                 </div>
                 <div class="p-2 bg-success text-white">
                     @Model.Description
-
                 </div>
             </div>
                 

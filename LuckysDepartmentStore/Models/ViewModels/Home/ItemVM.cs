@@ -17,10 +17,11 @@ namespace LuckysDepartmentStore.Models.ViewModels.Home
 
         [Display(Name = "Quantity")]
         [Required(ErrorMessage = "Quantity is required")]
+        [RegularExpression(@"^(?!0$).*$", ErrorMessage ="ProductName cannot be zero.")]
         public int Quantity { get; set; }
 
         [Display(Name = "ProductName")]
-        [Required(ErrorMessage = "Name is required")]
+        [Required(ErrorMessage = "Name is required")]        
         public string ProductName { get; set; }
 
         [Display(Name = "Category")]

@@ -12,7 +12,7 @@
         // We're using HttpContextBase to allow access to cookies.
         public string GetCartId(HttpContext context)
         {
-            if (context.Session.GetString == null)
+            if (context.Session.GetString(CartSessionKey) == null)
             {
                 if (!string.IsNullOrWhiteSpace(context.User.Identity.Name))
                 {
