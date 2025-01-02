@@ -1,6 +1,6 @@
-﻿using LuckysDepartmentStore.Models;
-using LuckysDepartmentStore.Models.ViewModels.Home;
+﻿using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Service;
+using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LuckysDepartmentStore.Controllers
@@ -21,8 +21,28 @@ namespace LuckysDepartmentStore.Controllers
 
                 return RedirectToAction("Index");
             }
-            return RedirectToAction("Home", "Item", new { productId = item.ProductID });
+            return RedirectToAction("Item", "Home", new { productId = item.ProductID });
         }
+        public async Task<ActionResult> RemoveFromCartAsync(ItemVM item)
+        {
+            if (ModelState.IsValid)
+            {
+                var cart = ShoppingCartService.GetCart(this.HttpContext);
+                await _shoppingCartService.AddToCartAsync(item, cart.ShoppingCartId);
 
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("Item", "Home", new { productId = item.ProductID });
+        }
+        
+        //[ChildActionOnly]
+        public ActionResult CartSummary()
+        {
+            var cart = ShoppingCartService.GetCart(this.HttpContext);
+
+            ViewData["CartCount"] = _shoppingCartService.GetCount(cart.ShoppingCartId);
+
+            return PartialView("CartSummary");
+        }
     }
 }

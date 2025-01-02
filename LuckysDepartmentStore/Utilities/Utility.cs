@@ -144,12 +144,12 @@ namespace LuckysDepartmentStore.Utilities
             itemVM.Price = item.Price;
             itemVM.Description = item.Description;
             itemVM.Quantity = item.Quantity;
-            itemVM.CategorySelection = item.Category;
-            itemVM.SubCategorySelection = item.SubCategory;
+            //itemVM.CategorySelection = item.Category;
+            //itemVM.SubCategorySelection = item.SubCategory;
             itemVM.BrandSelection = item.Brand;
-            itemVM.CategoryID = item.CategoryId;
-            itemVM.SubCategoryID = item.SubCategoryId;
-            itemVM.BrandID = item.BrandId;
+            //itemVM.CategoryID = item.CategoryId;
+            //itemVM.SubCategoryID = item.SubCategoryId;
+            //itemVM.BrandID = item.BrandId;
             itemVM.ProductPicture = item.ProductPicture;
 
             return itemVM;

@@ -15,7 +15,10 @@ builder.Services.AddDbContext<LuckysContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? throw new InvalidOperationException("Connection string 'LuckysContext' not found.")));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<LuckysContext>();
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<LuckysContext>()
+    .AddDefaultTokenProviders();
+
 builder.Services.AddRazorPages();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -26,6 +29,8 @@ builder.Services.AddScoped<ISubCategoryService, SubCategoryService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IDiscountService, DiscountService>();
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
+builder.Services.AddScoped<ICheckoutService, CheckoutService>();
+
 builder.Services.AddSingleton<Utility>();
 
 builder.Services.AddDistributedMemoryCache();

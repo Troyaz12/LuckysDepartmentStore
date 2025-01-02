@@ -13,70 +13,78 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
-    <div class="container">
-        <div class="d-flex flex-row">
 
-            <input type="hidden" id="ProductID" name="ProductID" value="@Model.ProductID">
-            <input type="hidden" id="Price" name="Price" value="@Model.Price">
+        <div class="container">
+            <div class="d-flex flex-row">              
 
-            <img src="@Model.ProductImage" id="ProductImage" name="ProductImage" class="image-fluid image-container item" alt="Product Image">
+                <img src="@Model.ProductImage" id="ProductImage" name="ProductImage" class="image-fluid image-container item" alt="Product Image">
 
-            <div class="d-flex flex-column">
-                <div class="p-2 bg-success text-white">
-                    <h1>@Model.BrandSelection</h1>
-                    <h2>@Model.ProductName</h2>
-                </div>
-                <div class="p-2 bg-primary text-white">
-                
-                    <p>
-                        <i class="fa-solid fa-star"></i> 
-                        <span>
-                            @string.Format("{0:F1}", @Model.Stars)                         
-                        </span>
+                <div class="d-flex flex-column">
+                    <div class="p-2 bg-success text-white">
+                        <h1>@Model.BrandSelection</h1>
+                        <h2>@Model.ProductName</h2>
+                    </div>
+                    <div class="p-2 bg-primary text-white">                
+                        <p>
+                            <i class="fa-solid fa-star"></i> 
+                            <span>
+                                @string.Format("{0:F1}", @Model.Stars)                         
+                            </span>
                     
-                        (@Model.RatingsCount)
-                    </p>
-                </div>
-                <div class="p-2 bg-secondary text-white">
-                    <span>
-                        @string.Format("{0:C}",@Model.Price)
-                    </span>
-                </div>
+                            (@Model.RatingsCount)
+                        </p>
+                    </div>
+                    <div class="p-2 bg-secondary text-white">
+                        <span>
+                            @string.Format("{0:C}",@Model.Price)
+                        </span>
+                    </div>
 
-                <div class="p-2 bg-success text-white" id="sizesContainer">
+                    <div class="p-2 bg-success text-white" id="sizesContainer">
             
                     
-                </div>
+                    </div>
 
-                <div class="p-2 bg-success text-white">
-                    @if (Model.ColorProduct != null && @Model.Color != null)
-                    {
-                        @for (var x = 0; x < @Model.Color.Count; x++)
+                    <div class="p-2 bg-success text-white">
+                        @if (Model.ColorProduct != null && @Model.Color != null)
                         {
-                            <input type="radio" class="btn-check options-radio" name="options" id="option@(x)" autocomplete="off" @(x == 0 ? "checked" : "")>
-                            <label class="btn btn-secondary" for="option@(x)">@Model.Color[x]</label>
+                            @for (var x = 0; x < @Model.Color.Count; x++)
+                            {
+                                <input type="radio" class="btn-check options-radio" name="options" id="option@(x)" autocomplete="off" @(x == 0 ? "checked" : "")>
+                                <label class="btn btn-secondary" for="option@(x)">@Model.Color[x]</label>
+                            }
                         }
-                    }
-                </div>
-                <div class="p-2 bg-success text-white">
+                    </div>
+
+                    <form asp-controller="ShoppingCart" asp-action="AddToCart" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <input type="hidden" id="ProductID" name="ProductID" value="@Model.ProductID">
+                        <input type="hidden" id="Price" name="Price" value="@Model.Price">
+                        <input type="hidden" id="ColorSelection" name="ColorSelection" value="@Model.ColorSelection">
+                        <input type="hidden" id="SizeSelection" name="SizeSelection" value="@Model.SizeSelection">
+
+                        <div class="p-2 bg-success text-white">
                     
-                    <label asp-for="Quantity" class="control-label" />
-                    <input asp-for="Quantity" type="number" class="form-control" id="Quantity" />
+                            <label asp-for="Quantity" class="control-label" />
+                            <input asp-for="Quantity" type="number" class="form-control" id="Quantity" />
+
+                        </div>
+                        <div class="p-2 bg-success text-white">
+                            <input type="submit" value="Add To Cart" class="btn btn-info mt-3" style="background-color: gold"/>
+                        </div>
+                        <div class="p-2 bg-success text-white">
+                            @Model.Description
+                        </div>
+                    </form>
 
                 </div>
-                <div class="p-2 bg-success text-white">
-                    <button type="button" class="btn" style="background-color: gold" >Add To Cart</button>
-                    <a type="button" class="btn btn-info mt-3" asp-controller="ShoppingCart" asp-action="AddToCart" style="background-color: gold">Add To Cart</a>
-                </div>
-                <div class="p-2 bg-success text-white">
-                    @Model.Description
-                </div>
+
+
             </div>
-                
-               
         </div>
-    </div>
-   
+
+
     <script>
         $(document).ready(function () {
             $('.options-radio').change(function (event) {
@@ -126,6 +134,14 @@
                 });
             }
 
+            $("#sizesContainer").on("click", "#sizes", function (e) {
+                e.preventDefault();
+                var index = $(this).data("index");
+                var sizeID = $(this).data("sizeid");
+
+                $("#SizeSelection").val(sizeID);
+
+            });
         });
     </script>
 

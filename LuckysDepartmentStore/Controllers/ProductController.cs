@@ -1,12 +1,6 @@
-﻿using AutoMapper;
-using LuckysDepartmentStore.Models;
-using LuckysDepartmentStore.Models.ViewModels.Product;
+﻿using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service;
-using LuckysDepartmentStore.Utilities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.CodeAnalysis.Emit;
 
 namespace LuckysDepartmentStore.Controllers
 {

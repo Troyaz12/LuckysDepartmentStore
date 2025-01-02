@@ -201,7 +201,7 @@ namespace LuckysDepartmentStore.Service
             return Utilities.ExecutionResult<decimal>.Success(total ?? decimal.Zero);
         }
         public async Task<Utilities.ExecutionResult<int>> CreateOrder(Product order, string ShoppingCartId)
-        {
+        { // may not need Product
             try
             {
                 decimal orderTotal = 0;
@@ -238,7 +238,7 @@ namespace LuckysDepartmentStore.Service
                 return Utilities.ExecutionResult<int>.Failure("Unable to get cart total.");
             }
 
-            // Return the OrderId as the confirmation number
+            // Return the CustomerOrderID as the confirmation number
             return Utilities.ExecutionResult<int>.Success(order.ProductID);
         }      
         // When a user has logged in, migrate their shopping cart to

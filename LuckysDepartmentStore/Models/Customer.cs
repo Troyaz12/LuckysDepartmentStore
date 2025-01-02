@@ -11,5 +11,7 @@
         public string State {  get; set; }
         public int ZipCode { get; set; } 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
     }
 }

@@ -28,6 +28,11 @@ namespace LuckysDepartmentStore.Data
             builder.Entity<Product>()
            .Property(d => d.Price)
            .HasColumnType("decimal(18,2)");
+
+            builder.Entity<ApplicationUser>()
+                .HasOne(a => a.Customer)
+                .WithOne(b => b.User)
+                .HasForeignKey<Customer>(b => b.UserId);
         }
 
         public DbSet<Category> Categories { get; set; }

@@ -1,12 +1,14 @@
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Service;
+using LuckysDepartmentStore.Utilities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace LuckysDepartmentStore.Controllers
 {
-    public class HomeController(IDiscountService _discountService, ILogger<HomeController> _logger, IProductService _productService) : Controller
+    public class HomeController(IDiscountService _discountService, ILogger<HomeController> _logger, IProductService _productService, SignInManager<IdentityUser> _signInManager, UserManager<IdentityUser> _userManager, IShoppingCartService _shoppingCartService) : Controller
     {
         //private readonly ILogger<HomeController> _logger;
 
@@ -59,11 +61,34 @@ namespace LuckysDepartmentStore.Controllers
             return View();
         }
         [HttpPost]
-		public IActionResult Login(Customer customer)
+		public async Task<IActionResult> Login(LogOnModel model, string returnUrl)
 		{
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
 
+                if (result.Succeeded)
+                {
+                    MigrateShoppingCart(model.UserName);                    
 
-			return View();
+                    if (Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "The user name or password provided is incorrect.");
+                }
+            }
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        
+               // return View();
 		}
         [HttpGet]
         public IActionResult Item(int? productId)
@@ -81,21 +106,53 @@ namespace LuckysDepartmentStore.Controllers
         [HttpPost] // get all sizes for each color
         public IActionResult GetSizeButtons([FromBody] List<ColorSizesVM> color)
         {
-            var sizes = color
+            var allSizes = color
                 .Where(product => product.Name == product.SelectedColor)
-                .Select(product => product.SizeName)
+                .Select(product => new Sizes
+                { 
+                    Size = product.SizeName, 
+                    SizesID = product.SizeID
+                })
                 .Distinct()
                 .ToList();
-                
 
-
-
-
-            return PartialView("_ButtonPartial", sizes);            
+            return PartialView("_ButtonPartial", allSizes);            
         }
+        private void MigrateShoppingCart(string UserName)
+        {
+            // Associate shopping cart items with logged-in user
+            var cart = ShoppingCartService.GetCart(this.HttpContext);
 
+            _shoppingCartService.MigrateCart(UserName, cart.ShoppingCartId);
+            HttpContext.Session.SetString(ShoppingCart.CartSessionKey, UserName);
+        }
+       
+        [HttpPost]
+        public async Task<ActionResult> Register(RegisterationModel model)
+        {
+            if (ModelState.IsValid)
+            {
 
+                var user = new IdentityUser { UserName = model.UserName, Email = model.Email };
+                var result = await _userManager.CreateAsync(user, model.Password);
 
+                if (result.Succeeded)
+                {
+                    MigrateShoppingCart(model.UserName);
+                   
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+            }
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
 
 
 
