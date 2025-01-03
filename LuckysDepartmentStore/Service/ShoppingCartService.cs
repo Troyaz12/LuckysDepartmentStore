@@ -12,23 +12,26 @@ namespace LuckysDepartmentStore.Service
     {
         public LuckysContext _context;
         public IMapper _mapper;
+        public const string CartSessionKey = "CartId";    
+        private readonly IHttpContextAccessor _httpContext;
 
-        public ShoppingCartService(LuckysContext context, IMapper mapper)
+    public ShoppingCartService(LuckysContext context, IMapper mapper, IHttpContextAccessor httpContext)
         {
             _context = context;
             _mapper = mapper;
+            _httpContext = httpContext;
         }
 
-        public static ShoppingCart GetCart(HttpContext context)
+        public string GetCart()
         {
-            var cart = new ShoppingCart();
-            cart.ShoppingCartId = cart.GetCartId(context);
-            return cart;
+            //var cart = new ShoppingCart();
+            var shoppingCartId = GetCartId();
+            return shoppingCartId;
         }
         // Helper method to simplify shopping cart calls
-        public static ShoppingCart GetCart(Controller controller)
+        public string GetCart(Controller controller)
         {
-            return GetCart(controller.HttpContext);
+            return GetCart();
 
         }
         public async Task<Utilities.ExecutionResult<Carts>> AddToCartAsync(ItemVM product, string ShoppingCartId)
@@ -200,12 +203,13 @@ namespace LuckysDepartmentStore.Service
 
             return Utilities.ExecutionResult<decimal>.Success(total ?? decimal.Zero);
         }
-        public async Task<Utilities.ExecutionResult<int>> CreateOrder(Product order, string ShoppingCartId)
+        public async Task<Utilities.ExecutionResult<decimal>> CreateOrder(Product order, string ShoppingCartId, int customerOrderId)
         { // may not need Product
+
+            decimal orderTotal = 0;
+
             try
             {
-                decimal orderTotal = 0;
-
                 var cartItems = GetCartItems(ShoppingCartId);
                 // Iterate over the items in the cart, 
                 // adding the order details for each
@@ -214,32 +218,39 @@ namespace LuckysDepartmentStore.Service
                     var customerOrderItem = new CustomerOrderItem
                     {
                         ProductID = item.ProductID,
-                        //CustomerOrderID = order.,
+                        CustomerOrderID = customerOrderId,
                         Price = item.Price,
                         Quantity = item.Quantity
 
                     };
                     // Set the order total of the shopping cart
-                    orderTotal += (item.Quantity * item.Price);
+                //    orderTotal += (item.Quantity * item.Price);
 
                     _context.CustomerOrderItems.Add(customerOrderItem);
 
-                }
-                // Set the order's total to the orderTotal count
-                //  order.Quantity = orderTotal;
+                }                
 
                 // Save the order
                 await _context.SaveChangesAsync();
+
+                orderTotal = await _context.CustomerOrderItems
+                    .Where(oi => oi.CustomerOrderID == customerOrderId)
+                    .SumAsync(oi => oi.Price * oi.Quantity);
+
+
+
+                
                 // Empty the shopping cart
                 EmptyCart(ShoppingCartId);
+
             }
             catch (Exception ex) 
             {
-                return Utilities.ExecutionResult<int>.Failure("Unable to get cart total.");
+                return Utilities.ExecutionResult<decimal>.Failure("Unable to get cart total.");
             }
 
             // Return the CustomerOrderID as the confirmation number
-            return Utilities.ExecutionResult<int>.Success(order.ProductID);
+            return Utilities.ExecutionResult<decimal>.Success(orderTotal);
         }      
         // When a user has logged in, migrate their shopping cart to
         // be associated with their username
@@ -262,6 +273,25 @@ namespace LuckysDepartmentStore.Service
             }
 
             return Utilities.ExecutionResult<string>.Success(ShoppingCartId);
+        }
+        // We're using HttpContextBase to allow access to cookies.
+        public string GetCartId()
+        {
+            if (_httpContext.HttpContext.Session.GetString(CartSessionKey) == null)
+            {
+                if (!string.IsNullOrWhiteSpace(_httpContext.HttpContext.User.Identity.Name))
+                {
+                    _httpContext.HttpContext.Session.SetString(CartSessionKey, _httpContext.HttpContext.User.Identity.Name);
+                }
+                else
+                {
+                    // Generate a new random GUID using System.Guid class
+                    Guid tempCartId = Guid.NewGuid();
+                    // Send tempCartId back to client as a cookie
+                    _httpContext.HttpContext.Session.SetString(CartSessionKey, tempCartId.ToString());
+                }
+            }
+            return _httpContext.HttpContext.Session.GetString(CartSessionKey);
         }
     }
 }

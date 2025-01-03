@@ -30,6 +30,7 @@ builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IDiscountService, DiscountService>();
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 builder.Services.AddScoped<ICheckoutService, CheckoutService>();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSingleton<Utility>();
 

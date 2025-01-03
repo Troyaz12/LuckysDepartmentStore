@@ -9,9 +9,9 @@
         public string City { get; set; }
         public string state { get; set; }
         public int Zip { get; set; }
-        public int ProductID { get; set; }
-        public Decimal Price { get; set; }
-        public int Quantity { get; set; }
+   //     public int ProductID { get; set; }
+    //    public Decimal Price { get; set; }
+ //       public int Quantity { get; set; }
         public int RoutingNumber { get; set; }
         public int AccountNumber { get; set; }
         public int CvcCode { get; set; }
@@ -25,5 +25,6 @@
         public DateTime OrderDate { get; set; } = DateTime.Now;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public string UserName { get; set; }
+        public string UserId { get; set; }
     }
 }

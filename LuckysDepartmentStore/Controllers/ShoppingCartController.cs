@@ -16,8 +16,8 @@ namespace LuckysDepartmentStore.Controllers
         {
             if (ModelState.IsValid)
             {
-                var cart = ShoppingCartService.GetCart(this.HttpContext);
-                await _shoppingCartService.AddToCartAsync(item, cart.ShoppingCartId);
+                var cart = _shoppingCartService.GetCart();
+                await _shoppingCartService.AddToCartAsync(item, cart);
 
                 return RedirectToAction("Index");
             }
@@ -27,8 +27,8 @@ namespace LuckysDepartmentStore.Controllers
         {
             if (ModelState.IsValid)
             {
-                var cart = ShoppingCartService.GetCart(this.HttpContext);
-                await _shoppingCartService.AddToCartAsync(item, cart.ShoppingCartId);
+                var cart = _shoppingCartService.GetCart();
+                await _shoppingCartService.AddToCartAsync(item, cart);
 
                 return RedirectToAction("Index");
             }
@@ -38,9 +38,9 @@ namespace LuckysDepartmentStore.Controllers
         //[ChildActionOnly]
         public ActionResult CartSummary()
         {
-            var cart = ShoppingCartService.GetCart(this.HttpContext);
+            var cart = _shoppingCartService.GetCart();
 
-            ViewData["CartCount"] = _shoppingCartService.GetCount(cart.ShoppingCartId);
+            ViewData["CartCount"] = _shoppingCartService.GetCount(cart);
 
             return PartialView("CartSummary");
         }

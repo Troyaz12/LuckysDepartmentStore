@@ -121,9 +121,9 @@ namespace LuckysDepartmentStore.Controllers
         private void MigrateShoppingCart(string UserName)
         {
             // Associate shopping cart items with logged-in user
-            var cart = ShoppingCartService.GetCart(this.HttpContext);
+            var cart = _shoppingCartService.GetCart();
 
-            _shoppingCartService.MigrateCart(UserName, cart.ShoppingCartId);
+            _shoppingCartService.MigrateCart(UserName, cart);
             HttpContext.Session.SetString(ShoppingCart.CartSessionKey, UserName);
         }
        

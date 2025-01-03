@@ -2,6 +2,7 @@
 using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Utilities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LuckysDepartmentStore.Service
 {
@@ -19,9 +20,11 @@ namespace LuckysDepartmentStore.Service
 
         public Task<Utilities.ExecutionResult<decimal>> GetTotal(string ShoppingCartId);
 
-        public Task<Utilities.ExecutionResult<int>>  CreateOrder(Product order, string ShoppingCartId);
+        public Task<Utilities.ExecutionResult<decimal>>  CreateOrder(Product order, string ShoppingCartId, int customerId);
 
         public Task<Utilities.ExecutionResult<string>> MigrateCart(string userName, string ShoppingCartId);
 
+        public string GetCart();
+        public string GetCart(Controller controller);
     }
 }

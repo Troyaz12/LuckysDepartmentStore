@@ -3,10 +3,11 @@ using LuckysDepartmentStore.Models.ViewModels.Checkout;
 using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LuckysDepartmentStore.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class CheckoutController(ICheckoutService _checkoutService, IShoppingCartService _shoppingCartService) : Controller
     {
         // GET: CheckoutController
@@ -23,28 +24,46 @@ namespace LuckysDepartmentStore.Controllers
         //
         // POST: /Checkout/AddressAndPayment
         [HttpPost]
-        public async Task<ActionResult> AddressAndPaymentAsync(OrderModelVM values)
+        public async Task<ActionResult> AddressAndPayment(OrderModelVM values)
         {
-            var order = new Order();
-
-            bool isUpdated = await TryUpdateModelAsync(order);
+            var order = new Order();            
 
             try
             {
                
                 order.UserName = User.Identity.Name;
+                order.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 order.OrderDate = DateTime.Now;
+                //order.FirstName = User.Identities.
+                //order.LastName = User.Identities.
+                order.Address1 = values.Shipping.Address1;
+                order.Address2 = values.Shipping.Address2;
+                order.City = values.Shipping.City;
+                order.state = values.Shipping.state;
+                order.Zip = values.Shipping.Zip;
+                order.RoutingNumber = values.Payment.RoutingNumber;
+                order.AccountNumber = values.Payment.AccountNumber;
+                order.CvcCode = values.Payment.CvcCode;
+                order.BillingAddress1 = values.Payment.BillingAddress1;
+                order.BillingAddress2 = values.Payment.BillingAddress2;
+                order.BillingCity = values.Payment.City;
+                order.BillingState = values.Payment.State;
+                order.BillingZipCode = values.Payment.ZipCode;
+                order.IsCheckingAccount = values.Payment.IsCheckingAccount;
+                order.IsCreditCard = values.Payment.IsCreditCard;
+
+
 
                 //Save Order
-                var orderId = _checkoutService.Order(order);
+                var orderId = await _checkoutService.Order(order);
 
                 //Process the order
-                var cart = ShoppingCartService.GetCart(this.HttpContext);
+                var cart = _shoppingCartService.GetCart();
                 Product product = new Product();
-                var orderResult = _shoppingCartService.CreateOrder(product, cart.ShoppingCartId);
+                var orderResult = _shoppingCartService.CreateOrder(product, cart, orderId.Data.CustomerOrderID);
 
                 return RedirectToAction("Complete",
-                new { id = orderResult });  // revisit to make sure this is correct
+                new { id = orderId.Data.CustomerOrderID });  // revisit to make sure this is correct
                
             }
             catch

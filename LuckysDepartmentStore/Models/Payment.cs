@@ -17,5 +17,6 @@
         public bool IsCheckingAccount { get; set; }
         public bool IsCreditCard { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public decimal Total { get; set; }
     }
 }
