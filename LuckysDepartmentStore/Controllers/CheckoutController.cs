@@ -15,9 +15,18 @@ namespace LuckysDepartmentStore.Controllers
         {
             OrderModelVM ordervm = new OrderModelVM()
             {
-                Shipping = new Shipping(),
-                Payment = new Payment()
+                Shipping = new List<ShippingAddress>(),
+                Payment = new List<Payment>()
             };
+
+            var shippingAddresses = _checkoutService.GetShippingAddresses(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            if(shippingAddresses != null)
+            {
+                ordervm.Shipping = shippingAddresses.Result.Data;
+            }
+
+
 
             return View(ordervm);
         }
@@ -31,26 +40,26 @@ namespace LuckysDepartmentStore.Controllers
             try
             {
                
-                order.UserName = User.Identity.Name;
-                order.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                order.OrderDate = DateTime.Now;
-                //order.FirstName = User.Identities.
-                //order.LastName = User.Identities.
-                order.Address1 = values.Shipping.Address1;
-                order.Address2 = values.Shipping.Address2;
-                order.City = values.Shipping.City;
-                order.state = values.Shipping.state;
-                order.Zip = values.Shipping.Zip;
-                order.RoutingNumber = values.Payment.RoutingNumber;
-                order.AccountNumber = values.Payment.AccountNumber;
-                order.CvcCode = values.Payment.CvcCode;
-                order.BillingAddress1 = values.Payment.BillingAddress1;
-                order.BillingAddress2 = values.Payment.BillingAddress2;
-                order.BillingCity = values.Payment.City;
-                order.BillingState = values.Payment.State;
-                order.BillingZipCode = values.Payment.ZipCode;
-                order.IsCheckingAccount = values.Payment.IsCheckingAccount;
-                order.IsCreditCard = values.Payment.IsCreditCard;
+                //order.UserName = User.Identity.Name;
+                //order.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                //order.OrderDate = DateTime.Now;
+                ////order.FirstName = User.Identities.
+                ////order.LastName = User.Identities.
+                //order.Address1 = values.Shipping.Address1;
+                //order.Address2 = values.Shipping.Address2;
+                //order.City = values.Shipping.City;
+                //order.state = values.Shipping.state;
+                //order.Zip = values.Shipping.Zip;
+                //order.RoutingNumber = values.Payment.RoutingNumber;
+                //order.AccountNumber = values.Payment.AccountNumber;
+                //order.CvcCode = values.Payment.CvcCode;
+                //order.BillingAddress1 = values.Payment.BillingAddress1;
+                //order.BillingAddress2 = values.Payment.BillingAddress2;
+                //order.BillingCity = values.Payment.City;
+                //order.BillingState = values.Payment.State;
+                //order.BillingZipCode = values.Payment.ZipCode;
+                //order.IsCheckingAccount = values.Payment.IsCheckingAccount;
+                //order.IsCreditCard = values.Payment.IsCreditCard;
 
 
 

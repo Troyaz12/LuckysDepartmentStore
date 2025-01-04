@@ -1,9 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace LuckysDepartmentStore.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public virtual Customer Customer { get; set; }
+        public virtual ICollection<ShippingAddress> ShippingAddress { get; set; }
+        public virtual ICollection<PaymentOptions> PaymentOptions { get; set; }
+        public virtual Consumer Consumer { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
     }
 }

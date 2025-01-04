@@ -1,4 +1,4 @@
-﻿@model Payment
+﻿@model List<Payment>
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -7,45 +7,6 @@
 
 <div class="row">
     <div class="col-md-4">      
-        <div class="form-group">
-            <label asp-for="RoutingNumber"></label>
-            <input asp-for="RoutingNumber" name="Payment.RoutingNumber" />
-        </div>
-        <div class="form-group">
-            <label asp-for="AccountNumber"></label>
-            <input asp-for="AccountNumber" name="Payment.AccountNumber" />
-        </div>
-        <div class="form-group">
-            <label asp-for="CvcCode"></label>
-            <input asp-for="CvcCode" name="Payment.CvcCode" />
-        </div>
-        <div class="form-group">
-            <label asp-for="BillingAddress1"></label>
-            <input asp-for="BillingAddress1" name="Payment.BillingAddress1" />
-        </div>
-        <div class="form-group">
-            <label asp-for="BillingAddress2"></label>
-            <input asp-for="BillingAddress2" name="Payment.BillingAddress2" />
-        </div>
-        <div class="form-group">
-            <label asp-for="City"></label>
-            <input asp-for="City" name="Payment.City" />
-        </div>
-        <div class="form-group">
-            <label asp-for="State"></label>
-            <input asp-for="State" name="Payment.State" />
-        </div>
-        <div class="form-group">
-            <label asp-for="ZipCode"></label>
-            <input asp-for="ZipCode" name="Payment.ZipCode" />
-        </div>
-        <div class="form-group">
-            <label asp-for="IsCheckingAccount"></label>
-            <input asp-for="IsCheckingAccount" type="checkbox" name="Payment.IsCheckingAccount" />
-        </div>
-        <div class="form-group">
-            <label asp-for="IsCreditCard"></label>
-            <input asp-for="IsCreditCard" type="checkbox" name="Payment.IsCreditCard" />
-        </div>
+     
     </div>
 </div>

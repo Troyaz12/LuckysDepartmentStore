@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace LuckysDepartmentStore.Data
 {
-    public class LuckysContext : IdentityDbContext
+    public class LuckysContext : IdentityDbContext<ApplicationUser>
     {
         public LuckysContext(DbContextOptions<LuckysContext> options)
         : base(options)
@@ -30,15 +30,25 @@ namespace LuckysDepartmentStore.Data
            .HasColumnType("decimal(18,2)");
 
             builder.Entity<ApplicationUser>()
-                .HasOne(a => a.Customer)
+                .HasMany(a => a.ShippingAddress)
                 .WithOne(b => b.User)
-                .HasForeignKey<Customer>(b => b.UserId);
+                .HasForeignKey(b => b.UserId);
+
+            builder.Entity<ApplicationUser>()
+               .HasMany(a => a.PaymentOptions)
+               .WithOne(b => b.User)
+               .HasForeignKey(b => b.UserId);
+
+            builder.Entity<ApplicationUser>()
+              .HasOne(a => a.Consumer)
+              .WithOne(b => b.User)
+              .HasForeignKey<Consumer>(b => b.UserId);
         }
 
         public DbSet<Category> Categories { get; set; }
         public virtual DbSet<Color> Colors { get; set; }
         public DbSet<ColorProduct> ColorProducts { get; set; }
-        public DbSet<Customer> Customers { get; set; }
+        public DbSet<ShippingAddress> ShippingAddress { get; set; }
         public DbSet<CustomerOrderItem> CustomerOrderItems { get; set; }
         public DbSet<CustomerOrder> CustomerOrders { get; set; }
         public DbSet<Discount> Discounts { get; set; }
@@ -51,6 +61,7 @@ namespace LuckysDepartmentStore.Data
         public DbSet<Brand> Brand { get; set; }
         public DbSet<Sizes> Sizes { get; set; }
         public DbSet<Carts> Carts { get; set; }
+        public DbSet<Consumer> Consumer { get; set; }
 
     }
 }

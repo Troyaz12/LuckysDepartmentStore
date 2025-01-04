@@ -31,5 +31,13 @@ namespace LuckysDepartmentStore.Models
             [Required]
             [Display(Name = "Security Answer")]
             public string SecurityAnswer { get; set; }
+
+            //[Required]
+            //[Display(Name = "First Name")]
+            //public string FirstName { get; set; }
+
+            //[Required]
+            //[Display(Name = "Last Name")]
+            //public string LastName { get; set; }
     }
 }

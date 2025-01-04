@@ -4,6 +4,7 @@ using LuckysDepartmentStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LuckysDepartmentStore.Migrations
 {
     [DbContext(typeof(LuckysContext))]
-    partial class LuckysContextModelSnapshot : ModelSnapshot
+    [Migration("20250103224814_PaymentOptRemoveCustID")]
+    partial class PaymentOptRemoveCustID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,9 +45,11 @@ namespace LuckysDepartmentStore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -171,21 +176,21 @@ namespace LuckysDepartmentStore.Migrations
                             CategoryID = 1,
                             CategoryDescription = "Jeans",
                             CategoryName = "Jeans",
-                            CreatedDate = new DateTime(2025, 1, 3, 21, 3, 19, 656, DateTimeKind.Local).AddTicks(29)
+                            CreatedDate = new DateTime(2025, 1, 3, 16, 48, 14, 161, DateTimeKind.Local).AddTicks(6234)
                         },
                         new
                         {
                             CategoryID = 2,
                             CategoryDescription = "Shirts",
                             CategoryName = "Shirts",
-                            CreatedDate = new DateTime(2025, 1, 3, 21, 3, 19, 656, DateTimeKind.Local).AddTicks(78)
+                            CreatedDate = new DateTime(2025, 1, 3, 16, 48, 14, 161, DateTimeKind.Local).AddTicks(6280)
                         },
                         new
                         {
                             CategoryID = 3,
                             CategoryDescription = "Shoes",
                             CategoryName = "Shoes",
-                            CreatedDate = new DateTime(2025, 1, 3, 21, 3, 19, 656, DateTimeKind.Local).AddTicks(80)
+                            CreatedDate = new DateTime(2025, 1, 3, 16, 48, 14, 161, DateTimeKind.Local).AddTicks(6283)
                         });
                 });
 
@@ -212,19 +217,19 @@ namespace LuckysDepartmentStore.Migrations
                         new
                         {
                             ColorID = 1,
-                            CreatedDate = new DateTime(2025, 1, 3, 21, 3, 19, 656, DateTimeKind.Local).AddTicks(1088),
+                            CreatedDate = new DateTime(2025, 1, 3, 16, 48, 14, 161, DateTimeKind.Local).AddTicks(7273),
                             Name = "Red"
                         },
                         new
                         {
                             ColorID = 2,
-                            CreatedDate = new DateTime(2025, 1, 3, 21, 3, 19, 656, DateTimeKind.Local).AddTicks(1101),
+                            CreatedDate = new DateTime(2025, 1, 3, 16, 48, 14, 161, DateTimeKind.Local).AddTicks(7285),
                             Name = "Green"
                         },
                         new
                         {
                             ColorID = 3,
-                            CreatedDate = new DateTime(2025, 1, 3, 21, 3, 19, 656, DateTimeKind.Local).AddTicks(1103),
+                            CreatedDate = new DateTime(2025, 1, 3, 16, 48, 14, 161, DateTimeKind.Local).AddTicks(7287),
                             Name = "Blue"
                         });
                 });
@@ -255,37 +260,6 @@ namespace LuckysDepartmentStore.Migrations
                     b.HasKey("ColorProductID");
 
                     b.ToTable("ColorProducts");
-                });
-
-            modelBuilder.Entity("LuckysDepartmentStore.Models.Consumer", b =>
-                {
-                    b.Property<int>("ConsumerID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ConsumerID"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("ConsumerID");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Consumer");
                 });
 
             modelBuilder.Entity("LuckysDepartmentStore.Models.CustomerOrder", b =>
@@ -684,7 +658,8 @@ namespace LuckysDepartmentStore.Migrations
 
                     b.HasKey("ShippingAddressID");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("ShippingAddress");
                 });
@@ -733,42 +708,42 @@ namespace LuckysDepartmentStore.Migrations
                         new
                         {
                             SubCategoryID = 1,
-                            CreatedDate = new DateTime(2025, 1, 3, 21, 3, 19, 656, DateTimeKind.Local).AddTicks(4157),
+                            CreatedDate = new DateTime(2025, 1, 3, 16, 48, 14, 162, DateTimeKind.Local).AddTicks(290),
                             SubCategoryDescription = "Mens products.",
                             SubCategoryName = "Mens"
                         },
                         new
                         {
                             SubCategoryID = 2,
-                            CreatedDate = new DateTime(2025, 1, 3, 21, 3, 19, 656, DateTimeKind.Local).AddTicks(4171),
+                            CreatedDate = new DateTime(2025, 1, 3, 16, 48, 14, 162, DateTimeKind.Local).AddTicks(305),
                             SubCategoryDescription = "Womens products.",
                             SubCategoryName = "Womens"
                         },
                         new
                         {
                             SubCategoryID = 3,
-                            CreatedDate = new DateTime(2025, 1, 3, 21, 3, 19, 656, DateTimeKind.Local).AddTicks(4173),
+                            CreatedDate = new DateTime(2025, 1, 3, 16, 48, 14, 162, DateTimeKind.Local).AddTicks(307),
                             SubCategoryDescription = "Boys youths",
                             SubCategoryName = "Boys"
                         },
                         new
                         {
                             SubCategoryID = 4,
-                            CreatedDate = new DateTime(2025, 1, 3, 21, 3, 19, 656, DateTimeKind.Local).AddTicks(4175),
+                            CreatedDate = new DateTime(2025, 1, 3, 16, 48, 14, 162, DateTimeKind.Local).AddTicks(308),
                             SubCategoryDescription = "Girls youths",
                             SubCategoryName = "Girls"
                         },
                         new
                         {
                             SubCategoryID = 5,
-                            CreatedDate = new DateTime(2025, 1, 3, 21, 3, 19, 656, DateTimeKind.Local).AddTicks(4176),
+                            CreatedDate = new DateTime(2025, 1, 3, 16, 48, 14, 162, DateTimeKind.Local).AddTicks(310),
                             SubCategoryDescription = "Boys infant products",
                             SubCategoryName = "Boys Infant"
                         },
                         new
                         {
                             SubCategoryID = 6,
-                            CreatedDate = new DateTime(2025, 1, 3, 21, 3, 19, 656, DateTimeKind.Local).AddTicks(4178),
+                            CreatedDate = new DateTime(2025, 1, 3, 16, 48, 14, 162, DateTimeKind.Local).AddTicks(311),
                             SubCategoryDescription = "Girls infant products",
                             SubCategoryName = "Girls Infant"
                         });
@@ -896,15 +871,15 @@ namespace LuckysDepartmentStore.Migrations
                         {
                             Id = "d601656b-5848-4236-96d5-d722d471089d",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d792a1d3-7169-4783-b45a-f8a70dbb0a4f",
+                            ConcurrencyStamp = "42190bec-bd94-42de-ab10-c0adb23800f2",
                             Email = "admin@localhost.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEG7ducPNYq1az+IduSVfbAAWaq85sepvgXxeK0wAHPVHFJPZMHMYaOI5A900r2xYQg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELoPTZH8gerx+VwqvXqSPqPyK4afstzlIz/N0PnxdOzSCpekTwSuWhnwZO1yxqJPJw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7ef9e9d6-021d-44da-8596-33a9f455da7f",
+                            SecurityStamp = "54425ef8-ddb2-44f2-a752-a448549a2b66",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         });
@@ -1002,17 +977,6 @@ namespace LuckysDepartmentStore.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("LuckysDepartmentStore.Models.Consumer", b =>
-                {
-                    b.HasOne("LuckysDepartmentStore.Models.ApplicationUser", "User")
-                        .WithOne("Consumer")
-                        .HasForeignKey("LuckysDepartmentStore.Models.Consumer", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("LuckysDepartmentStore.Models.CustomerOrder", b =>
                 {
                     b.HasOne("LuckysDepartmentStore.Models.ShippingAddress", "Customer")
@@ -1038,8 +1002,8 @@ namespace LuckysDepartmentStore.Migrations
             modelBuilder.Entity("LuckysDepartmentStore.Models.ShippingAddress", b =>
                 {
                     b.HasOne("LuckysDepartmentStore.Models.ApplicationUser", "User")
-                        .WithMany("ShippingAddress")
-                        .HasForeignKey("UserId")
+                        .WithOne("ShippingAddress")
+                        .HasForeignKey("LuckysDepartmentStore.Models.ShippingAddress", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1099,12 +1063,10 @@ namespace LuckysDepartmentStore.Migrations
 
             modelBuilder.Entity("LuckysDepartmentStore.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("Consumer")
-                        .IsRequired();
-
                     b.Navigation("PaymentOptions");
 
-                    b.Navigation("ShippingAddress");
+                    b.Navigation("ShippingAddress")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

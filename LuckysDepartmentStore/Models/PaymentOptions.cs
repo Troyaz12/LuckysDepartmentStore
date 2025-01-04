@@ -3,7 +3,6 @@
     public class PaymentOptions
     {
         public int PaymentOptionsID { get; set; }
-        public int CustomerID { get; set; }
         public int RoutingNumber { get; set; }
         public int AccountNumber { get; set; }
         public int CvcCode {  get; set; }
@@ -17,5 +16,7 @@
         public bool IsActive { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime ProcessedDate { get; set; } = DateTime.Now;
+        public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
     }
 }

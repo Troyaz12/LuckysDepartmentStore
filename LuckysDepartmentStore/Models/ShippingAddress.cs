@@ -1,8 +1,8 @@
 ﻿namespace LuckysDepartmentStore.Models
 {
-    public class Customer
+    public class ShippingAddress
     {
-        public int CustomerID { get; set; }
+        public int ShippingAddressID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Address1 { get; set; }

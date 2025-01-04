@@ -4,6 +4,7 @@ using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace LuckysDepartmentStore.Service
 {
@@ -23,14 +24,14 @@ namespace LuckysDepartmentStore.Service
 
             int customerId;
             OrderIds orderids = new OrderIds();
+         
+            var shippingAddress = _context.ShippingAddress
+                .Where(address => address.UserId == order.UserId)
+                .ToList();
 
-            // check for ConsumerId
-            var consumer = _context.Customers.SingleOrDefault(
-                customer => customer.UserId == order.UserId);
-
-            if (consumer == null)
+            if (shippingAddress == null)
             {
-                var customer = new Customer();
+                var customer = new ShippingAddress();
                 customer.FirstName = order.FirstName;
                 customer.LastName = order.LastName; 
                 customer.Address1 = order.Address1;
@@ -39,7 +40,7 @@ namespace LuckysDepartmentStore.Service
                 customer.State = order.state;
 
 
-                _context.Customers.Add(customer);
+                _context.ShippingAddress.Add(customer);
 
                 var newCustomerId = _context.SaveChanges();
 
@@ -47,13 +48,13 @@ namespace LuckysDepartmentStore.Service
             }
             else
             {
-                customerId = consumer.CustomerID;
+            //    customerId = consumer.CustomerID;
             }
             
 
             // insert payment
             var payment = new Payment();
-            payment.CustomerID = customerId;
+        //    payment.CustomerID = customerId;
             payment.RoutingNumber = order.RoutingNumber;
             payment.AccountNumber = order.AccountNumber;
             payment.CvcCode = order.CvcCode;
@@ -85,7 +86,7 @@ namespace LuckysDepartmentStore.Service
 
             // insert into customer orders
             var customerOrder = new CustomerOrder();
-            customerOrder.CustomerID = customerId;
+         //   customerOrder.CustomerID = customerId;
             customerOrder.PaymentID = paymentId;
 
             _context.CustomerOrders.Add(customerOrder);
@@ -112,7 +113,7 @@ namespace LuckysDepartmentStore.Service
             }
 
             orderids.PaymentID = paymentId;
-            orderids.CustomerID = customerId;
+        //    orderids.CustomerID = customerId;
             orderids.CustomerOrderID = customerOrderId;
             orderids.ShippingID = shippingId;            
 
@@ -127,6 +128,25 @@ namespace LuckysDepartmentStore.Service
 
             return isValid;
         }
+
+        public async Task<Utilities.ExecutionResult<List<ShippingAddress>>> GetShippingAddresses(string userId)
+        {
+
+            var shippingAddress = _context.ShippingAddress
+             .Where(address => address.UserId == userId)
+             .ToList();
+
+            return Utilities.ExecutionResult<List<ShippingAddress>>.Success(shippingAddress);
+        }
+        //public async Task<Utilities.ExecutionResult<List<Payment>>> GetPaymentOptions(string userId)
+        //{
+
+        //    var paymentOptions = _context.PaymentOptions
+        //     .Where(address => address.UserId == userId)
+        //     .ToList();
+
+        //    return Utilities.ExecutionResult<List<Payment>>.Success(paymentOptions);
+        //}
 
     }
 }
