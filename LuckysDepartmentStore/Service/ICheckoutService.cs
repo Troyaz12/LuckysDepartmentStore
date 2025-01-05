@@ -5,7 +5,6 @@ namespace LuckysDepartmentStore.Service
     public interface ICheckoutService
     {
         public Task<Utilities.ExecutionResult<OrderIds>> Order(Order order);
-        public bool IsValid(int id, string user);
-        public Task<Utilities.ExecutionResult<List<ShippingAddress>>> GetShippingAddresses(string userId);
+        public bool IsValid(int id, string user);        
     }
 }

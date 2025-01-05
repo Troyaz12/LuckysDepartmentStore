@@ -1,5 +1,6 @@
 ﻿using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Checkout;
+using LuckysDepartmentStore.Models.ViewModels.Consumer;
 using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,18 +9,18 @@ using System.Security.Claims;
 namespace LuckysDepartmentStore.Controllers
 {
     [Authorize]
-    public class CheckoutController(ICheckoutService _checkoutService, IShoppingCartService _shoppingCartService) : Controller
+    public class CheckoutController(ICheckoutService _checkoutService, IShoppingCartService _shoppingCartService, IConsumerService _consumerService) : Controller
     {
         // GET: CheckoutController
         public ActionResult AddressAndPayment()
         {
             OrderModelVM ordervm = new OrderModelVM()
             {
-                Shipping = new List<ShippingAddress>(),
+                Shipping = new List<ShippingAddressVM>(),
                 Payment = new List<Payment>()
             };
 
-            var shippingAddresses = _checkoutService.GetShippingAddresses(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var shippingAddresses = _consumerService.GetShippingAddress(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             if(shippingAddresses != null)
             {

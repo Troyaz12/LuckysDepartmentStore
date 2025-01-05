@@ -128,25 +128,5 @@ namespace LuckysDepartmentStore.Service
 
             return isValid;
         }
-
-        public async Task<Utilities.ExecutionResult<List<ShippingAddress>>> GetShippingAddresses(string userId)
-        {
-
-            var shippingAddress = _context.ShippingAddress
-             .Where(address => address.UserId == userId)
-             .ToList();
-
-            return Utilities.ExecutionResult<List<ShippingAddress>>.Success(shippingAddress);
-        }
-        //public async Task<Utilities.ExecutionResult<List<Payment>>> GetPaymentOptions(string userId)
-        //{
-
-        //    var paymentOptions = _context.PaymentOptions
-        //     .Where(address => address.UserId == userId)
-        //     .ToList();
-
-        //    return Utilities.ExecutionResult<List<Payment>>.Success(paymentOptions);
-        //}
-
     }
 }

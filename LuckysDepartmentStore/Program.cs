@@ -1,6 +1,7 @@
 using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Service;
 using LuckysDepartmentStore.Utilities;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -30,6 +31,10 @@ builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IDiscountService, DiscountService>();
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 builder.Services.AddScoped<ICheckoutService, CheckoutService>();
+builder.Services.AddScoped<IConsumerService, ConsumerService>();
+
+//builder.Services.AddScoped<UserService>();
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSingleton<Utility>();

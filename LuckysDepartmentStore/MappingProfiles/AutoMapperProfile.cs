@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.DTO.Consumer;
 using LuckysDepartmentStore.Models.DTO.Discount;
 using LuckysDepartmentStore.Models.DTO.Home;
 using LuckysDepartmentStore.Models.DTO.Products;
+using LuckysDepartmentStore.Models.ViewModels.Consumer;
 using LuckysDepartmentStore.Models.ViewModels.Discount;
 using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Models.ViewModels.Product;
@@ -52,6 +54,12 @@ namespace LuckysDepartmentStore.MappingProfiles
 
             CreateMap<RatingsDTO, RatingVM>()
                 .ReverseMap();
+
+            CreateMap<ShippingAddressDTO, ShippingAddressVM>()
+              .ReverseMap();
+
+            CreateMap<PaymentOptionsDTO, PaymentOptions>()
+              .ReverseMap();
         }
     }
 }
