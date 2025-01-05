@@ -10,8 +10,8 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta1/css/bootstrap.min.css" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
-    <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+ @*    <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script> *@
 
 </head>
 
@@ -46,8 +46,7 @@
                     </span>
                 </label>
             </div>
-        }
-        <p><a href="@Url.Action("CreateShippingAddress","Consumer")" class="link-underline-primary">Add New Address</a></p>
+        }     
         <p><a href="" class="link-underline-primary">Edit Address</a></p>
         <div class="row">
             <div class="col-md-12">
@@ -125,7 +124,7 @@
                 State: State,
                 ZipCode: ZipCode
             };
-
+            console.log("Test2.5 " + item);
             $.ajax({
                 url: '@Url.Action("CreateShippingAddress", "Consumer")',
                 type: 'POST',
@@ -145,6 +144,10 @@
                     $('#ZipCode').val('');
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
+                     console.log("Test4 - jqXHR: ", jqXHR);
+                    console.log("Text Status: ", textStatus);
+                    console.log("Error Thrown: ", errorThrown);
+    
                     alert("Error updating list: " + errorThrown);
                 }
             });

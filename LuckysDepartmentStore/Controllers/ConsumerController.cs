@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace LuckysDepartmentStore.Controllers
 {
-    public class ConsumerController(IConsumerService _consumerService, UserManager<IdentityUser> _userManager) : Controller
+    public class ConsumerController(IConsumerService _consumerService, UserManager<ApplicationUser> _userManager) : Controller
     {
         //private readonly UserManager<IdentityUser> _userManager;
         public IActionResult Index()
@@ -31,7 +31,9 @@ namespace LuckysDepartmentStore.Controllers
             var allAddresses = await _consumerService.GetShippingAddress(shippingAddress.UserId);
 
 
-            return PartialView("_ShippingPartial", allAddresses);            
+            //return PartialView("_ShippingPartial", allAddresses.Data);            
+            return Json(new { success = true, html = RenderRazorViewToString("_ShippingPartial", allAddresses.Data) });
+
         }
 
         [HttpGet]

@@ -1,17 +1,18 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using LuckysDepartmentStore.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LuckysDepartmentStore.Data.Configurations
 {
-    public class ApplicationUserConfiguration : IEntityTypeConfiguration<IdentityUser>
+    public class ApplicationUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
     {
-        public void Configure(EntityTypeBuilder<IdentityUser> builder)
+        public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
-            var hasher = new PasswordHasher<IdentityUser>();
+            var hasher = new PasswordHasher<ApplicationUser>();
 
             builder.HasData(
-                new IdentityUser
+                new ApplicationUser
                 {
                     Id = "d601656b-5848-4236-96d5-d722d471089d",
                     Email = "admin@localhost.com",

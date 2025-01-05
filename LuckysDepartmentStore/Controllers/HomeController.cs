@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace LuckysDepartmentStore.Controllers
 {
-    public class HomeController(IDiscountService _discountService, ILogger<HomeController> _logger, IProductService _productService, SignInManager<IdentityUser> _signInManager, UserManager<IdentityUser> _userManager, IShoppingCartService _shoppingCartService) : Controller
+    public class HomeController(IDiscountService _discountService, ILogger<HomeController> _logger, IProductService _productService, SignInManager<ApplicationUser> _signInManager, UserManager<ApplicationUser> _userManager, IShoppingCartService _shoppingCartService) : Controller
     {
         //private readonly ILogger<HomeController> _logger;
 
@@ -133,7 +133,7 @@ namespace LuckysDepartmentStore.Controllers
             if (ModelState.IsValid)
             {
 
-                var user = new IdentityUser { UserName = model.UserName, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)

@@ -1,4 +1,5 @@
 using LuckysDepartmentStore.Data;
+using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Service;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNet.Identity;
@@ -16,7 +17,7 @@ builder.Services.AddDbContext<LuckysContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? throw new InvalidOperationException("Connection string 'LuckysContext' not found.")));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<LuckysContext>()
     .AddDefaultTokenProviders();
 
