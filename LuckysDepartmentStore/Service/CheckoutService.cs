@@ -29,33 +29,11 @@ namespace LuckysDepartmentStore.Service
                 .Where(address => address.UserId == order.UserId)
                 .ToList();
 
-            if (shippingAddress == null)
-            {
-                var customer = new ShippingAddress();
-                customer.FirstName = order.FirstName;
-                customer.LastName = order.LastName; 
-                customer.Address1 = order.Address1;
-                customer.Address2 = order.Address2;
-                customer.City = order.City;
-                customer.State = order.state;
-
-
-                _context.ShippingAddress.Add(customer);
-
-                var newCustomerId = _context.SaveChanges();
-
-                customerId = newCustomerId;
-            }
-            else
-            {
-            //    customerId = consumer.CustomerID;
-            }
-            
-
             // insert payment
             var payment = new Payment();
         //    payment.CustomerID = customerId;
-            payment.RoutingNumber = order.RoutingNumber;
+
+            // add name
             payment.AccountNumber = order.AccountNumber;
             payment.CvcCode = order.CvcCode;
             payment.BillingAddress1 = order.BillingAddress1;
@@ -63,8 +41,10 @@ namespace LuckysDepartmentStore.Service
             payment.City = order.City;
             payment.State = order.state;
             payment.ZipCode = order.Zip;
-            payment.IsCheckingAccount = order.IsCheckingAccount;
-            payment.IsCreditCard = order.IsCreditCard;
+            payment.IsCheckingAccount = false;
+            payment.IsCreditCard = true;
+            payment.IsProcessed = false;
+            payment.ProcessMessage = "Pending";
 
             _context.Payments.Add(payment);
 
@@ -72,8 +52,8 @@ namespace LuckysDepartmentStore.Service
 
             // insert into shipping id
             var shipping = new Shipping();
-            shipping.FirstName = order.FirstName;
-            shipping.LastName = order.LastName;
+            shipping.FirstName = order.FirstNameShipping;
+            shipping.LastName = order.LastNameShipping;
             shipping.Address1 = order.Address1;
             shipping.Address2 = order.Address2;
             shipping.City = order.City;

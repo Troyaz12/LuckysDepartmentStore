@@ -2,16 +2,18 @@
 {
     public class Order
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string FirstNameShipping { get; set; }
+        public string LastNameShipping { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
         public string City { get; set; }
         public string state { get; set; }
         public int Zip { get; set; }
-   //     public int ProductID { get; set; }
-    //    public Decimal Price { get; set; }
- //       public int Quantity { get; set; }
+        //     public int ProductID { get; set; }
+        //    public Decimal Price { get; set; }
+        //       public int Quantity { get; set; }
+        public string FirstNameBilling { get; set; }
+        public string LastNameBilling { get; set; }
         public int RoutingNumber { get; set; }
         public int AccountNumber { get; set; }
         public int CvcCode { get; set; }

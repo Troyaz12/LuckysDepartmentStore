@@ -2,6 +2,7 @@
 using LuckysDepartmentStore.Models.ViewModels.Checkout;
 using LuckysDepartmentStore.Models.ViewModels.Consumer;
 using LuckysDepartmentStore.Service;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -9,7 +10,7 @@ using System.Security.Claims;
 namespace LuckysDepartmentStore.Controllers
 {
     [Authorize]
-    public class CheckoutController(ICheckoutService _checkoutService, IShoppingCartService _shoppingCartService, IConsumerService _consumerService) : Controller
+    public class CheckoutController(ICheckoutService _checkoutService, IShoppingCartService _shoppingCartService, IConsumerService _consumerService, UserManager<ApplicationUser> _userManager) : Controller
     {
         // GET: CheckoutController
         public async Task<ActionResult> AddressAndPayment()
@@ -42,34 +43,33 @@ namespace LuckysDepartmentStore.Controllers
         {
             var order = new Order();
 
-            var selectedShipping = ShippingAddresses.FirstOrDefault(s => s.ShippingAddressID == SelectedShippingAddressID);
-            var selectedPayment = PaymentOptions.FirstOrDefault(p => p.PaymentOptionsID == SelectedPaymentOptionsID);
-
+            
             try
             {
-               
-                //order.UserName = User.Identity.Name;
-                //order.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                //order.OrderDate = DateTime.Now;
-                ////order.FirstName = User.Identities.
-                ////order.LastName = User.Identities.
-                //order.Address1 = values.Shipping.Address1;
-                //order.Address2 = values.Shipping.Address2;
-                //order.City = values.Shipping.City;
-                //order.state = values.Shipping.state;
-                //order.Zip = values.Shipping.Zip;
-                //order.RoutingNumber = values.Payment.RoutingNumber;
-                //order.AccountNumber = values.Payment.AccountNumber;
-                //order.CvcCode = values.Payment.CvcCode;
-                //order.BillingAddress1 = values.Payment.BillingAddress1;
-                //order.BillingAddress2 = values.Payment.BillingAddress2;
-                //order.BillingCity = values.Payment.City;
-                //order.BillingState = values.Payment.State;
-                //order.BillingZipCode = values.Payment.ZipCode;
-                //order.IsCheckingAccount = values.Payment.IsCheckingAccount;
-                //order.IsCreditCard = values.Payment.IsCreditCard;
+                var selectedShipping = ShippingAddresses.FirstOrDefault(s => s.ShippingAddressID == SelectedShippingAddressID);
+                var selectedPayment = PaymentOptions.FirstOrDefault(p => p.PaymentOptionsID == SelectedPaymentOptionsID);
 
+                var user = await _userManager.GetUserAsync(User);
+                order.UserId = user.Id;
+                order.UserName = selectedShipping.FirstName;                
+                order.OrderDate = DateTime.Now;
+                order.FirstNameShipping = selectedShipping.FirstName;
+                order.LastNameShipping = selectedShipping.LastName;
+                order.Address1 = selectedShipping.Address1;                
+                order.Address2 = selectedShipping?.Address2 ?? order.Address2;                
+                order.City = selectedShipping.City;
+                order.state = selectedShipping.State;
+                order.Zip = selectedShipping.ZipCode;
 
+                order.FirstNameBilling = selectedPayment.FirstName;
+                order.LastNameBilling = selectedPayment.LastName;
+                order.AccountNumber = selectedPayment.AccountNumber;
+                order.CvcCode = selectedPayment.CvcCode;
+                order.BillingAddress1 = selectedPayment.BillingAddress1;
+                order.BillingAddress2 = selectedPayment?.BillingAddress2 ?? order.BillingAddress2;
+                order.BillingCity = selectedPayment.City;
+                order.BillingState = selectedPayment.State;
+                order.BillingZipCode = selectedPayment.ZipCode;
 
                 //Save Order
                 var orderId = await _checkoutService.Order(order);

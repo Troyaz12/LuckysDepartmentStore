@@ -18,8 +18,8 @@ namespace LuckysDepartmentStore.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateShippingAddress([FromBody] ShippingAddressVM shippingAddress)
         {
-           var user = _userManager.GetUserAsync(User);
-           shippingAddress.UserId = user.Result.Id;           
+           var user = await _userManager.GetUserAsync(User);
+           shippingAddress.UserId = user.Id;           
 
             var newAddresses = await _consumerService.CreateShippingAddress(shippingAddress);
 
@@ -52,8 +52,8 @@ namespace LuckysDepartmentStore.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePaymentOption([FromBody] PaymentOptionsVM paymentOption)
         {
-            var user = _userManager.GetUserAsync(User);
-            paymentOption.UserId = user.Result.Id;
+            var user = await _userManager.GetUserAsync(User);
+            paymentOption.UserId = user.Id;
 
             var newPaymentOption = await _consumerService.CreatePaymentOption(paymentOption);
 
@@ -62,7 +62,7 @@ namespace LuckysDepartmentStore.Controllers
                 return View();
             }
 
-            var allPaymentOptions = await _consumerService.GetShippingAddress(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var allPaymentOptions = await _consumerService.GetPaymentOptions(paymentOption.UserId);
 
 
             return PartialView("_PaymentPartial", allPaymentOptions.Data);
