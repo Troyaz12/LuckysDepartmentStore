@@ -6,7 +6,7 @@
         public int SelectedPaymentOptionsID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public int AccountNumber { get; set; }
+        public string AccountNumber { get; set; }
         public int CvcCode { get; set; }
         public string BillingAddress1 { get; set; }
         public string BillingAddress2 { get; set; }

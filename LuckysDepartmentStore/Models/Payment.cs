@@ -6,8 +6,8 @@
         public int CustomerID { get; set; }
         public bool IsProcessed { get; set; }
         public string ProcessMessage { get; set; }
-        public int? RoutingNumber { get; set; }
-        public int AccountNumber { get; set; }
+        public string? RoutingNumber { get; set; }
+        public string AccountNumber { get; set; }
         public int CvcCode { get; set; }
         public string BillingAddress1 { get; set; }
         public string BillingAddress2 { get; set; }
