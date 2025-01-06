@@ -58,7 +58,10 @@ namespace LuckysDepartmentStore.MappingProfiles
             CreateMap<ShippingAddressDTO, ShippingAddressVM>()
               .ReverseMap();
 
-            CreateMap<PaymentOptionsDTO, PaymentOptions>()
+            CreateMap<PaymentOptionsVM, PaymentOptions>()
+             .ReverseMap();
+
+            CreateMap<PaymentOptionsDTO, PaymentOptionsVM>()
               .ReverseMap();
         }
     }

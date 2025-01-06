@@ -72,6 +72,7 @@ namespace LuckysDepartmentStore.Service
                     City = address.City,
                     State = address.State,
                     ZipCode = address.ZipCode,
+                    ShippingAddressID = address.ShippingAddressID
                   })
                 .ToListAsync();
 
@@ -131,7 +132,8 @@ namespace LuckysDepartmentStore.Service
                    State = address.State,
                    ZipCode = address.ZipCode,
                    IsCheckingAccount = address.IsCheckingAccount,
-                   IsCreditCard = address.IsCreditCard                   
+                   IsCreditCard = address.IsCreditCard,
+                   PaymentOptionsID = address.PaymentOptionsID
                 })
                 .ToListAsync();
 

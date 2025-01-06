@@ -17,14 +17,16 @@ namespace LuckysDepartmentStore.Controllers
             OrderModelVM ordervm = new OrderModelVM()
             {
                 Shipping = new List<ShippingAddressVM>(),
-                Payment = new List<Payment>()
+                Payment = new List<PaymentOptionsVM>()
             };
 
             var shippingAddresses = _consumerService.GetShippingAddress(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var paymentOptions = _consumerService.GetPaymentOptions(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            if(shippingAddresses != null)
+            if (shippingAddresses != null)
             {
                 ordervm.Shipping = shippingAddresses.Result.Data;
+                ordervm.Payment = paymentOptions.Result.Data;
             }
 
 

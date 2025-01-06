@@ -2,6 +2,8 @@
 {
     public class PaymentOptionsDTO
     {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public int PaymentOptionsID { get; set; }
         public int RoutingNumber { get; set; }
         public int AccountNumber { get; set; }
@@ -15,6 +17,5 @@
         public bool IsCreditCard { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
-        public DateTime ProcessedDate { get; set; } = DateTime.Now;
     }
 }

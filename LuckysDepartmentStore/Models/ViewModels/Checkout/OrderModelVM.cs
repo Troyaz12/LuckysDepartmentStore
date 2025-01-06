@@ -5,6 +5,6 @@ namespace LuckysDepartmentStore.Models.ViewModels.Checkout
     public class OrderModelVM
     {
         public List<ShippingAddressVM> Shipping { get; set; }
-        public List<Payment> Payment { get; set; }
+        public List<PaymentOptionsVM> Payment { get; set; }
     }
 }
