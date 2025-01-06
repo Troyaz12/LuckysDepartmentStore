@@ -21,8 +21,8 @@
         @for (int i=0; i < Model.Count; i++)
         {
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                <label class="form-check-label" for="flexRadioDefault1">
+                <input class="form-check-input" type="radio" name="SelectedShippingAddressID" id="shipping_@Model[i].ShippingAddressID" value="@Model[i].ShippingAddressID">
+                <label class="form-check-label" for="shipping_@Model[i].ShippingAddressID">
                    <span>
                        @Model[i].FirstName
                    </span>
@@ -32,9 +32,13 @@
                     <span>
                         @Model[i].Address1
                     </span>
-                    <span>
-                        @Model[i].Address2
-                    </span>
+
+                    @if(!string.IsNullOrEmpty(Model[i].Address2))
+                    {
+                        <span>
+                            @Model[i].Address2<br/>
+                        </span>
+                    }
                     <span>
                         @Model[i].City
                     </span>
@@ -45,6 +49,14 @@
                         @Model[i].ZipCode
                     </span>
                 </label>
+                <input type="hidden" name="ShippingAddresses[@i].FirstName" value="@Model[i].FirstName" />
+                <input type="hidden" name="ShippingAddresses[@i].LastName" value="@Model[i].LastName" />
+                <input type="hidden" name="ShippingAddresses[@i].Address1" value="@Model[i].Address1" />
+                <input type="hidden" name="ShippingAddresses[@i].Address2" value="@Model[i].Address2" />
+                <input type="hidden" name="ShippingAddresses[@i].City" value="@Model[i].City" />
+                <input type="hidden" name="ShippingAddresses[@i].State" value="@Model[i].State" />
+                <input type="hidden" name="ShippingAddresses[@i].ZipCode" value="@Model[i].ZipCode" />
+                <input type="hidden" name="ShippingAddresses[@i].ShippingAddressID" value="@Model[i].ShippingAddressID" />
             </div>
         }     
     </div>

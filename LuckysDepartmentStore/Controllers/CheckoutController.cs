@@ -12,7 +12,7 @@ namespace LuckysDepartmentStore.Controllers
     public class CheckoutController(ICheckoutService _checkoutService, IShoppingCartService _shoppingCartService, IConsumerService _consumerService) : Controller
     {
         // GET: CheckoutController
-        public ActionResult AddressAndPayment()
+        public async Task<ActionResult> AddressAndPayment()
         {
             OrderModelVM ordervm = new OrderModelVM()
             {
@@ -20,25 +20,30 @@ namespace LuckysDepartmentStore.Controllers
                 Payment = new List<PaymentOptionsVM>()
             };
 
-            var shippingAddresses = _consumerService.GetShippingAddress(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var paymentOptions = _consumerService.GetPaymentOptions(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var shippingAddresses = await _consumerService.GetShippingAddress(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var paymentOptions = await _consumerService.GetPaymentOptions(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             if (shippingAddresses != null)
             {
-                ordervm.Shipping = shippingAddresses.Result.Data;
-                ordervm.Payment = paymentOptions.Result.Data;
+                ordervm.Shipping = shippingAddresses.Data;             
             }
 
+            if (paymentOptions != null)
+            {
+                ordervm.Payment = paymentOptions.Data;
+            }
 
-
-            return View(ordervm);
+                return View(ordervm);
         }
         //
         // POST: /Checkout/AddressAndPayment
         [HttpPost]
-        public async Task<ActionResult> AddressAndPayment(OrderModelVM values)
+        public async Task<ActionResult> AddressAndPayment(int SelectedShippingAddressID, int SelectedPaymentOptionsID, List<ShippingAddressVM> ShippingAddresses, List<PaymentOptionsVM> PaymentOptions)//OrderModelVM values)
         {
-            var order = new Order();            
+            var order = new Order();
+
+            var selectedShipping = ShippingAddresses.FirstOrDefault(s => s.ShippingAddressID == SelectedShippingAddressID);
+            var selectedPayment = PaymentOptions.FirstOrDefault(p => p.PaymentOptionsID == SelectedPaymentOptionsID);
 
             try
             {
