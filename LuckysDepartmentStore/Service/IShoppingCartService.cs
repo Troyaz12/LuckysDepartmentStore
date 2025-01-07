@@ -26,5 +26,8 @@ namespace LuckysDepartmentStore.Service
 
         public string GetCart();
         public string GetCart(Controller controller);
+
+        public Task<ExecutionResult<int>> GetCartCount(string ShoppingCartId);
+       
     }
 }

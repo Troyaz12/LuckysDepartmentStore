@@ -8,6 +8,7 @@ namespace LuckysDepartmentStore.Models
         public virtual ICollection<ShippingAddress> ShippingAddress { get; set; }
         public virtual ICollection<PaymentOptions> PaymentOptions { get; set; }
         public virtual Consumer Consumer { get; set; }
+        public virtual ICollection<CustomerOrder> CustomerOrder { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
     }

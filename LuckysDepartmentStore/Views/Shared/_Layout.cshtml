@@ -29,22 +29,23 @@
     <header>
         <div class="row align-items-center bg-success bg-opacity-5">
             <div class="col-md-4">
-               @* // <a class="ps-1" style="background-color: darkgreen" href="/Identity/Account/Login">Login</a> *@
-                @* <partial name="_LoginPartial" /> *@
+                
             </div> <!-- Empty first column -->
             <div class="col-md-4 text-center">
                 <a asp-area="" asp-controller="Home" asp-action="Index"><img src="~/img/InUse/Luckys1.png" class="imgLayout my-1"></a>
             </div>
-
-                <div class="col-md-4 text-end pe-4">
-
-                    <form class="d-flex" role="search" asp-action="Search" asp-controller="Home">
-                        <input class="form-control" type="search" placeholder="Search" aria-label="Search" name="searchString">
-                        <button class="btn btn-primary" type="submit" value="search"> <i class="bi bi-search"></i></button>
-                    </form>
-                </div>
-            
+            <div class="col-md-3 text-end pe-3">
+                <form class="d-flex" role="search" asp-action="Search" asp-controller="Home">
+                    <input class="form-control" type="search" placeholder="Search" aria-label="Search" name="searchString">
+                    <button class="btn btn-primary" type="submit" value="search"> <i class="bi bi-search"></i></button>
+                </form>
+            </div>
+            <h1 class="col-md-1 icon-container">
+                <i class="bi bi-cart3"> </i>
+                <span class="badge"> 3</span> <!-- This is the number overlay -->
+            </h1>
         </div>
+      
         <div class="row align-items-center bg-opacity-5">
 
             <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -103,7 +104,7 @@
                                     <div class="container">
                                         <div class="row">
                                             <ul class="list-unstyled col-md-4">
-                                                <li><a class="dropdown-item menu-heading" asp-controller="Home" asp-action="Search" asp-route-name="Womens">Men's Clothing</a></li>
+                                                <li><a class="dropdown-item menu-heading" asp-controller="Home" asp-action="Search" asp-route-name="mens">Men's Clothing</a></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="Search" asp-route-name="mens Pants">Pants</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="Search" asp-route-name="mens shorts">Shorts</a></li>                                                

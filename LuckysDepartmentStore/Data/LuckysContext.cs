@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace LuckysDepartmentStore.Data
 {
@@ -32,7 +33,8 @@ namespace LuckysDepartmentStore.Data
             builder.Entity<ApplicationUser>()
                 .HasMany(a => a.ShippingAddress)
                 .WithOne(b => b.User)
-                .HasForeignKey(b => b.UserId);
+                .HasForeignKey(b => b.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<ApplicationUser>()
                .HasMany(a => a.PaymentOptions)
@@ -43,6 +45,20 @@ namespace LuckysDepartmentStore.Data
               .HasOne(a => a.Consumer)
               .WithOne(b => b.User)
               .HasForeignKey<Consumer>(b => b.UserId);
+
+            builder.Entity<ApplicationUser>()
+             .HasMany(a => a.CustomerOrder)
+             .WithOne(b => b.User)
+             .HasForeignKey(b => b.UserId)
+             .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<CustomerOrder>()
+             .HasOne(co => co.Customer)
+             .WithMany()
+             .HasForeignKey(co => co.ShippingAddressID)
+             .OnDelete(DeleteBehavior.NoAction);
+
+
         }
 
         public DbSet<Category> Categories { get; set; }

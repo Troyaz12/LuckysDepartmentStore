@@ -48,7 +48,7 @@ namespace LuckysDepartmentStore.Service
 
             _context.Payments.Add(payment);
 
-            var paymentId = _context.SaveChanges();
+            _context.SaveChanges();
 
             // insert into shipping id
             var shipping = new Shipping();
@@ -62,40 +62,46 @@ namespace LuckysDepartmentStore.Service
 
             _context.Shipping.Add(shipping);
 
-            var shippingId = _context.SaveChanges();
+            _context.SaveChanges();
 
             // insert into customer orders
             var customerOrder = new CustomerOrder();
          //   customerOrder.CustomerID = customerId;
-            customerOrder.PaymentID = paymentId;
+            customerOrder.PaymentID = payment.PaymentID;
+            customerOrder.ShippingAddressID = shipping.ShippingID;
+            customerOrder.UserId = order.UserId;
 
             _context.CustomerOrders.Add(customerOrder);
-            var customerOrderId = _context.SaveChanges();
+            _context.SaveChanges();
 
             var cart = _shoppingCartService.GetCart();
             Product product = new Product();
-            var orderTotal = _shoppingCartService.CreateOrder(product, cart, customerOrderId);
+            var orderTotal = _shoppingCartService.CreateOrder(product, cart, customerOrder.CustomerOrderID);
 
-            var paymentUpdate = _context.Payments.Find(paymentId);
+            var paymentUpdate = _context.Payments.Find(payment.PaymentID);
 
             if (paymentUpdate != null)
             {
-                //orderUpdate.
-                paymentUpdate.Total = orderTotal.Result.Data;
+                var blog = _context.Payments.Single(b => b.PaymentID == payment.PaymentID);
+                blog.Total = orderTotal.Result.Data;
+                _context.SaveChanges();
 
-                _context.Payments.Add(payment);
+                ////orderUpdate.
+                //paymentUpdate.Total = orderTotal.Result.Data;
 
-                var result = _context.SaveChanges();
+                //_context.Entry(paymentUpdate).State = EntityState.Modified;
+
+                //var result = _context.SaveChanges();
             }
             else
             {
                 return Utilities.ExecutionResult<OrderIds>.Failure("Find payment.");
             }
 
-            orderids.PaymentID = paymentId;
+            orderids.PaymentID = payment.PaymentID;
         //    orderids.CustomerID = customerId;
-            orderids.CustomerOrderID = customerOrderId;
-            orderids.ShippingID = shippingId;            
+            orderids.CustomerOrderID = customerOrder.CustomerOrderID;
+            orderids.ShippingID = shipping.ShippingID;            
 
             return Utilities.ExecutionResult<OrderIds>.Success(orderids);
         }

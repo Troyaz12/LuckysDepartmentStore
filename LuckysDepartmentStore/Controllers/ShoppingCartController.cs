@@ -7,9 +7,15 @@ namespace LuckysDepartmentStore.Controllers
 {
     public class ShoppingCartController(IShoppingCartService _shoppingCartService) : Controller
     {
-        public IActionResult Index()
+        public async Task<IActionResult>Index()
         {
-            return View();
+            var cartID = _shoppingCartService.GetCart();
+            var allItems = await _shoppingCartService.GetCartItems(cartID);
+
+
+
+
+            return View(allItems.Data);
         }
         // GET: /Store/AddToCart/5
         public async Task<ActionResult> AddToCartAsync(ItemVM item)

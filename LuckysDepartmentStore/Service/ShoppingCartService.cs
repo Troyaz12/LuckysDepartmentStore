@@ -52,6 +52,7 @@ namespace LuckysDepartmentStore.Service
                         ProductID = product.ProductID,
                         CartID = ShoppingCartId,
                         Quantity = product.Quantity,
+                        Price = product.Price,
                         CreatedDate = DateTime.Now
                     };
                     _context.Carts.Add(cartItem);
@@ -154,7 +155,7 @@ namespace LuckysDepartmentStore.Service
                 {
                     return Utilities.ExecutionResult<List<Carts>>.Failure("Unable to get cart items.");
                 }
-                _context.SaveChangesAsync();
+                //_context.SaveChangesAsync();
 
             }
             catch (Exception ex)
@@ -277,6 +278,7 @@ namespace LuckysDepartmentStore.Service
         // We're using HttpContextBase to allow access to cookies.
         public string GetCartId()
         {
+            
             if (_httpContext.HttpContext.Session.GetString(CartSessionKey) == null)
             {
                 if (!string.IsNullOrWhiteSpace(_httpContext.HttpContext.User.Identity.Name))
@@ -292,6 +294,19 @@ namespace LuckysDepartmentStore.Service
                 }
             }
             return _httpContext.HttpContext.Session.GetString(CartSessionKey);
+        }
+
+        public Task<ExecutionResult<int>> GetCartCount(string ShoppingCartId)
+        {
+            var cartItems = GetCartItems(ShoppingCartId);
+
+
+
+
+
+
+
+            throw new NotImplementedException();
         }
     }
 }
