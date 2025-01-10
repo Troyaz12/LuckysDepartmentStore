@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.DTO.ShoppingCart;
+using LuckysDepartmentStore.Models.ViewModels.Consumer;
 using LuckysDepartmentStore.Models.ViewModels.Home;
+using LuckysDepartmentStore.Models.ViewModels.ShoppingCart;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,12 +17,14 @@ namespace LuckysDepartmentStore.Service
         public IMapper _mapper;
         public const string CartSessionKey = "CartId";    
         private readonly IHttpContextAccessor _httpContext;
+        public Utility _utility;
 
-    public ShoppingCartService(LuckysContext context, IMapper mapper, IHttpContextAccessor httpContext)
+    public ShoppingCartService(LuckysContext context, IMapper mapper, IHttpContextAccessor httpContext, Utility utility)
         {
             _context = context;
             _mapper = mapper;
             _httpContext = httpContext;
+            _utility = utility;
         }
 
         public string GetCart()
@@ -34,18 +39,20 @@ namespace LuckysDepartmentStore.Service
             return GetCart();
 
         }
-        public async Task<Utilities.ExecutionResult<Carts>> AddToCartAsync(ItemVM product, string ShoppingCartId)
-        {
-            Carts cartItem = null;
+        public async Task<Utilities.ExecutionResult<CartsVM>> AddToCartAsync(ItemVM product, string ShoppingCartId)
+        {            
             try
             {
-                // Get the matching cart and album instances
-                cartItem = await _context.Carts.SingleOrDefaultAsync(
+                // Get the matching cart instances
+                var cartItem = await _context.Carts.SingleOrDefaultAsync(
                     c => c.CartID == ShoppingCartId
                     && c.ProductID == product.ProductID);
 
+
                 if (cartItem == null)
                 {
+                    product.ProductPicture = _utility.StringToBytes(product.ProductImage);
+
                     // Create a new cart item if no cart item exists
                     cartItem = new Carts
                     {
@@ -53,7 +60,9 @@ namespace LuckysDepartmentStore.Service
                         CartID = ShoppingCartId,
                         Quantity = product.Quantity,
                         Price = product.Price,
-                        CreatedDate = DateTime.Now
+                        CreatedDate = DateTime.Now,
+                        ProductPicture = product.ProductPicture,
+                        ProductName = product.ProductName
                     };
                     _context.Carts.Add(cartItem);
                 }
@@ -61,17 +70,21 @@ namespace LuckysDepartmentStore.Service
                 {
                     // If the item does exist in the cart, 
                     // then add one to the quantity
-                    cartItem.Quantity++;
+                    cartItem.Quantity += product.Quantity;
                 }
                 // Save changes
                 await _context.SaveChangesAsync();
+
+                var cartVM = _mapper.Map<CartsVM>(cartItem);
+
+                return Utilities.ExecutionResult<CartsVM>.Success(cartVM);
             }
             catch(Exception ex)
             {
-                return Utilities.ExecutionResult<Carts>.Failure("Unable to add to cart.");
+                return Utilities.ExecutionResult<CartsVM>.Failure("Unable to add to cart.");
             }
 
-            return Utilities.ExecutionResult<Carts>.Success(cartItem);
+            
         }
 
         public async Task<Utilities.ExecutionResult<int>> RemoveFromCart(Product product, string ShoppingCartId)
@@ -141,29 +154,42 @@ namespace LuckysDepartmentStore.Service
 
                 return Utilities.ExecutionResult<int>.Success(cartItems.Count());
         }
-        public async Task<Utilities.ExecutionResult<List<Carts>>> GetCartItems(string ShoppingCartId)
+        public async Task<Utilities.ExecutionResult<List<CartsVM>>> GetCartItems(string ShoppingCartId)
         {
-            List<Carts> cartItems = null;
+           // List<Carts> cartItems = null;
 
             try
             {
-                cartItems = await _context.Carts
-                .Where(cart => cart.CartID == ShoppingCartId)
+                var cartItems = await _context.Carts
+                .Where(cart => cart.CartID == ShoppingCartId)                
+                .Select(cartItems => new CartsDTO
+                 {
+                    ProductID = cartItems.ProductID,
+                    Price = cartItems.Price,
+                    Quantity = cartItems.Quantity,
+                    ProductPicture = cartItems.ProductPicture,
+                    ProductName = cartItems.ProductName
+                 })
                 .ToListAsync();
 
                 if (cartItems == null || !cartItems.Any())
                 {
-                    return Utilities.ExecutionResult<List<Carts>>.Failure("Unable to get cart items.");
+                    return Utilities.ExecutionResult<List<CartsVM>>.Failure("Unable to get cart items.");
                 }
-                //_context.SaveChangesAsync();
 
+                var cartVM = _mapper.Map<List<CartsVM>>(cartItems);
+
+                for (int x=0; x < cartVM.Count; x++)
+                {
+                    cartVM[x].ProductImage = _utility.BytesToImage(cartVM[x].ProductPicture);
+                }
+
+                return Utilities.ExecutionResult<List<CartsVM>>.Success(cartVM);
             }
             catch (Exception ex)
             {
-                return Utilities.ExecutionResult<List<Carts>>.Failure("Unable to get cart items.");
-            }
-
-            return Utilities.ExecutionResult<List<Carts>>.Success(cartItems);
+                return Utilities.ExecutionResult<List<CartsVM>>.Failure("Unable to get cart items.");
+            }           
         }
         public async Task<Utilities.ExecutionResult<int>> GetCount(string ShoppingCartId)
         {
@@ -296,17 +322,13 @@ namespace LuckysDepartmentStore.Service
             return _httpContext.HttpContext.Session.GetString(CartSessionKey);
         }
 
-        public Task<ExecutionResult<int>> GetCartCount(string ShoppingCartId)
+        public async Task<ExecutionResult<int>> GetCartCount(string ShoppingCartId)
         {
             var cartItems = GetCartItems(ShoppingCartId);
 
+            int quantity = cartItems.Result.Data.Sum(item => item.Quantity);
 
-
-
-
-
-
-            throw new NotImplementedException();
-        }
+            return ExecutionResult<int>.Success(quantity);
+        }       
     }
 }

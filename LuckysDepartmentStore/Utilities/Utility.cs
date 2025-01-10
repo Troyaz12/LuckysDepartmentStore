@@ -2,6 +2,7 @@
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Models.DTO.Home;
 using LuckysDepartmentStore.Models.ViewModels.Home;
+using System.Text;
 
 namespace LuckysDepartmentStore.Utilities
 {
@@ -170,6 +171,37 @@ namespace LuckysDepartmentStore.Utilities
             stars = 5 * starPercent;
 
             return stars;
+        }
+        public byte[] StringToBytes(string imageString)
+        {
+            try
+            {
+                if (imageString == null)
+                {
+                    return DefaultImageBytes();
+                }
+                else
+                {
+                    var data = imageString.Substring(imageString.IndexOf(",") + 1);
+                    byte[] imageBytes = Convert.FromBase64String(data);                    
+
+                    return imageBytes;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentNullException("Error during Convertion: " + ex.Message);
+            }
+
+        }
+        public byte[] DefaultImageBytes()
+        {
+            var defaultImage = _config["ImagePaths:ShoppingImageEmpty"];
+
+            byte[] imageBytes = Convert.FromBase64String(defaultImage);
+
+            return imageBytes;
         }
     }
 }

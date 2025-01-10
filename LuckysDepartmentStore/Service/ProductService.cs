@@ -95,33 +95,6 @@ namespace LuckysDepartmentStore.Service
                 throw new Exception("An error occurred while processing your request", ex);
             }
         }
-        //public T GetItemAs<T> (object obj) where T : class 
-        //{ 
-           
-
-
-        //    if(obj.GetType() == typeof(ProductVM))
-        //    {
-        //        ProductVM productVm = new ProductVM();
-        //        productVm = (ProductVM) obj;
-
-        //        var color = _context.Colors
-        //                 .Where(p => p.Name.ToLower() == productVm.Color.ToLower())
-        //                 .ToList();
-
-        //        Product product = new Product();
-        //        product.ColorProductID = color[0].ColorID;
-
-
-        //        return product as T;
-        //    }
-
-
-
-
-        //    return obj as T;
-
-        //}
         public List<Color> GetColors()
         {
             var color = _context.Colors               
@@ -210,8 +183,8 @@ namespace LuckysDepartmentStore.Service
                         SubCategory = SubCategory.SubCategoryName,
                         Brand = Brand.BrandName,
                         CreatedDate = Product.CreatedDate,
-                        ProductImage = Product.ProductPicture.ToString()
-    };
+                        ProductPicture = Product.ProductPicture
+                    };
 
 
                 if (!string.IsNullOrEmpty(categorySelection))
@@ -253,10 +226,12 @@ namespace LuckysDepartmentStore.Service
                 var productListVM = _mapper.Map<List<ProductVM>>(list);
 
 
+
+
                 foreach (ProductVM singleProduct in productListVM)
                 {
 
-                    singleProduct.ProductImage = _utility.BytesToImage(singleProduct.ProductArt);
+                    singleProduct.ProductImage = _utility.BytesToImage(singleProduct.ProductPicture);
 
                 }
 

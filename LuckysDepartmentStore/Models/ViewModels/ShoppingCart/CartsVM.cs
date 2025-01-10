@@ -1,6 +1,6 @@
-﻿namespace LuckysDepartmentStore.Models
+﻿namespace LuckysDepartmentStore.Models.ViewModels.ShoppingCart
 {
-    public class Carts
+    public class CartsVM
     {
         public int ID { get; set; }
         public string CartID { get; set; }
@@ -9,6 +9,7 @@
         public int Quantity { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public byte[]? ProductPicture { get; set; }
+        public string? ProductImage { get; set; }
         public string ProductName { get; set; }
     }
 }

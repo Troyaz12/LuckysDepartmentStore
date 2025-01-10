@@ -3,6 +3,7 @@ using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Service;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -34,12 +35,9 @@ builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 builder.Services.AddScoped<ICheckoutService, CheckoutService>();
 builder.Services.AddScoped<IConsumerService, ConsumerService>();
 
-//builder.Services.AddScoped<UserService>();
-
+builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
-
 builder.Services.AddSingleton<Utility>();
-
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -56,8 +54,12 @@ builder.Services.AddSession(options =>
 //	.AddDefaultTokenProviders();
 
 var app = builder.Build();
+    
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
-
+app.MapHub<CartHub>("/CartHub");
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -76,9 +78,6 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.UseSession();

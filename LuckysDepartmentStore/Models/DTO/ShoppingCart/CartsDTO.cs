@@ -1,6 +1,6 @@
-﻿namespace LuckysDepartmentStore.Models
+﻿namespace LuckysDepartmentStore.Models.DTO.ShoppingCart
 {
-    public class Carts
+    public class CartsDTO
     {
         public int ID { get; set; }
         public string CartID { get; set; }

@@ -31,7 +31,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
         [Display(Name = "CreatedDate")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
-        public byte[] ProductArt { get; set; }
+        public byte[] ProductPicture { get; set; }
         public string? ProductImage { get; set; }
     }
 }

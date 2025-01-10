@@ -40,13 +40,9 @@ body {
 }
 
 .dropdown-menu {
-    /*width: 1000px;
-    left: 0;
-    right: 0;
-    top: 100%;*/
     background-color: rgb(247,233,142);
     position: fixed;
-    top: 165px;
+    top: 190px;
     left: 0;
     width: 100vw;
 }
@@ -152,15 +148,31 @@ body {
 .icon-container {
     position: relative;
     display: inline-block;
+    padding:50px;
+}
+
+.col-md-1 {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;    
+    }
+
+.icon-container .cart {
+    font-size: 48px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .icon-container .badge {
     position: absolute;
-    top: 7px;
-    right: 50px;   
-    color: white;
+    top: 67px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;       
     border-radius: 50%;
     padding: 5px 10px;
     font-size: 14px;
+    display: none;
 }
-

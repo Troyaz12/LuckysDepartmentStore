@@ -4,10 +4,12 @@ using LuckysDepartmentStore.Models.DTO.Consumer;
 using LuckysDepartmentStore.Models.DTO.Discount;
 using LuckysDepartmentStore.Models.DTO.Home;
 using LuckysDepartmentStore.Models.DTO.Products;
+using LuckysDepartmentStore.Models.DTO.ShoppingCart;
 using LuckysDepartmentStore.Models.ViewModels.Consumer;
 using LuckysDepartmentStore.Models.ViewModels.Discount;
 using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Models.ViewModels.Product;
+using LuckysDepartmentStore.Models.ViewModels.ShoppingCart;
 using LuckysDepartmentStore.Utilities;
 
 namespace LuckysDepartmentStore.MappingProfiles
@@ -63,6 +65,12 @@ namespace LuckysDepartmentStore.MappingProfiles
 
             CreateMap<PaymentOptionsDTO, PaymentOptionsVM>()
               .ReverseMap();
+
+            CreateMap<Carts, CartsVM>()
+             .ReverseMap();
+
+            CreateMap<CartsDTO, CartsVM>()
+             .ReverseMap();
         }
     }
 }
