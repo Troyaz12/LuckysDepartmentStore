@@ -165,12 +165,9 @@ namespace LuckysDepartmentStore.Controllers
         }
 
         [HttpPost]
-       // [ValidateAntiForgeryToken]
-        public ActionResult UpdateList([FromBody] ColorProductVM product)
-        {
-            productVM.ColorProduct.Add(product);
-                                
-            return PartialView("_DynamicPartialList", productVM);
+        public ActionResult UpdateList([FromBody] UpdateColorListVM colorModel)
+        {                       
+            return PartialView("_DynamicPartialList", colorModel.ColorProductList);
         }
         [HttpPost]
        // [ValidateAntiForgeryToken]
@@ -182,26 +179,29 @@ namespace LuckysDepartmentStore.Controllers
             return PartialView("_DynamicPartialListEdit", productEditVM);
         }
         [HttpPost]
-        public ActionResult DeleteItem(int index)
+        public ActionResult DeleteItem([FromBody] RemoveColorVM removeColor)
         {
-            if (index >= 0 && index <= productVM.ColorProduct.Count)
+            var index = removeColor.Index;
+            var colorProducts = removeColor.CurrentList;
+
+            if (index >= 0 && index <= colorProducts.Count)
             {
-                productVM.ColorProduct.RemoveAt(index);
+                removeColor.CurrentList.RemoveAt(index);
             }
-            return PartialView("_DynamicPartialList", productVM);
+            return PartialView("_DynamicPartialList", colorProducts);
         }
         [HttpPost]
-        public ActionResult DeleteEditItem(int index)
+        public ActionResult DeleteEditItem([FromBody] RemoveColorVM removeColor)
         {
-            if (index >= 0 && index <= productEditVM.ColorProduct.Count)
+            var index = removeColor.Index;
+            var colorProducts = removeColor.CurrentList;
+
+            if (index >= 0 && index <= colorProducts.Count)
             {
                 productEditVM.ColorProduct.RemoveAt(index);
             }
-            return PartialView("_DynamicPartialListEdit", productEditVM);
+            return PartialView("_DynamicPartialListEdit", colorProducts);
         }
-
-
-
 
     }
 }

@@ -4,7 +4,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
 {
     public class ProductCreateVM
     {
-        public int ProductID { get; set; }
+        public int? ProductID { get; set; }
 
         [Display(Name = "Price")]
         [Required(ErrorMessage = "Price is required")]

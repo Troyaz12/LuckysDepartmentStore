@@ -46,6 +46,13 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+});
+
+
+
 //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Add Identity services

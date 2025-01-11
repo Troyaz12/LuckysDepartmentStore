@@ -1,4 +1,5 @@
-﻿@model LuckysDepartmentStore.Models.ViewModels.Product.ProductCreateVM
+﻿@using LuckysDepartmentStore.Models.ViewModels.Product
+@model LuckysDepartmentStore.Models.ViewModels.Product.ProductCreateVM
 
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -26,7 +27,7 @@
 <hr />
 
 
-    <form asp-action="Create" enctype="multipart/form-data">
+    <form id="productForm" asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>            
 
             <div class="row">
@@ -58,6 +59,7 @@
                     <input type="hidden" id="SubCategoryID" name="SubCategoryID">
                     <input type="hidden" id="BrandID" name="BrandID">
                     <input type="hidden" id="SizeID" name="SizeID">
+                    <input type="hidden" id="ProductID" name="ProductID">
 
                     
                     <div class="dropdown">
@@ -161,7 +163,7 @@
                         </div>
                     </div>
                     <div class="scrollable-section mt-2" id="dynamicList">                    
-                        @Html.Partial("_DynamicPartialList", Model)
+                        @Html.Partial("_DynamicPartialList", Model.ColorProduct)
                     </div>
                 </div>
             </div>
@@ -200,8 +202,6 @@
             $(dropdownClass + ' .dropdown-item').on('click', function () {
                 $(inputId).val($(this).text());
                 $(inputNum).val($(this).attr('data-stored-value'));
-
-                console.log("execute" + $(this).text() + " " + $(this).attr('data-stored-value'));
             });
         }
 
@@ -212,28 +212,52 @@
         handleDropdownFilter('#Brand', '#BrandID','.dropdown-menu[aria-labelledby="Brand"]');
         handleDropdownFilter('#Sizes', '#SizeID', '.dropdown-menu[aria-labelledby="Sizes"]');
 
+         // Function to gather all ColorProductVM data from the partial view
+            var gatherColorProducts = function () {
+                var colorProducts = [];
+                $('#colorProductContainer li').each(function (index, element) {
+                    var colorProduct = {
+                        ColorID: $(element).find('input[name*=".ColorID"]').val(),
+                        Quantity: $(element).find('input[name*=".Quantity"]').val(),
+                        Name: $(element).find('input[name*=".Name"]').val(),
+                        SizeID: $(element).find('input[name*=".SizeID"]').val(),
+                        SizeName: $(element).find('input[name*=".SizeName"]').val()
+                    };
+                    colorProducts.push(colorProduct);
+                });
+                return colorProducts;
+            };
+
         $('#save').on('click', function (e) {
             e.preventDefault();
 
             var name = $('#Color').val(); // Assuming data-selected is set when color is selected
-            var colorID = $('#ColorID').val()||null; // Assuming data-selected is set when color is selected
-            var quantity = $('#QuantityInput').val();
-            var sizeID = $('#SizeID').val();
+            var colorID = $('#ColorID').val() ? parseInt($('#ColorID').val()) : null;
+            var quantity = $('#QuantityInput').val() ? parseInt($('#QuantityInput').val()) : 0;
+            var sizeID = $('#SizeID').val() ? parseInt($('#SizeID').val()) : null;
             var sizeName = $('#Sizes').val();
-           
-            var item = {
+
+            var newItem = {
                 ColorID: colorID,
                 Quantity: quantity,
                 Name: name,
                 SizeID: sizeID,
                 SizeName: sizeName
-            };            
+            };
+
+            var currentColorProducts = gatherColorProducts();
+            currentColorProducts.push(newItem);
+
             
+            var allData = {
+                ColorProductList: currentColorProducts
+            }
+
             $.ajax({
                 url: '@Url.Action("UpdateList", "Product")',
                 type: 'POST',
                 contentType: 'application/json', 
-                data: JSON.stringify(item),
+                data: JSON.stringify(allData),
 
                 success: function (data) 
                 { 
@@ -256,11 +280,18 @@
         $("#dynamicList").on("click", "#deleteColor", function (e) {
             e.preventDefault();
             var index = $(this).data("index");
-             console.log("executed code");
+            var currentColorProducts = gatherColorProducts();
+
+            var allData = {
+                Index: index,
+                CurrentList: currentColorProducts
+            }
+            console.log("delete: " + JSON.stringify(allData) + " " + index + " " + currentColorProducts);
             $.ajax({
                 url: '@Url.Action("DeleteItem", "Product")',
                 type: 'POST',
-                data: { index: index },
+                contentType: 'application/json',
+                data: JSON.stringify(allData),
                 success: function (data) {
                     $("#dynamicList").html(data);
                 },
@@ -271,9 +302,27 @@
         });
 
 
+        $('#productForm').on('submit', function (e) {
+        
+        var colorProducts = gatherColorProducts();
+        console.log("saved form " + colorProducts);
+        // Append hidden fields for each ColorProduct
+        for (var i = 0; i < colorProducts.length; i++) {
+            var colorProduct = colorProducts[i];
+            for (var key in colorProduct) {
+                if (colorProduct.hasOwnProperty(key)) {
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'ColorProduct[' + i + '].' + key,
+                        value: colorProduct[key]
+                    }).appendTo('#productForm');
+                }
+            }
+        }
+
+        // Allow the form to be submitted
+        return true;
     });
 
-    
-
-
+});
 </script>
