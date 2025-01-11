@@ -117,27 +117,32 @@ body {
 }
 
 .big-header {
-    font-size: 5.00rem;
-    font-family: "Bodoni Moda";
+    font-size: 3.00rem;
+    font-family: "Lato", serif;
 }
 
 .small-header {
-   
-    font-family: "Bodoni Moda";
+    font-family: "Lato", serif;
 }
 .card {
+    padding-top: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
+    border: none;
 }
 
 .card img {
      max-width: 100%;
-     height: auto;
+     /*height: auto;*/
 }
 
 .card-title {
-    font-weight: bold;
+ 
+}
+
+.card-text {
+ 
 }
 
 .item{
@@ -175,4 +180,26 @@ body {
     padding: 5px 10px;
     font-size: 14px;
     display: none;
+}
+
+.image-container {
+    width: 350px; /* Adjust to your preferred width */
+    height: 350px; /* Adjust to your preferred height */
+    object-fit: cover; /* This ensures the image covers the entire container while maintaining its aspect ratio */
+    padding:20px;
+}
+
+.image-box {
+    background-color: #f7f7f7; /* Grey background */
+    padding: 30px; /* Optional padding for some space around the image */
+    border-radius: 5px; /* Optional rounded corners */
+    display: inline-block; /* Ensure the box fits snugly around the image */
+}
+.card-text-container {
+    text-align: left;
+    width:100%;
+}
+
+.no-underline {
+    text-decoration: none;
 }

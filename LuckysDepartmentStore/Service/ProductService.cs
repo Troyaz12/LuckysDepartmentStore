@@ -41,11 +41,11 @@ namespace LuckysDepartmentStore.Service
 
             try
             {
-                if ((product != null && product.ColorProduct == null))
+                if ((product != null && product.ColorID == null))
                 {
-                    for (int x = 0; x > product.ColorProduct.Count; x++)
+                    for (int x = 0; x < product.ColorProduct.Count; x++)
                     {
-                        if (product.ColorProduct[x].ColorID == 0)
+                        if (product.ColorProduct[x].ColorID == 0 || product.ColorProduct[x].ColorID == null)
                         {
                             var colorId = _colorService.Create(product.ColorProduct[x].Name);
                             
@@ -163,7 +163,6 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-
                 var products =
                     from Product in _context.Products
                     join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
@@ -172,6 +171,16 @@ namespace LuckysDepartmentStore.Service
                     from SubCategory in subCategories.DefaultIfEmpty()
                     join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
                     from Brand in Brands.DefaultIfEmpty()
+                    join DiscountsByBrand in _context.Discounts on Product.BrandID equals DiscountsByBrand.BrandID into DiscountBrand
+                    from DiscountsByBrand in DiscountBrand.DefaultIfEmpty()
+                    join DiscountsByCategory in _context.Discounts on Product.CategoryID equals DiscountsByCategory.CategoryID into DiscountCategory
+                    from DiscountsByCategory in DiscountCategory.DefaultIfEmpty()
+                    join DiscountsByProduct in _context.Discounts on Product.ProductID equals DiscountsByProduct.ProductID into DiscountProduct
+                    from DiscountsByProduct in DiscountProduct.DefaultIfEmpty()
+                    join DiscountsBySubcategory in _context.Discounts on Product.SubCategoryID equals DiscountsBySubcategory.SubCategoryID into DiscountSubCategory
+                    from DiscountsBySubcategory in DiscountSubCategory.DefaultIfEmpty()
+                    where DiscountsByBrand != null || DiscountsByCategory != null || DiscountsByProduct != null || DiscountsBySubcategory != null
+
                     select new ProductVmDTO
                     {
                         ProductID = Product.ProductID,

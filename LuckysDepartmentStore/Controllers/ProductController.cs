@@ -15,6 +15,7 @@ namespace LuckysDepartmentStore.Controllers
 
             var products = _productService.GetProductsSearchBar(category, searchString);
             productList.Products = products;
+            ProductCreateVM productVM = new ProductCreateVM();
 
             return View(productList);
         }

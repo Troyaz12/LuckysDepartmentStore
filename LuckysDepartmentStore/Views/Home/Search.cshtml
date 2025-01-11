@@ -1,35 +1,40 @@
 ﻿@model IEnumerable<LuckysDepartmentStore.Models.ViewModels.Product.ProductVM>
 
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html><html lang="en">
+<head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>jQuery UI Datepicker - Default functionality</title>
+  <title>Search</title>
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
   <link rel="stylesheet" href="/resources/demos/style.css">
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
-
+  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">       
 </head>
 <body>
-    <div style="background-color: rgb(244,240,255)">
-        <h1 class="text-center big-header">Discounts</h1>
-        <h2 class="text-center small-header">Check out out weekly discounts.</h2>
+        <h1 class="big-header">Discounts</h1>        
 
-        <div class="container text-center">
+        <div class="container">
             <div class="row">
                 @foreach (var product in Model)
                 {                    
                     <div class="col-md-4 mb-4">
                         <div class="card">
-                            <a asp-action="Item" asp-route-productId="@product.ProductID">
-                                <img src="@product.ProductImage" id="ProductImage" name="ProductImage" class="image-fluid image-container" alt="Product Image">
-                            </a>
-                            <div>
-                                <h5 class="card-title">@product.ProductName </h5>
-                                <p calss="card-text">
-                                    @product.Description
-                                </p>
-                                <p>@string.Format("{0:C2}",@product.Price)</p>
+
+                            <div class = "image-box">
+                                <a asp-action="Item" asp-route-productId="@product.ProductID">
+                                    <img src="@product.ProductImage" id="ProductImage" name="ProductImage" class="img-fluid image-container" alt="Product Image">
+                                </a>
+                            </div>
+
+                            <div class="card-text-container">
+                                <div style="padding-left:10px">
+                                    <h5 class="card-title">@product.ProductName </h5>
+                                    <p class="card-text">
+                                        @product.Description
+                                    </p>
+                                    <p class="card-text">@string.Format("{0:C2}",@product.Price)</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -39,13 +44,3 @@
         </div>    
 </body>
 </html>
-
-
-
-
- 
-
-
-  <script>
-  
-  </script>
