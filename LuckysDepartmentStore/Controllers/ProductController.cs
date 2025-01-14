@@ -1,13 +1,11 @@
 ﻿using LuckysDepartmentStore.Models.ViewModels.Product;
-using LuckysDepartmentStore.Service;
+using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LuckysDepartmentStore.Controllers
 {
     public class ProductController(IProductService _productService) : Controller
     {
-        public static ProductCreateVM productVM = new ProductCreateVM();
-        public static ProductEditVM productEditVM = new ProductEditVM();
         // GET: Product
         public ActionResult Index(string category, string searchString)
         {
@@ -93,7 +91,7 @@ namespace LuckysDepartmentStore.Controllers
         // GET: Product/Edit/5
         public ActionResult Edit(int id)
         {
-            productEditVM = _productService.GetAProduct(id);
+            ProductEditVM productEditVM = _productService.GetAProduct(id);
 
             productEditVM.Color = _productService.GetColors();
             productEditVM.Category = _productService.GetCategory();
@@ -117,8 +115,6 @@ namespace LuckysDepartmentStore.Controllers
                 }
 
             }
-
-            productVM.ColorProduct = productEditVM.ColorProduct;
 
             return View(productEditVM);
         }
@@ -171,12 +167,9 @@ namespace LuckysDepartmentStore.Controllers
         }
         [HttpPost]
        // [ValidateAntiForgeryToken]
-        public ActionResult UpdateListForEdit([FromBody] ColorProductVM product)
+        public ActionResult UpdateListForEdit([FromBody] UpdateColorListVM product)
         {
-            // productVM.ColorProduct.Add(product);
-            productEditVM.ColorProduct.Add(product);
-
-            return PartialView("_DynamicPartialListEdit", productEditVM);
+            return PartialView("_DynamicPartialListEdit", product.ColorProductList);
         }
         [HttpPost]
         public ActionResult DeleteItem([FromBody] RemoveColorVM removeColor)
@@ -195,11 +188,7 @@ namespace LuckysDepartmentStore.Controllers
         {
             var index = removeColor.Index;
             var colorProducts = removeColor.CurrentList;
-
-            if (index >= 0 && index <= colorProducts.Count)
-            {
-                productEditVM.ColorProduct.RemoveAt(index);
-            }
+          
             return PartialView("_DynamicPartialListEdit", colorProducts);
         }
 

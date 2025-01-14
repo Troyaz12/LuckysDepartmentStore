@@ -33,5 +33,10 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
 
         public byte[] ProductPicture { get; set; }
         public string? ProductImage { get; set; }
+        public decimal? DiscountAmount { get; set; }
+        public decimal? DiscountPercent { get; set; }
+
+        [Display(Name = "Price")]
+        public Decimal SalePrice { get; set; }
     }
 }

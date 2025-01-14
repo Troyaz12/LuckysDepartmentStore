@@ -24,5 +24,6 @@
         public int CategoryId { get; set; }
         public int SubCategoryId { get; set; }
         public int SizeID { get; set; }
+        public string? DiscountTags { get; set; }
     }
 }

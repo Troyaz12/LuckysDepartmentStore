@@ -5,7 +5,7 @@ using LuckysDepartmentStore.Models.ViewModels.ShoppingCart;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LuckysDepartmentStore.Service
+namespace LuckysDepartmentStore.Service.Interfaces
 {
     public interface IShoppingCartService
     {
@@ -19,16 +19,16 @@ namespace LuckysDepartmentStore.Service
 
         public Task<ExecutionResult<int>> GetCount(string ShoppingCartId);
 
-        public Task<Utilities.ExecutionResult<decimal>> GetTotal(string ShoppingCartId);
+        public Task<ExecutionResult<decimal>> GetTotal(string ShoppingCartId);
 
-        public Task<Utilities.ExecutionResult<decimal>>  CreateOrder(Product order, string ShoppingCartId, int customerId);
+        public Task<ExecutionResult<decimal>> CreateOrder(Product order, string ShoppingCartId, int customerId);
 
-        public Task<Utilities.ExecutionResult<string>> MigrateCart(string userName, string ShoppingCartId);
+        public Task<ExecutionResult<string>> MigrateCart(string userName, string ShoppingCartId);
 
         public string GetCart();
         public string GetCart(Controller controller);
 
         public Task<ExecutionResult<int>> GetCartCount(string ShoppingCartId);
-       
+
     }
 }

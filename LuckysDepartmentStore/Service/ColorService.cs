@@ -2,6 +2,7 @@
 using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Product;
+using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace LuckysDepartmentStore.Service

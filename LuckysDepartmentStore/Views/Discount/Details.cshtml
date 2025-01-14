@@ -50,9 +50,9 @@
             <label asp-for="ExpirationDate" class="control-label"></label>
             <span class="form-control">@Model.ExpirationDate.ToString("yyyy-MM-dd")</span>
         </div>
-        <div class="form-group" id="KeywordsGroup">
-            <label asp-for="Keywords" class="control-label"></label>
-            <span class="form-control">@Model.Keywords</span>
+        <div class="form-group" id="DiscountTagGroup">
+            <label asp-for="DiscountTag" class="control-label"></label>
+            <span class="form-control">@Model.DiscountTag</span>
         </div>
         <div class="form-group" id="ProductIDGroup">
             <label asp-for="ProductID" class="control-label"></label>
@@ -115,10 +115,6 @@
 
         if (ProductID === null || ProductID === '') {
             $("#ProductIDGroup").hide();
-        }
-
-        if (Keywords === null || Keywords === '') {
-            $("#KeywordsGroup").hide();
         }
     });
 

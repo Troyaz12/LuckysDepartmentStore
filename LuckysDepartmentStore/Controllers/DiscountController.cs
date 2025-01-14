@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using LuckysDepartmentStore.Models.ViewModels.Discount;
 using LuckysDepartmentStore.Models.ViewModels.Product;
-using LuckysDepartmentStore.Service;
+using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LuckysDepartmentStore.Controllers

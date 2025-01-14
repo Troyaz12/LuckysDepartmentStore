@@ -23,5 +23,8 @@ namespace LuckysDepartmentStore.Models.DTO.Products
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public string? Keywords { get; set; }
         public byte[]? ProductPicture { get; set; }
+        public decimal? DiscountAmount { get; set; }
+        public decimal? DiscountPercent { get; set; }
+        public string? DiscountTag { get; set; }
     }
 }

@@ -9,9 +9,20 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discount Details</title>
+    <title>Discount Edit</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta1/js/bootstrap.min.js"></script>
+    <!-- Ensure these scripts are included for client-side validation -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
+
+
+
+
 </head>
-<h1>Discount Detail</h1>
+<h1>Discount Edit</h1>
 
 <hr />
 
@@ -21,6 +32,11 @@
 
 
     @Html.AntiForgeryToken()
+
+    <input type="hidden" id="DiscountID" name="DiscountID" value="@Model.DiscountID">
+    <input type="hidden" id="CategoryID" name="CategoryID">
+    <input type="hidden" id="SubCategoryID" name="SubCategoryID">
+    <input type="hidden" id="BrandID" name="BrandID">
 
     <div class="row">
         <image src="@Model.DiscountImage" id="DiscountImage" name="DiscountImage" class="image-container">
@@ -54,8 +70,8 @@
                 <input asp-for="ExpirationDate" class="form-control" />
             </div>
             <div class="form-group">
-                <label asp-for="Keywords" class="control-label"></label>
-                <input asp-for="Keywords" class="form-control"/>
+                <label asp-for="DiscountTag" class="control-label"></label>
+                <input asp-for="DiscountTag" class="form-control" />
             </div>
             <div class="form-group">
                 <label asp-for="ProductID" class="control-label"></label>
@@ -94,7 +110,7 @@
             <div class="dropdown">
                 <label asp-for="Brand">Brand</label>
                 <input asp-for="BrandSelection" type="text" class="form-control dropdown-toggle" id="Brand" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
-                <span id="BrandIDEr" class="text-danger"></span>
+                <span id="BrandSelection" class="text-danger"></span>
                 <span asp-validation-for="BrandSelection" class="text-danger"></span>
                 <ul class="dropdown-menu" aria-labelledby="Brand">
                     @if (Model.Brand != null)
@@ -123,8 +139,10 @@
 
 <script>
 
-    $(function () {
+    $(document).ready(function () {
         function handleDropdownFilter(inputId, inputNum, dropdownClass) {
+            console.log("test");
+
             $(inputId).on('keyup', function () {
                 var filter = this.value.toLowerCase();
                 var items = document.querySelectorAll(dropdownClass + ' li');
@@ -132,13 +150,21 @@
                     var text = item.textContent.toLowerCase();
                     item.style.display = text.includes(filter) ? '' : 'none';
                 });
+
+                // Clear hidden input field if input is cleared
+                if (!filter) 
+                { 
+                    $(inputNum).val('');
+                }
+
+
             });
 
             $(dropdownClass + ' .dropdown-item').on('click', function () {
                 $(inputId).val($(this).text());
                 $(inputNum).val($(this).attr('data-stored-value'));
 
-                const categorySelectionIn = document.getElementById('Category');
+               
 
             });
         }

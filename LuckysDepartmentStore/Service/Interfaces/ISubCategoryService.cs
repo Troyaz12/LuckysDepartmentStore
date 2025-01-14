@@ -1,6 +1,6 @@
 ﻿using LuckysDepartmentStore.Models.ViewModels.Product;
 
-namespace LuckysDepartmentStore.Service
+namespace LuckysDepartmentStore.Service.Interfaces
 {
     public interface ISubCategoryService
     {

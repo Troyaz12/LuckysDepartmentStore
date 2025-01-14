@@ -1,0 +1,74 @@
+﻿@model IEnumerable<LuckysDepartmentStore.Models.ViewModels.Product.ProductVM>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Search</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+
+    <style>
+        .card-text-container p {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
+</head>
+<body>
+    <h1 class="big-header">Search</h1>
+
+    <div class="container">
+        <div class="row">
+
+            @if (Model != null)
+            {
+                @foreach (var product in Model)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="image-box">
+                                <a asp-action="Item" asp-route-productId="@product.ProductID">
+                                    <img src="@product.ProductImage" id="ProductImage" name="ProductImage" class="img-fluid image-container" alt="Product Image">
+                                </a>
+                            </div>
+                            <div class="card-text-container">
+                                <div style="padding-left:10px">
+                                    <h5 class="card-title">@product.ProductName </h5>
+                                    <p class="card-text">@product.Description</p>
+                                    <div style="padding-top:5px;">
+                                        <p class="card-text" style="text-decoration: line-through;">@string.Format("{0:C2}", @product.Price)</p>
+                                        <p>
+                                            Discount:
+                                            @if (product.DiscountAmount != null && product.DiscountAmount > 0)
+                                            {
+                                                <span>-@product.DiscountAmount</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@string.Format("{0:0}%", @product.DiscountPercent * 100)</span>
+                                            }
+                                        </p>
+                                        <p>Sale Price: <span class="card-text" style="color: red;">@string.Format("{0:C2}", @product.SalePrice)</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Results could not be found. Please try again later.</p>
+            }
+
+
+        </div>
+    </div>
+</body>
+</html>

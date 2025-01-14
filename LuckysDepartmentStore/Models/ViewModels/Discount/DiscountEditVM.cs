@@ -49,7 +49,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Discount
         [Display(Name = "Discount Description")]
         public string? DiscountDescription { get; set; }
 
-        public string? Keywords { get; set; }
+        public string? DiscountTag { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]

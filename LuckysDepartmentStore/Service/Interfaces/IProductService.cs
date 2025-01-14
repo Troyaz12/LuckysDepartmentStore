@@ -1,10 +1,11 @@
 ﻿using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.DTO.Products;
 using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LuckysDepartmentStore.Service
+namespace LuckysDepartmentStore.Service.Interfaces
 {
     public interface IProductService
     {
@@ -22,5 +23,8 @@ namespace LuckysDepartmentStore.Service
           int? productID, string? keywords);
         public List<Sizes> GetSize();
         public ExecutionResult<ItemVM> GetItem(int productId);
+        public IQueryable<ProductVmDTO> GetProductsWithDiscount();
+        public Task<ExecutionResult<List<ProductVM>>> GetProductsSearch(string? categorySelection,
+          string? subCategorySelection, string? brandSelection, int? productID, string? discountTags);
     }
 }

@@ -6,16 +6,25 @@
 *@
 @{
 }
-<ul class="list-group">
-@foreach (var item in Model)
+
+@if (Model != null)
 {
-   <span>
-        <image src="@item.ProductImage" id="ProductPicture" name="ProductPicture" class="image-container">
-        <li class="list-group-item">@item.ProductID @item.Price @item.Quantity</li>
-     
-    </span>
+    <ul class="list-group">
+        @foreach (var item in Model)
+        {
+            <span>
+                <image src="@item.ProductImage" id="ProductPicture" name="ProductPicture" class="image-container">
+            <li class="list-group-item">@item.ProductID @item.Price @item.Quantity</li>
+
+            </span>
 
 
+        }
+    </ul>
 }
-</ul>
+else
+{
+    <h1>Your shopping cart is empty.</h1>
+}
+
 

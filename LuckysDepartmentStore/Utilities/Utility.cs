@@ -31,6 +31,7 @@ namespace LuckysDepartmentStore.Utilities
             productsVM.CategoryID = products.CategoryId;
             productsVM.SubCategoryID = products.SubCategoryId;
             productsVM.BrandID = products.BrandId;
+            productsVM.DiscountTag = products.DiscountTags;
             
 
             return productsVM;

@@ -1,6 +1,7 @@
 using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Service;
+using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Builder;

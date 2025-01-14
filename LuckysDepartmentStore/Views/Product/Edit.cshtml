@@ -26,7 +26,7 @@
 <hr />
 
 
-<form asp-action="Edit" enctype="multipart/form-data">
+<form id="productForm" asp-action="Edit" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     @Html.AntiForgeryToken()
 
@@ -106,6 +106,11 @@
                     }
                 </ul>
             </div>
+            <div class="form-group">
+                <label asp-for="DiscountTag" class="control-label"></label>
+                <input asp-for="DiscountTag" class="form-control" data-bs-toggle="tooltip" title="Seperate tags with a comma." />
+                <span asp-validation-for="DiscountTag" class="text-danger"></span>
+            </div>
         </div>
     </div>
 
@@ -165,7 +170,7 @@
                 </div>
             </div>
             <div class="scrollable-section mt-2" id="dynamicList">
-                @Html.Partial("_DynamicPartialListEdit", Model)
+                @Html.Partial("_DynamicPartialListEdit", Model.ColorProduct)
             </div>
         </div>
     </div>
@@ -216,6 +221,22 @@
         handleDropdownFilter('#Brand', '#BrandID', '.dropdown-menu[aria-labelledby="Brand"]');
         handleDropdownFilter('#Sizes', '#SizeID', '.dropdown-menu[aria-labelledby="Sizes"]');
 
+        // Function to gather all ColorProductVM data from the partial view
+        var gatherColorProducts = function () {
+            var colorProducts = [];
+            $('#colorProductContainer li').each(function (index, element) {
+                var colorProduct = {
+                    ColorID: $(element).find('input[name*=".ColorID"]').val(),
+                    Quantity: $(element).find('input[name*=".Quantity"]').val(),
+                    Name: $(element).find('input[name*=".Name"]').val(),
+                    SizeID: $(element).find('input[name*=".SizeID"]').val(),
+                    SizeName: $(element).find('input[name*=".SizeName"]').val()
+                };
+                colorProducts.push(colorProduct);
+            });
+            return colorProducts;
+        };
+
         $('#save').on('click', function (e) {
             e.preventDefault();
 
@@ -226,7 +247,7 @@
             var sizeID = $('#SizeID').val();
             var sizeName = $('#Sizes').val();
                         
-            var item = {
+            var newItem = {
                 ColorID: colorID,
                 Quantity: quantity,
                 Name: name,
@@ -235,11 +256,18 @@
                 SizeName: sizeName
             };
 
+            var currentColorProducts = gatherColorProducts();
+            currentColorProducts.push(newItem);
+
+            var allData = {
+                ColorProductList: currentColorProducts
+            }
+            
             $.ajax({
                 url: '@Url.Action("UpdateListForEdit", "Product")',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(item),
+                data: JSON.stringify(allData),
                 headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
                 },
                 success: function (data) {
@@ -261,12 +289,18 @@
         $("#dynamicList").on("click", "#deleteColor", function (e) {
             e.preventDefault();
             var index = $(this).data("index");
-            var model = $(this).data("model");
-            console.log("This is the Model: " + model);
+            var currentColorProducts = gatherColorProducts();
+
+            var allData = {
+                Index: index,
+                CurrentList: currentColorProducts
+            }
+            console.log("delete: " + JSON.stringify(allData) + " " + index + " " + currentColorProducts);
             $.ajax({
-                url: '@Url.Action("DeleteEditItem", "Product")',
+                url: '@Url.Action("DeleteItem", "Product")',
                 type: 'POST',
-                data: { index: index },
+                contentType: 'application/json',
+                data: JSON.stringify(allData),
                 success: function (data) {
                     $("#dynamicList").html(data);
                 },
@@ -276,6 +310,27 @@
             });
         });
 
+        $('#productForm').on('submit', function (e) {
+
+            var colorProducts = gatherColorProducts();
+            console.log("saved form " + colorProducts);
+            // Append hidden fields for each ColorProduct
+            for (var i = 0; i < colorProducts.length; i++) {
+                var colorProduct = colorProducts[i];
+                for (var key in colorProduct) {
+                    if (colorProduct.hasOwnProperty(key)) {
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'ColorProduct[' + i + '].' + key,
+                            value: colorProduct[key]
+                        }).appendTo('#productForm');
+                    }
+                }
+            }
+
+            // Allow the form to be submitted
+            return true;
+        });
 
     });
 </script>

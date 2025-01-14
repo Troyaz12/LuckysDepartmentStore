@@ -1,6 +1,6 @@
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Home;
-using LuckysDepartmentStore.Service;
+using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -42,9 +42,18 @@ namespace LuckysDepartmentStore.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
         [HttpGet]
-        public async Task<IActionResult> SearchAsync(string? categorySelection, string? subCategorySelection, string? brandSelection, int? productID, string? keywords)
+        public async Task<IActionResult> SearchDiscount(string? categorySelection, string? subCategorySelection, 
+            string? brandSelection, int? productID, string? discountTags)
         {
-            var productList = await _productService.GetProductsByDiscount(categorySelection, subCategorySelection, brandSelection, productID, keywords);
+            var productList = await _productService.GetProductsByDiscount(categorySelection, subCategorySelection, brandSelection, productID, discountTags);
+
+            return View(productList.Data);
+        }
+        [HttpGet]
+        public async Task<IActionResult> SearchProduct(string? category, string? subCategory, 
+            string? brand, int? productID, string? searchString)
+        {
+            var productList = await _productService.GetProductsSearch(category, subCategory, brand, productID, searchString);
 
             return View(productList.Data);
         }

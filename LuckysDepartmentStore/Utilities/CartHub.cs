@@ -1,4 +1,4 @@
-﻿using LuckysDepartmentStore.Service;
+﻿using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 
 namespace LuckysDepartmentStore.Utilities

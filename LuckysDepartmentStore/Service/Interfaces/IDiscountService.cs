@@ -2,7 +2,7 @@
 using LuckysDepartmentStore.Models.ViewModels.Discount;
 using LuckysDepartmentStore.Utilities;
 
-namespace LuckysDepartmentStore.Service
+namespace LuckysDepartmentStore.Service.Interfaces
 {
     public interface IDiscountService
     {

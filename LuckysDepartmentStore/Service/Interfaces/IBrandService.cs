@@ -1,9 +1,9 @@
 ﻿using LuckysDepartmentStore.Models.ViewModels.Product;
 
-namespace LuckysDepartmentStore.Service
+namespace LuckysDepartmentStore.Service.Interfaces
 {
     public interface IBrandService
     {
-       public int Create(ProductCreateVM product);
+        public int Create(ProductCreateVM product);
     }
 }

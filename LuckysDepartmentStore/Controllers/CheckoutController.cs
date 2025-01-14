@@ -1,11 +1,11 @@
 ﻿using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Checkout;
 using LuckysDepartmentStore.Models.ViewModels.Consumer;
-using LuckysDepartmentStore.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using LuckysDepartmentStore.Service.Interfaces;
 
 namespace LuckysDepartmentStore.Controllers
 {

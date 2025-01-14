@@ -2,12 +2,12 @@
 using LuckysDepartmentStore.Models.ViewModels.Consumer;
 using LuckysDepartmentStore.Models.ViewModels.Discount;
 using LuckysDepartmentStore.Utilities;
-using LuckysDepartmentStore.Service;
 using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models.DTO.Consumer;
 using Microsoft.EntityFrameworkCore;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using AutoMapper;
+using LuckysDepartmentStore.Service.Interfaces;
 
 namespace LuckysDepartmentStore.Service
 {

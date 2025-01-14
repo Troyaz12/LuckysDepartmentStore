@@ -3,6 +3,7 @@ using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.DTO.Discount;
 using LuckysDepartmentStore.Models.ViewModels.Discount;
+using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
@@ -70,7 +71,7 @@ namespace LuckysDepartmentStore.Service
                        CategorySelection = Category.CategoryName,
                        ProductID = Discount.ProductID,
                        BrandSelection = Brand.BrandName,
-                       Keywords = Discount.Keywords,
+                       DiscountTag = Discount.DiscountTag,
                        ExpirationDate = Discount.ExpirationDate
                    }).FirstOrDefault();
 
@@ -121,7 +122,7 @@ namespace LuckysDepartmentStore.Service
                 discountOld.CategoryID = discount.CategoryID;
                 discountOld.ProductID = discount.ProductID;
                 discountOld.BrandID = discount.BrandID;
-                discountOld.Keywords = discount.Keywords;
+                discountOld.DiscountTag = discount.DiscountTag;
                 discountOld.ExpirationDate = discount.ExpirationDate;
 
                 await _context.SaveChangesAsync();
@@ -136,7 +137,6 @@ namespace LuckysDepartmentStore.Service
 
         public async Task<Discount> CreateAsync(DiscountCreateVM discount)
         {
-
             try
             {
                 if(discount.DiscountPercent != 0)
@@ -188,7 +188,7 @@ namespace LuckysDepartmentStore.Service
                         CategorySelection = Category.CategoryName,
                         ProductID = Discount.ProductID,
                         BrandSelection = Brand.BrandName,
-                        Keywords = Discount.Keywords,
+                        DiscountTag = Discount.DiscountTag,
                         ExpirationDate = Discount.ExpirationDate
                     };
 

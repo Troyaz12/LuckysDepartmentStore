@@ -13,7 +13,7 @@
         public string? CategorySelection { get; set; }
         public int? ProductID { get; set; }
         public string? BrandSelection { get; set; }
-        public string? Keywords { get; set; }
+        public string? DiscountTag { get; set; }
         public DateTime ExpirationDate { get; set; }
     }
 }
