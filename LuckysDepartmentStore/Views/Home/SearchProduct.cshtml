@@ -42,19 +42,28 @@
                                     <h5 class="card-title">@product.ProductName </h5>
                                     <p class="card-text">@product.Description</p>
                                     <div style="padding-top:5px;">
-                                        <p class="card-text" style="text-decoration: line-through;">@string.Format("{0:C2}", @product.Price)</p>
-                                        <p>
-                                            Discount:
-                                            @if (product.DiscountAmount != null && product.DiscountAmount > 0)
-                                            {
-                                                <span>-@product.DiscountAmount</span>
-                                            }
-                                            else
-                                            {
-                                                <span>@string.Format("{0:0}%", @product.DiscountPercent * 100)</span>
-                                            }
-                                        </p>
-                                        <p>Sale Price: <span class="card-text" style="color: red;">@string.Format("{0:C2}", @product.SalePrice)</span></p>
+
+                                        @if (product.DiscountAmount != null || product.DiscountAmount != 0 ||
+                                            product.DiscountPercent != null || product.DiscountPercent != 0)
+                                        {
+                                            <p class="card-text">@string.Format("{0:C2}", @product.Price)</p>
+                                        }
+                                        else
+                                        {
+                                            <p class="card-text" style="text-decoration: line-through;">@string.Format("{0:C2}", @product.Price)</p>
+                                            <p>
+                                                Discount:
+                                                @if (product.DiscountAmount != null && product.DiscountAmount > 0)
+                                                {
+                                                    <span>-@product.DiscountAmount</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@string.Format("{0:0}%", @product.DiscountPercent * 100)</span>
+                                                }
+                                            </p>
+                                            <p>Sale Price: <span class="card-text" style="color: red;">@string.Format("{0:C2}", @product.SalePrice)</span></p>
+                                        }
                                     </div>
                                 </div>
                             </div>

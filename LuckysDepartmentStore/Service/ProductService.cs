@@ -298,17 +298,14 @@ namespace LuckysDepartmentStore.Service
                 productOld.BrandID = (int) productEdit.BrandID;
                 productOld.SubCategoryID = (int) productEdit.SubCategoryID;
                 productOld.DiscountTag = productEdit.DiscountTag;
+                productOld.SearchWords = productEdit.SearchWords;
 
-                if (productEdit.ProductPicture != null)
+                if (productEdit.ProductPictureFile != null)
                 {
-                    productOld.ProductPicture = productEdit.ProductPicture;
+                    productOld.ProductPicture = _utility.ImageBytes(productEdit.ProductPictureFile);
                 }
 
-
-                //var productMap = _mapper.Map<Product>(productEdit);
-
                 var colorProductsEdit = _mapper.Map<List<ColorProduct>>(productEdit.ColorProduct);
-
 
                 var productID = productEdit.ProductID;
 
@@ -366,7 +363,10 @@ namespace LuckysDepartmentStore.Service
                  BrandId = Product.BrandID,
                  CategoryId = Category.CategoryID,
                  SubCategoryId = SubCategory.SubCategoryID,
-                 ProductPicture = Product.ProductPicture
+                 ProductPicture = Product.ProductPicture,
+                 DiscountTags = Product.DiscountTag,
+                 SearchWords = Product.SearchWords
+
              };
 
             var colorProductDTO =
@@ -604,6 +604,10 @@ namespace LuckysDepartmentStore.Service
 
                     var productSearch = _mapper.Map<List<ProductVM>>(resultList);
 
+                    for (int x = 0; x < productSearch.Count; x++)
+                    {
+                        productSearch[x].ProductImage = _utility.BytesToImage(productSearch[x].ProductPicture);
+                    }
 
                     return ExecutionResult<List<ProductVM>>.Success(productSearch);
                 }
@@ -638,22 +642,38 @@ namespace LuckysDepartmentStore.Service
 
                     var productSearch = _mapper.Map<List<ProductVM>>(resultList);
 
+                    for (int x = 0; x < productSearch.Count; x++)
+                    {
+                        productSearch[x].ProductPicture = _utility.StringToBytes(productSearch[x].ProductImage);
+                    }
 
                     return ExecutionResult<List<ProductVM>>.Success(productSearch);
 
                 }
                 else if (searchString != null)
-                {
-                    var searchQuery = "summer clothes"; // User input from the search bar
-                    var upperSearchQuery = searchQuery.ToUpper().Trim();
-                    var keywords = searchQuery.Split(' ').Select(k => k.ToUpper().Trim()).ToList();
-                    keywords.Add(upperSearchQuery); // Add the entire phrase to the keyword list
+                {                   
+                    var upperSearchQuery = searchString.ToUpper().Trim();
+                    var keywords = searchString.Split(' ').Select(k => k.ToUpper().Trim()).ToList();
 
-                    var products = _context.Products.Where(p =>
-                        keywords.All(k => EF.Functions.Like(p.Description.ToUpper(), "%" + k + "%"))
-                    ).ToListAsync();                    
+                    var exactMatches = _context.Products.Where(p =>
+                        p.SearchWords != null && EF.Functions.Like(p.SearchWords.ToUpper(), "%" + upperSearchQuery + "%")
+                    ).ToList();
+
+                    if (!exactMatches.Any())
+                    {
+                        exactMatches = _context.Products.Where(p =>
+                            p.SearchWords != null && keywords.Any(k => EF.Functions.Like(p.SearchWords.ToUpper(), "%" + k + "%"))
+                        ).ToList();
+                    }
+
+                    var products = exactMatches;
 
                     var productSearch = _mapper.Map<List<ProductVM>>(products);
+
+                    for (int x = 0; x < productSearch.Count; x++)
+                    {
+                        productSearch[x].ProductImage = _utility.BytesToImage(productSearch[x].ProductPicture);
+                    }
 
                     return ExecutionResult<List<ProductVM>>.Success(productSearch);
                 }

@@ -14,6 +14,7 @@
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public int DiscountID { get; set; }
         public string? DiscountTag { get; set; }
+        public string? SearchWords { get; set; }
 
     }
 }

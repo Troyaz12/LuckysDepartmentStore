@@ -32,7 +32,8 @@ namespace LuckysDepartmentStore.Utilities
             productsVM.SubCategoryID = products.SubCategoryId;
             productsVM.BrandID = products.BrandId;
             productsVM.DiscountTag = products.DiscountTags;
-            
+            productsVM.SearchWords = products.SearchWords;
+
 
             return productsVM;
         }
@@ -53,6 +54,8 @@ namespace LuckysDepartmentStore.Utilities
             productsVM.SubCategoryID = products.SubCategoryId;
             productsVM.BrandID = products.BrandId;
             productsVM.ProductPicture = products.ProductPicture;
+            productsVM.DiscountTags = products.DiscountTags;
+            productsVM.SearchWords = products.SearchWords;
 
             return productsVM;
         }

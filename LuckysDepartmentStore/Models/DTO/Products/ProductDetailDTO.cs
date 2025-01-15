@@ -24,5 +24,7 @@
         public int CategoryId { get; set; }
         public int SubCategoryId { get; set; }
         public byte[]? ProductPicture { get; set; }
+        public string? DiscountTags { get; set; }
+        public string? SearchWords { get; set; }
     }
 }

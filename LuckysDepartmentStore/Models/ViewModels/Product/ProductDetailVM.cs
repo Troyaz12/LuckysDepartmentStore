@@ -55,5 +55,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
         public int? DiscountID { get; set; }
         public byte[]? ProductPicture { get; set; }
         public string? ProductImage { get; set; }
+        public string? DiscountTags { get; set; }
+        public string? SearchWords { get; set; }
     }
 }

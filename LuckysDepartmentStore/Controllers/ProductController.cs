@@ -69,7 +69,7 @@ namespace LuckysDepartmentStore.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductID,Price,Description,Quantity,ProductName,CategorySelection,BrandSelection," +
             "ColorSelection,SubCategoryID,ProductPictureFile,CreatedDate,Category,Color,ColorID,CategoryID," +
-            "SubCategorySelection, ColorProduct,BrandID")] ProductCreateVM product)
+            "SubCategorySelection, ColorProduct,BrandID, DiscountTags, SearchWords")] ProductCreateVM product)
         {
             if (ModelState.IsValid)
             {

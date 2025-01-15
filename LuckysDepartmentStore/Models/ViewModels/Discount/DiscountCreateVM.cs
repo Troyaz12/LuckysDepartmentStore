@@ -49,11 +49,10 @@ namespace LuckysDepartmentStore.Models.ViewModels.Discount
         [Display(Name = "Discount Description")]
         public string? DiscountDescription { get; set; }
 
-        public string? Keywords { get; set; }
-
         [Required]
         [DataType(DataType.DateTime)]
         [FutureDateCheck("ExpirationDate", ErrorMessage = "Expiration Date must be greater then today.")]
         public DateTime ExpirationDate { get; set; }
+        public string? DiscountTag { get; set; }
     }
 }

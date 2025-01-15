@@ -47,8 +47,8 @@
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
-            <label for="ProductPicture">Product Picture</label>
-            <input type="file" class="form-control" id="ProductPicture" name="ProductPicture">
+            <label for="ProductPictureFile">Product Picture</label>
+            <input type="file" class="form-control" id="ProductPictureFile" name="ProductPictureFile">
 
 
         </div>
@@ -111,6 +111,11 @@
                 <input asp-for="DiscountTag" class="form-control" data-bs-toggle="tooltip" title="Seperate tags with a comma." />
                 <span asp-validation-for="DiscountTag" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="SearchWords" class="control-label"></label>
+                <input asp-for="SearchWords" class="form-control" data-bs-toggle="tooltip" title="Seperate tags with a space." />
+                <span asp-validation-for="SearchWords" class="text-danger"></span>
+            </div>
         </div>
     </div>
 
@@ -145,7 +150,7 @@
                             </div>
 
                             <label for="QuantityInput">Quantity</label>
-                            <input name="QuantityInput" type="number" id="QuantityInput" class="form-control">                       
+                            <input name="QuantityInput" type="number" id="QuantityInput" class="form-control">
                             
                             <div class="dropdown">
                                 <label asp-for="Sizes">Sizes</label>

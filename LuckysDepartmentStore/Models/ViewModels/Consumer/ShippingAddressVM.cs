@@ -1,4 +1,6 @@
-﻿namespace LuckysDepartmentStore.Models.ViewModels.Consumer
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace LuckysDepartmentStore.Models.ViewModels.Consumer
 {
     public class ShippingAddressVM
     {
@@ -9,6 +11,7 @@
         public string? Address2 { get; set; }
         public string City { get; set; }
         public string State { get; set; }
+        [Display(Name = "Zip Code")]
         public int ZipCode { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public string UserId { get; set; }
