@@ -17,46 +17,91 @@
         <div class="container">
             <div class="d-flex flex-row">              
 
-                <img src="@Model.ProductImage" id="ProductImage" name="ProductImage" class="image-fluid image-container item" alt="Product Image">
+                <img src="@Model.ProductImage" id="ProductImage" name="ProductImage" class="image-fluid image-containerItem item" alt="Product Image">
 
                 <div class="d-flex flex-column">
-                    <div class="p-2 bg-success text-white">
+                    <div class="p-2 text-black">
                         <h1>@Model.BrandSelection</h1>
-                        <h2>@Model.ProductName</h2>
+                        <h3>@Model.ProductName</h3>
                     </div>
-                    <div class="p-2 bg-primary text-white">                
-                        <p>
-                            <i class="fa-solid fa-star"></i> 
-                            <span>
-                                @string.Format("{0:F1}", @Model.Stars)                         
-                            </span>
+                    <div class="p-2 text-black">
+
+                        <div class="p-2 text-white">
+                            @Model.Description
+                        </div>
+
+                        @if(Model.RatingsCount !=0){
+                            <p>
+                                <i class="fa-solid fa-star"></i> 
+                                <span>
+                                    @string.Format("{0:F1}", @Model.Stars)                         
+                                </span>
                     
-                            (@Model.RatingsCount)
-                        </p>
+                                (@Model.RatingsCount)
+                            </p>
+                        }
+                        else
+                        {
+                            <p>
+                                <i class="fa-solid fa-star"></i>
+                                <span>
+                                    No reviews yet
+                                </span>
+                            </p>
+                    
+                        }
+
+
                     </div>
-                    <div class="p-2 bg-secondary text-white">
+                    <div class="text-black">
+
+                    @if(Model.DiscountAmount != 0 || Model.DiscountPercent != 0 )
+                    {
                         <span>
                             @string.Format("{0:C}",@Model.Price)
                         </span>
-                    </div>
+                    }
+                    else
+                    {
+                        
+                        <div style="padding-top:5px;">
 
-                    <div class="p-2 bg-success text-white" id="sizesContainer">
+
+                            <p class="card-text" style="text-decoration: line-through;">@string.Format("{0:C2}", @Model.Price)</p>
+                            <p>
+                                 Discount:
+                                 @if (@Model.DiscountAmount != null && @Model.DiscountAmount > 0)
+                                 {
+                                    <span>-@Model.DiscountAmount</span>
+                                 }
+                                @if (@Model.DiscountPercent != null && @Model.DiscountPercent > 0)
+                                 {
+                                     <span>@string.Format("{0:0}%", @Model.DiscountPercent * 100)</span>
+                                 }
+                             </p>
+                            <p>Sale Price: <span class="card-text" style="color: red;">@string.Format("{0:C2}", @Model.SalePrice)</span></p>
+                        </div>
+                    }
+                    </div>
+                    <span class="pt-2">Size</span>
+                    <div class="pl-2 pb-2 text-white" id="sizesContainer">
             
                     
                     </div>
 
-                    <div class="p-2 bg-success text-white">
+                    <span class="pt-2">Color</span>
+                    <div class="pl-2 text-white">                        
                         @if (Model.ColorProduct != null && @Model.Color != null)
                         {
                             @for (var x = 0; x < @Model.Color.Count; x++)
                             {
                                 <input type="radio" class="btn-check options-radio" name="options" id="option@(x)" autocomplete="off" @(x == 0 ? "checked" : "")>
-                                <label class="btn btn-secondary" for="option@(x)">@Model.Color[x]</label>
+                                <label class="btn btn-warning" for="option@(x)">@Model.Color[x]</label>
                             }
                         }
                     </div>
 
-                    <form asp-controller="ShoppingCart" asp-action="AddToCart" enctype="multipart/form-data">
+                    <form id="addToCartForm" asp-controller="ShoppingCart" asp-action="AddToCart" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                         <input type="hidden" id="ProductID" name="ProductID" value="@Model.ProductID">
@@ -66,28 +111,48 @@
                         <input type="hidden" id="ProductImage" name="ProductImage" value="@Model.ProductImage">
                         <input type="hidden" id="ProductName" name="ProductName" value="@Model.ProductName">
 
-                        <div class="p-2 bg-success text-white">
+                        <div class="p-1">
                     
-                            <label asp-for="Quantity" class="control-label" />
+                            <label asp-for="Quantity" class="control-label"></label>
                             <input asp-for="Quantity" type="number" class="form-control" id="Quantity" />
 
                         </div>
-                        <div class="p-2 bg-success text-white">
-                            <input type="submit" value="Add To Cart" class="btn btn-info mt-3" style="background-color: gold"/>
+                        <div class="p-2 text-white">
+                            <input type="submit" id="addToCartButton" value="Add To Cart" class="btn btn-info mt-1 w-100" style="background-color: gold" />
                         </div>
-                        <div class="p-2 bg-success text-white">
-                            @Model.Description
+
+                        <!-- Button to trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#cartModal">
+                            Launch Centered Modal
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                <h5 class="modal-title" id="cartModalLabel">Centered Modal</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        This modal is centered vertically and horizontally.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continue Shopping</button>
+                                        <button type="button" class="btn btn-primary" id="checkOutButton" style="background-color: gold">Checkout</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
                     </form>
 
                     <form asp-controller="Checkout" asp-action="AddressAndPayment" enctype="multipart/form-data" method="get">
                         
-                        <input type="submit" value="Address and Payment" class="btn btn-info mt-3" style="background-color: gold"/>
+                        <input type="submit" value="Address and Payment" class="btn btn-info mt-3 w-100" style="background-color: gold"/>
 
                     </form>
                 </div>
-
-
             </div>
         </div>
 
@@ -149,6 +214,37 @@
                 $("#SizeSelection").val(sizeID);
 
             });
+
+            $('#addToCartForm').submit(function(event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                var formData = $(this).serialize(); // Serialize form data
+
+                $.ajax({
+                    url: '/ShoppingCart/AddToCart', // Action method URL
+                    type: 'POST',
+                    data: formData, // Send form data
+                    success: function(response) {
+                        if (response.success) {
+                            // Open the modal on success
+                            $('#cartModal').modal('show');
+                        } else {
+                            alert('Failed to add item to cart.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('An error occurred while adding the item to the cart.');
+                    }
+            });
+
+            document.getElementById('checkOutButton').addEventListener('click', function() {
+                // Redirect the user to the "Index" action in the ShoppingCart controller
+                window.location.href = '@Url.Action("Index", "ShoppingCart")'; // Change this URL if needed
+            });
+
+        });
+
+
         });
     </script>
 

@@ -248,8 +248,8 @@ namespace LuckysDepartmentStore.Service
                     BrandId = Product.BrandID,
                     CategoryId = Category.CategoryID,
                     SubCategoryId = SubCategory.SubCategoryID,
-                    DiscountTags = Product.DiscountTag
-
+                    DiscountTags = Product.DiscountTag,
+                    SearchWords = Product.SearchWords
                 };
 
             var colorProductDTO =
@@ -265,7 +265,6 @@ namespace LuckysDepartmentStore.Service
                     ColorProductID = ColorProducts.ColorProductID,
                     SizeID = ColorProducts.SizeID
                 };
-
 
             var product = productDTO.FirstOrDefault();
 
@@ -429,29 +428,40 @@ namespace LuckysDepartmentStore.Service
         }
         public ExecutionResult<ItemVM> GetItem(int productId)
         {
-
             var productDTO =
-             from Product in _context.Products
-             join Category in _context.Categories on Product.CategoryID equals Category.CategoryID
-             join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID
-             join Brand in _context.Brand on Product.BrandID equals Brand.BrandId
-             where Product.ProductID == productId
-             select new ItemDTO
-             {
-                 ProductID = Product.ProductID,
-                 ProductName = Product.ProductName,
-                 Price = Product.Price,
-                 Description = Product.Description,
-                 Quantity = Product.Quantity,
-                 Category = Category.CategoryName,
-                 SubCategory = SubCategory.SubCategoryName,
-                 Brand = Brand.BrandName,
-                 CreatedDate = Product.CreatedDate,
-                 BrandId = Product.BrandID,
-                 CategoryId = Category.CategoryID,
-                 SubCategoryId = SubCategory.SubCategoryID,
-                 ProductPicture = Product.ProductPicture,
-             };
+                from Product in _context.Products
+                join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
+                from Category in categories.DefaultIfEmpty()
+                join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID into subCategories
+                from SubCategory in subCategories.DefaultIfEmpty()
+                join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
+                from Brand in Brands.DefaultIfEmpty()
+                join DiscountsByBrand in _context.Discounts on Product.BrandID equals DiscountsByBrand.BrandID into DiscountBrand
+                from DiscountsByBrand in DiscountBrand.DefaultIfEmpty()
+                join DiscountsByCategory in _context.Discounts on Product.CategoryID equals DiscountsByCategory.CategoryID into DiscountCategory
+                from DiscountsByCategory in DiscountCategory.DefaultIfEmpty()
+                join DiscountsByProduct in _context.Discounts on Product.ProductID equals DiscountsByProduct.ProductID into DiscountProduct
+                from DiscountsByProduct in DiscountProduct.DefaultIfEmpty()
+                join DiscountsBySubcategory in _context.Discounts on Product.SubCategoryID equals DiscountsBySubcategory.SubCategoryID into DiscountSubCategory
+                from DiscountsBySubcategory in DiscountSubCategory.DefaultIfEmpty()
+                where productId == Product.ProductID
+
+                select new ItemDTO
+                {
+                    ProductID = Product.ProductID,
+                    ProductName = Product.ProductName,
+                    Price = Product.Price,
+                    Description = Product.Description,
+                    Quantity = Product.Quantity,
+                    Category = Category.CategoryName,
+                    SubCategory = SubCategory.SubCategoryName,
+                    Brand = Brand.BrandName,
+                    CreatedDate = Product.CreatedDate,
+                    ProductPicture = Product.ProductPicture,
+                    DiscountAmount = (decimal?)DiscountsByBrand.DiscountAmount ?? (decimal?)DiscountsByCategory.DiscountAmount ?? (decimal?)DiscountsByProduct.DiscountAmount ?? (decimal?)DiscountsBySubcategory.DiscountAmount,
+                    DiscountPercent = (decimal?)DiscountsByBrand.DiscountPercent ?? (decimal?)DiscountsByCategory.DiscountPercent ?? (decimal?)DiscountsByProduct.DiscountPercent ?? (decimal?)DiscountsBySubcategory.DiscountPercent,
+                    DiscountTag = Product.DiscountTag
+                };
 
             var colorProductDTO =
                 from ColorProducts in _context.ColorProducts
@@ -488,6 +498,35 @@ namespace LuckysDepartmentStore.Service
             }
 
             var item = _utility.MapDetailItem(product);
+
+            // check discount tag
+            if (!string.IsNullOrEmpty(item.DiscountTag))
+            {
+                var discountTagsArray = item.DiscountTag.Split(',').Select(k => k.ToUpper().Trim()).ToList();
+
+                var discountDTO = (
+                    from Discount in _context.Discounts                    
+                    where discountTagsArray.Any(tag => discountTagsArray.Contains(tag))
+                    select Discount).ToList();
+
+                var totalDiscountAmount = discountDTO.Sum(discount => discount.DiscountAmount);
+                var totalDiscountPercent = discountDTO.Sum(discount => discount.DiscountPercent);
+
+                item.DiscountAmount = totalDiscountAmount;
+                item.DiscountPercent = totalDiscountPercent;
+
+                item.SalePrice = item.Price;                  
+
+                if (item.DiscountPercent != 0)
+                {
+                    item.SalePrice = item.Price - (item.Price * (decimal)item.DiscountPercent);
+                }
+
+                if (item.DiscountAmount != 0)
+                {
+                    item.SalePrice = item.SalePrice - (decimal) item.DiscountAmount;
+                }                
+            }
 
             var colorProducts = _mapper.Map<List<ColorProductVM>>(colorProductDTO);
 

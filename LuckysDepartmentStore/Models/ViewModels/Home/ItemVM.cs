@@ -44,6 +44,10 @@ namespace LuckysDepartmentStore.Models.ViewModels.Home
         public List<Sizes>? Sizes { get; set; } = new List<Sizes>();
 
         public int SizeSelection { get; set; }
+        public decimal? DiscountAmount { get; set; }
+        public decimal? DiscountPercent { get; set; }
+        public string? DiscountTag { get; set; }
+        public Decimal SalePrice { get; set; }
 
     }
 }

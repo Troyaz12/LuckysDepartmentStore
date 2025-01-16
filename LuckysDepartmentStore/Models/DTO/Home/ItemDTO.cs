@@ -24,5 +24,8 @@
         public int CategoryId { get; set; }
         public int SubCategoryId { get; set; }
         public byte[]? ProductPicture { get; set; }
+        public decimal? DiscountAmount { get; set; }
+        public decimal? DiscountPercent { get; set; }
+        public string? DiscountTag { get; set; }
     }
 }
