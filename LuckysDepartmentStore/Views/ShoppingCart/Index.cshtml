@@ -1,4 +1,7 @@
-﻿@using LuckysDepartmentStore.Models.ViewModels.ShoppingCart
+﻿<!DOCTYPE html>
+<html>
+
+@using LuckysDepartmentStore.Models.ViewModels.ShoppingCart
 @model List<CartsVM>
 
 @*
@@ -7,18 +10,83 @@
 @{
 }
 
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flex Column Example</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+                  <body>
 @if (Model != null)
 {
     <ul class="list-group">
         @foreach (var item in Model)
         {
-            <span>
+        <div class="container">
+            <div class="d-flex flex-row w-100">              
+
                 <image src="@item.ProductImage" id="ProductPicture" name="ProductPicture" class="image-container">
-                <li class="list-group-item">@item.ProductID @item.Price @item.Quantity</li>
 
-            </span>
+                <div class="d-flex flex-column">
+                    <div class="p-2 text-black">                       
+                        <h3>@item.ProductName</h3>
+                        <div>
+                            @item.Description
+                        </div>
+                    </div>
+                    
+                    <div class="text-black">
+
+                        @if(item.DiscountAmount == 0 || item.DiscountPercent == 0 )
+                        {
+                            <span class="p-2 pt-3 pb-3">
+                                @string.Format("{0:C}",@item.Price)
+                            </span>
+                        }
+                        else
+                        {
+                        
+                            <div style="padding-top:5px;">
 
 
+                                <p class="card-text" style="text-decoration: line-through;">@string.Format("{0:C2}", @item.Price)</p>
+                                <p>
+                                     Discount:
+                                     @if (@item.DiscountAmount != null && @item.DiscountAmount > 0)
+                                     {
+                                        <span>-@item.DiscountAmount</span>
+                                     }
+                                    @if (@item.DiscountPercent != null && @item.DiscountPercent > 0)
+                                     {
+                                         <span>@string.Format("{0:0}%", @item.DiscountPercent * 100)</span>
+                                     }
+                                </p>
+                                <p>Sale Price: <span class="card-text" style="color: red;">@string.Format("{0:C2}", @item.SalePrice)</span></p>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="pl-2 pb-2" id="sizesContainer">
+                        <label asp-for="@item.Size" class="control-label"></label>
+                        <label asp-for="@item.Size" class="form-control"/>                    
+                    </div>
+                    
+                    <div class="pl-2">
+                        <label asp-for="@item.Color" class="control-label"></label>
+                        <label asp-for="@item.Color" class="form-control"/>                    
+                    </div>
+                      <div class="pl-2">
+                        <label asp-for="@item.Quantity" class="control-label"></label>
+                        <label asp-for="@item.Quantity" class="form-control"/>                    
+                    </div>
+
+                </div>
+            </div>
+        </div>
         }
     </ul>
 }
@@ -27,4 +95,5 @@ else
     <h1>Your shopping cart is empty.</h1>
 }
 
-
+    </body>
+</html>

@@ -1,13 +1,17 @@
 ﻿using AutoMapper;
+using Azure;
 using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.DTO.Discount;
 using LuckysDepartmentStore.Models.DTO.Home;
 using LuckysDepartmentStore.Models.DTO.Products;
+using LuckysDepartmentStore.Models.ViewModels.Discount;
 using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Utility = LuckysDepartmentStore.Utilities.Utility;
 
 namespace LuckysDepartmentStore.Service
@@ -161,65 +165,27 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                var products = GetProductsWithDiscount();
+                var products = GetProductsWithDiscount(categorySelection,
+                    subCategorySelection, brandSelection, discountTags);
 
-                if (!string.IsNullOrEmpty(categorySelection))
-                {
-                    products = products.Where(s => s.Category != null && s.Category.ToUpper().Contains(categorySelection.ToUpper()));
-                }
-
-                if (!string.IsNullOrEmpty(subCategorySelection))
-                {
-                    products = products.Where(s => s.SubCategory != null && s.SubCategory.ToUpper() == subCategorySelection.ToUpper());
-                }
-
-                if (!string.IsNullOrEmpty(brandSelection))
-                {
-                    products = products.Where(s => s.Brand != null && s.Brand.ToUpper().Contains(brandSelection.ToUpper()));
-                }
-
-                if (productID != null)
-                {
-                    products = products.Where(s => s.ProductID.Equals(productID));
-                }
-
-                
-
-                if (!string.IsNullOrEmpty(discountTags))
-                {
-                    var keywordArray = discountTags.Split(',').Select(k => k.ToUpper().Trim()).ToList();
-
-                    products = products.Where(p =>
-                        !string.IsNullOrEmpty(p.DiscountTag) &&
-                        keywordArray.Any(k => EF.Functions.Like(p.DiscountTag.ToUpper(), "%" + k + "%"))
-                    );
-                }
-
-
-
-                var list = await products.ToListAsync();
-
-                var productListVM = _mapper.Map<List<ProductVM>>(list);
+                var productListVM = _mapper.Map<List<ProductVM>>(products);
 
                 foreach (ProductVM singleProduct in productListVM)
                 {
-
                     singleProduct.ProductImage = _utility.BytesToImage(singleProduct.ProductPicture);
 
-                    if(singleProduct.DiscountAmount != null && singleProduct.DiscountAmount > 0)
+                    if (singleProduct.DiscountAmount != null && singleProduct.DiscountAmount > 0)
                     {
                         singleProduct.SalePrice = (decimal)(singleProduct.Price - singleProduct.DiscountAmount);
 
                     }
                     else if (singleProduct.DiscountPercent != null && singleProduct.DiscountPercent > 0)
                     {
-                        singleProduct.SalePrice = (decimal)(singleProduct.Price - (singleProduct.Price *singleProduct.DiscountPercent));
+                        singleProduct.SalePrice = (decimal)(singleProduct.Price - (singleProduct.Price * singleProduct.DiscountPercent));
                     }
-
                 }
 
-                return ExecutionResult<List<ProductVM>>.Success(productListVM);
-
+                return ExecutionResult<List<ProductVM>>.Success(productListVM);                
             }
             catch (Exception ex)
             {
@@ -497,35 +463,13 @@ namespace LuckysDepartmentStore.Service
                 return ExecutionResult<ItemVM>.Failure("Cannot find product in database. Product ID does not exist.");
             }
 
-            var item = _utility.MapDetailItem(product);
+          //  var item = _utility.MapDetailItem(product);
+            var item = _mapper.Map<ItemVM>(product);
 
             // check discount tag
             if (!string.IsNullOrEmpty(item.DiscountTag))
             {
-                var discountTagsArray = item.DiscountTag.Split(',').Select(k => k.ToUpper().Trim()).ToList();
-
-                var discountDTO = (
-                    from Discount in _context.Discounts                    
-                    where discountTagsArray.Any(tag => discountTagsArray.Contains(tag))
-                    select Discount).ToList();
-
-                var totalDiscountAmount = discountDTO.Sum(discount => discount.DiscountAmount);
-                var totalDiscountPercent = discountDTO.Sum(discount => discount.DiscountPercent);
-
-                item.DiscountAmount = totalDiscountAmount;
-                item.DiscountPercent = totalDiscountPercent;
-
-                item.SalePrice = item.Price;                  
-
-                if (item.DiscountPercent != 0)
-                {
-                    item.SalePrice = item.Price - (item.Price * (decimal)item.DiscountPercent);
-                }
-
-                if (item.DiscountAmount != 0)
-                {
-                    item.SalePrice = item.SalePrice - (decimal) item.DiscountAmount;
-                }                
+                item = CalculateDiscount(item);
             }
 
             var colorProducts = _mapper.Map<List<ColorProductVM>>(colorProductDTO);
@@ -565,25 +509,25 @@ namespace LuckysDepartmentStore.Service
 
             return ExecutionResult<ItemVM>.Success(item);
         }
-        public IQueryable<ProductVmDTO> GetProductsWithDiscount()
+        public List<ProductVmDTO> GetProductsWithDiscount()
         {
             var products =
-                    from Product in _context.Products
-                    join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
-                    from Category in categories.DefaultIfEmpty()
-                    join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID into subCategories
-                    from SubCategory in subCategories.DefaultIfEmpty()
-                    join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
-                    from Brand in Brands.DefaultIfEmpty()
-                    join DiscountsByBrand in _context.Discounts on Product.BrandID equals DiscountsByBrand.BrandID into DiscountBrand
-                    from DiscountsByBrand in DiscountBrand.DefaultIfEmpty()
-                    join DiscountsByCategory in _context.Discounts on Product.CategoryID equals DiscountsByCategory.CategoryID into DiscountCategory
-                    from DiscountsByCategory in DiscountCategory.DefaultIfEmpty()
-                    join DiscountsByProduct in _context.Discounts on Product.ProductID equals DiscountsByProduct.ProductID into DiscountProduct
-                    from DiscountsByProduct in DiscountProduct.DefaultIfEmpty()
-                    join DiscountsBySubcategory in _context.Discounts on Product.SubCategoryID equals DiscountsBySubcategory.SubCategoryID into DiscountSubCategory
-                    from DiscountsBySubcategory in DiscountSubCategory.DefaultIfEmpty()
-                    where DiscountsByBrand != null || DiscountsByCategory != null || DiscountsByProduct != null || DiscountsBySubcategory != null
+                    (from Product in _context.Products
+                     join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
+                     from Category in categories.DefaultIfEmpty()
+                     join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID into subCategories
+                     from SubCategory in subCategories.DefaultIfEmpty()
+                     join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
+                     from Brand in Brands.DefaultIfEmpty()
+                     join DiscountsByBrand in _context.Discounts on Product.BrandID equals DiscountsByBrand.BrandID into DiscountBrand
+                     from DiscountsByBrand in DiscountBrand.DefaultIfEmpty()
+                     join DiscountsByCategory in _context.Discounts on Product.CategoryID equals DiscountsByCategory.CategoryID into DiscountCategory
+                     from DiscountsByCategory in DiscountCategory.DefaultIfEmpty()
+                     join DiscountsByProduct in _context.Discounts on Product.ProductID equals DiscountsByProduct.ProductID into DiscountProduct
+                     from DiscountsByProduct in DiscountProduct.DefaultIfEmpty()
+                     join DiscountsBySubcategory in _context.Discounts on Product.SubCategoryID equals DiscountsBySubcategory.SubCategoryID into DiscountSubCategory
+                     from DiscountsBySubcategory in DiscountSubCategory.DefaultIfEmpty()
+                     where DiscountsByBrand != null || DiscountsByCategory != null || DiscountsByProduct != null || DiscountsBySubcategory != null                    
 
                     select new ProductVmDTO
                     {
@@ -600,9 +544,88 @@ namespace LuckysDepartmentStore.Service
                         DiscountAmount = (decimal?)DiscountsByBrand.DiscountAmount ?? (decimal?)DiscountsByCategory.DiscountAmount ?? (decimal?)DiscountsByProduct.DiscountAmount ?? (decimal?)DiscountsBySubcategory.DiscountAmount,
                         DiscountPercent = (decimal?)DiscountsByBrand.DiscountPercent ?? (decimal?)DiscountsByCategory.DiscountPercent ?? (decimal?)DiscountsByProduct.DiscountPercent ?? (decimal?)DiscountsBySubcategory.DiscountPercent,
                         DiscountTag = Product.DiscountTag
-                    };
+                    }).ToList();
 
-            return products;
+                    // get all discounts with tags
+           var discountTagged =
+                      from Discounts in _context.Discounts
+                      where Discounts.DiscountActive == true && !string.IsNullOrEmpty(Discounts.DiscountTag)
+                      select new DiscountDTO
+                      {
+                          DiscountPercent = Discounts.DiscountPercent,
+                          DiscountAmount = Discounts.DiscountAmount,
+                          DiscountActive = Discounts.DiscountActive,
+                          DiscountTag = Discounts.DiscountTag
+                      };
+
+           var discountTagLookup = discountTagged
+                       .ToDictionary(d => d.DiscountTag.ToUpper().Trim(), d => d);
+
+            var productsWithDTags =
+                         (from Product in _context.Products
+                         join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
+                         from Category in categories.DefaultIfEmpty()
+                         join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID into subCategories
+                         from SubCategory in subCategories.DefaultIfEmpty()
+                         join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
+                         from Brand in Brands.DefaultIfEmpty()
+                         where !string.IsNullOrEmpty(Product.DiscountTag)
+                         select new ProductVmDTO
+                         {
+                             ProductID = Product.ProductID,
+                             ProductName = Product.ProductName,
+                             Price = Product.Price,
+                             Description = Product.Description,
+                             Quantity = Product.Quantity,
+                             Category = Category.CategoryName,
+                             SubCategory = SubCategory.SubCategoryName,
+                             Brand = Brand.BrandName,
+                             CreatedDate = Product.CreatedDate,
+                             ProductPicture = Product.ProductPicture,
+                             DiscountTag = Product.DiscountTag
+                         }).ToList();
+
+
+            for (int x = 0; x < productsWithDTags.Count(); x++)
+            {
+                var productDTagsArray = productsWithDTags[x].DiscountTag.Split(',').Select(k => k.ToUpper().Trim()).ToList();
+
+                foreach (var tag in productDTagsArray)//(var discount in discountTagged)
+                {
+                    if (discountTagLookup.TryGetValue(tag, out var discount)) //(productDTagsArray.Contains(discount.DiscountTag.ToUpper().Trim()))
+                    {
+                        productsWithDTags[x].DiscountAmount = (productsWithDTags[x].DiscountAmount ?? 0) + discount.DiscountAmount;
+                        productsWithDTags[x].DiscountPercent = (productsWithDTags[x].DiscountPercent ?? 0) + discount.DiscountPercent;
+
+                    }
+
+                }
+
+            }
+
+            var combinedProducts = products
+                        .Concat(productsWithDTags)
+                        .GroupBy(p => p.ProductID)
+                        .Select(g => new ProductVmDTO
+                        {
+                          ProductID = g.Key,
+                          ProductName = g.First().ProductName,
+                          Price = g.First().Price,
+                          Description = g.First().Description,
+                          Quantity = g.First().Quantity,
+                          Category = g.First().Category,
+                          SubCategory = g.First().SubCategory,
+                          Brand = g.First().Brand,
+                          CreatedDate = g.First().CreatedDate,
+                          ProductPicture = g.First().ProductPicture,
+                          DiscountAmount = g.Sum(x => x.DiscountAmount ?? 0),
+                          DiscountPercent = g.Sum(x => x.DiscountPercent ?? 0),
+                          DiscountTag = g.First().DiscountTag
+                        })
+                        .ToList();
+
+
+            return combinedProducts;
 
         }
         public async Task<ExecutionResult<List<ProductVM>>> GetProductsSearch(string? categorySelection,
@@ -723,6 +746,162 @@ namespace LuckysDepartmentStore.Service
             {
                 return ExecutionResult<List<ProductVM>>.Failure("Unable to search products.");
             }
+        }
+        public ItemVM CalculateDiscount(ItemVM item)
+        {
+            var discountTagsArray = item.DiscountTag.Split(',').Select(k => k.ToUpper().Trim()).ToList();
+            var discountDTO = (
+                from Discount in _context.Discounts
+                where discountTagsArray.Any(tag => discountTagsArray.Contains(tag))
+                select Discount).ToList();
+
+            var totalDiscountAmount = discountDTO.Sum(discount => discount.DiscountAmount);
+            var totalDiscountPercent = discountDTO.Sum(discount => discount.DiscountPercent);
+
+            item.DiscountAmount = totalDiscountAmount;
+            item.DiscountPercent = totalDiscountPercent;
+
+            item.SalePrice = _utility.CalculateSalePrice(item.DiscountAmount, item.DiscountPercent, item.Price);
+
+            return item;
+        }
+        public List<ProductVmDTO> GetProductsWithDiscount(string? categorySelection,
+            string? subCategorySelection, string? brandSelection, string? discountTags)
+        {
+            List<ProductVmDTO> products = new List<ProductVmDTO>();
+
+            if (subCategorySelection != null || brandSelection != null || categorySelection != null)
+            {
+                products =
+                        (from Product in _context.Products
+                         join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
+                         from Category in categories.DefaultIfEmpty()
+                         join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID into subCategories
+                         from SubCategory in subCategories.DefaultIfEmpty()
+                         join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
+                         from Brand in Brands.DefaultIfEmpty()
+                         join DiscountsByBrand in _context.Discounts on Product.BrandID equals DiscountsByBrand.BrandID into DiscountBrand
+                         from DiscountsByBrand in DiscountBrand.DefaultIfEmpty()
+                         join DiscountsByCategory in _context.Discounts on Product.CategoryID equals DiscountsByCategory.CategoryID into DiscountCategory
+                         from DiscountsByCategory in DiscountCategory.DefaultIfEmpty()
+                         join DiscountsBySubcategory in _context.Discounts on Product.SubCategoryID equals DiscountsBySubcategory.SubCategoryID into DiscountSubCategory
+                         from DiscountsBySubcategory in DiscountSubCategory.DefaultIfEmpty()
+                         where (DiscountsByBrand != null && Product.BrandID == DiscountsByBrand.BrandID) || (DiscountsByCategory != null && Product.CategoryID == DiscountsByCategory.CategoryID) ||
+                            (DiscountsBySubcategory != null && Product.SubCategoryID == DiscountsBySubcategory.SubCategoryID)
+
+                         select new ProductVmDTO
+                         {
+                             ProductID = Product.ProductID,
+                             ProductName = Product.ProductName,
+                             Price = Product.Price,
+                             Description = Product.Description,
+                             Quantity = Product.Quantity,
+                             Category = Category.CategoryName,
+                             SubCategory = SubCategory.SubCategoryName,
+                             Brand = Brand.BrandName,
+                             CreatedDate = Product.CreatedDate,
+                             ProductPicture = Product.ProductPicture,
+                             DiscountAmount = (decimal?)DiscountsByBrand.DiscountAmount ?? (decimal?)DiscountsByCategory.DiscountAmount ?? (decimal?)DiscountsBySubcategory.DiscountAmount,
+                             DiscountPercent = (decimal?)DiscountsByBrand.DiscountPercent ?? (decimal?)DiscountsByCategory.DiscountPercent ?? (decimal?)DiscountsBySubcategory.DiscountPercent,
+                             DiscountTag = Product.DiscountTag
+                         }).ToList();
+            }
+
+            List<ProductVmDTO> productsWithDTags = new List<ProductVmDTO>();
+            var filteredProducts = new List<ProductVmDTO>();
+            if (discountTags != null)
+            {
+                var discountTagsArray = discountTags.Split(',')
+                                                     .Select(k => k.ToUpper().Trim())
+                                                     .ToList();
+
+                // Get all discounts and split DiscountTag outside of the query
+                var allDiscounts = _context.Discounts
+                                           .Where(d => d.DiscountTag != null)
+                                           .ToList();
+
+                var discounts =
+                    allDiscounts
+                    .Where(d => d.DiscountTag.Split(',')
+                                              .Select(tag => tag.ToUpper().Trim())
+                                              .Intersect(discountTagsArray)
+                                              .Any())
+                    .ToList();
+
+                var discountTagLookup = discounts
+                    .ToDictionary(d => d.DiscountTag.ToUpper().Trim(), d => d);
+
+
+                productsWithDTags =
+                      (from Product in _context.Products
+                       join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
+                       from Category in categories.DefaultIfEmpty()
+                       join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID into subCategories
+                       from SubCategory in subCategories.DefaultIfEmpty()
+                       join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
+                       from Brand in Brands.DefaultIfEmpty()
+                       where !string.IsNullOrEmpty(Product.DiscountTag) && discountTagsArray.Any(k => EF.Functions.Like(Product.DiscountTag.ToUpper(), "%" + k + "%"))
+                       select new ProductVmDTO
+                       {
+                           ProductID = Product.ProductID,
+                           ProductName = Product.ProductName,
+                           Price = Product.Price,
+                           Description = Product.Description,
+                           Quantity = Product.Quantity,
+                           Category = Category.CategoryName,
+                           SubCategory = SubCategory.SubCategoryName,
+                           Brand = Brand.BrandName,
+                           CreatedDate = Product.CreatedDate,
+                           ProductPicture = Product.ProductPicture,
+                           DiscountTag = Product.DiscountTag
+                       }).ToList();
+
+                for (int x = 0; x < productsWithDTags.Count(); x++)
+                {
+                    var productDTagsArray = productsWithDTags[x].DiscountTag.Split(',').Select(k => k.ToUpper().Trim()).ToList();
+                    bool hasMatchingDiscount = false;
+
+                    foreach (var tag in productDTagsArray)//(var discount in discountTagged)
+                    {
+                        if (discountTagLookup.TryGetValue(tag, out var discount)) //(productDTagsArray.Contains(discount.DiscountTag.ToUpper().Trim()))
+                        {
+                            productsWithDTags[x].DiscountAmount = (productsWithDTags[x].DiscountAmount ?? 0) + discount.DiscountAmount;
+                            productsWithDTags[x].DiscountPercent = (productsWithDTags[x].DiscountPercent ?? 0) + discount.DiscountPercent;
+                            hasMatchingDiscount = true;
+                        }
+                    }
+                    if (hasMatchingDiscount)
+                    {
+                        filteredProducts.Add(productsWithDTags[x]); 
+                    }
+
+                }
+            }
+
+            var combinedProducts = products
+                       .Concat(filteredProducts)
+                       .GroupBy(p => p.ProductID)
+                       .Select(g => new ProductVmDTO
+                       {
+                           ProductID = g.Key,
+                           ProductName = g.First().ProductName,
+                           Price = g.First().Price,
+                           Description = g.First().Description,
+                           Quantity = g.First().Quantity,
+                           Category = g.First().Category,
+                           SubCategory = g.First().SubCategory,
+                           Brand = g.First().Brand,
+                           CreatedDate = g.First().CreatedDate,
+                           ProductPicture = g.First().ProductPicture,
+                           DiscountAmount = g.Sum(x => x.DiscountAmount ?? 0),
+                           DiscountPercent = g.Sum(x => x.DiscountPercent ?? 0),
+                           DiscountTag = g.First().DiscountTag
+                       })
+                       .ToList();
+
+
+            return combinedProducts;
+
         }
     }
 }

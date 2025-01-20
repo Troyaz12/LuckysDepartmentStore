@@ -3,6 +3,8 @@ using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Models.DTO.Home;
 using LuckysDepartmentStore.Models.ViewModels.Home;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace LuckysDepartmentStore.Utilities
 {
@@ -80,7 +82,7 @@ namespace LuckysDepartmentStore.Utilities
             {
                 throw new ArgumentNullException("Error during Convertion: " + ex.Message);
             }
-            
+
         }
         public byte[] ImageBytes(IFormFile? fileImport)
         {
@@ -136,7 +138,7 @@ namespace LuckysDepartmentStore.Utilities
 
             var pictureBase64 = Convert.ToBase64String(File.ReadAllBytes(defaultImage));
             string image = $"data:image/jpeg;base64,{pictureBase64}";
-    
+
             return image;
         }
         public ItemVM MapDetailItem(ItemDTO item)
@@ -162,7 +164,7 @@ namespace LuckysDepartmentStore.Utilities
         public double ItemRating(List<RatingVM> ratings)
         {
             double ratingValTotal = 0;
-            double totalPossible = 5*ratings.Count;
+            double totalPossible = 5 * ratings.Count;
             double starPercent = 0;
             double stars = 0;
 
@@ -187,7 +189,7 @@ namespace LuckysDepartmentStore.Utilities
                 else
                 {
                     var data = imageString.Substring(imageString.IndexOf(",") + 1);
-                    byte[] imageBytes = Convert.FromBase64String(data);                    
+                    byte[] imageBytes = Convert.FromBase64String(data);
 
                     return imageBytes;
                 }
@@ -206,6 +208,22 @@ namespace LuckysDepartmentStore.Utilities
             byte[] imageBytes = Convert.FromBase64String(defaultImage);
 
             return imageBytes;
+        }
+        public decimal CalculateSalePrice(decimal? discountAmount, decimal? discountPercent, decimal price)
+        {
+            decimal salePrice = price;
+
+            if (discountPercent != 0)
+            {
+                salePrice = price - (price * (decimal)discountPercent);
+            }
+
+            if (discountAmount != 0)
+            {
+                salePrice = salePrice - (decimal)discountAmount;
+            }
+
+            return salePrice;
         }
     }
 }

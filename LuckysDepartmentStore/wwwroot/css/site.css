@@ -213,7 +213,7 @@ body {
 
 /* Style for gold button appearance */
 .gold-btn {
-    background-color: gold !important; /* Gold background */
+    background-color: rgb(40, 167, 69) !important; /* Green background */
     color: black !important; /* Black text for contrast */
     border: 1px solid gold !important; /* Gold border */
     padding: 10px 20px; /* Adjust padding for button size */
@@ -222,14 +222,29 @@ body {
     cursor: pointer; /* Pointer cursor on hover */
 }
 
-    /* Change color on hover */
-    .gold-btn:hover {
-        background-color: green; /* Slightly darker gold */
-        border-color: #ffd700;
-    }
+/* Ensure these styles have higher specificity than Bootstrap's */
+input[type="radio"].btn-check:checked + .gold-btn {
+    background-color: gold !important; /* Gold background when checked */
+    border-color: gold !important;
+    color: black !important; /* Black text for contrast */
+}
 
-/* Styling for the checked radio button label */
-input[type="radio"]:checked + .gold-btn {
-    background-color: #ffd700; /* Change to darker gold when selected */
-    border-color: #ffd700;
+.gold-btn:hover {
+    background-color: gold !important; /* Gold background on hover */
+    border-color: gold !important;
+    color: black !important; /* Black text for contrast */
+}
+
+/* Hide the radio button but keep it functional */
+.btn-check {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Change color when clicked/selected */ 
+.size-button.selected {
+    background-color: gold !important; /* Green background when selected */
+    border-color: green !important;
+    color: white !important; /* White text for contrast */
 }

@@ -8,5 +8,5 @@
 @* @foreach (var button in Model) *@
 @for(int i=0; i < Model.Count; i++)
 {
-    <button id="sizes" class="btn btn-warning" data-index="@i" data-sizeid="@Model[i].SizesID">@Model[i].Size</button>
+    <button id="sizes" class="btn gold-btn size-button" data-index="@i" data-sizeid="@Model[i].SizesID">@Model[i].Size</button>
 }

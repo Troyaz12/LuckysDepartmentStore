@@ -11,5 +11,11 @@
         public byte[]? ProductPicture { get; set; }
         public string? ProductImage { get; set; }
         public string ProductName { get; set; }
+        public string Size { get; set; }
+        public string Color { get; set; }
+        public string Description { get; set; }
+        public decimal DiscountAmount { get; set; }
+        public decimal DiscountPercent { get; set; }
+        public decimal SalePrice { get; set; }
     }
 }

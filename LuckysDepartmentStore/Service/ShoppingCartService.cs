@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.DTO.Home;
 using LuckysDepartmentStore.Models.DTO.ShoppingCart;
 using LuckysDepartmentStore.Models.ViewModels.Consumer;
 using LuckysDepartmentStore.Models.ViewModels.Home;
@@ -161,17 +162,56 @@ namespace LuckysDepartmentStore.Service
 
             try
             {
-                var cartItems = await _context.Carts
-                .Where(cart => cart.CartID == ShoppingCartId)                
-                .Select(cartItems => new CartsDTO
-                 {
-                    ProductID = cartItems.ProductID,
-                    Price = cartItems.Price,
-                    Quantity = cartItems.Quantity,
-                    ProductPicture = cartItems.ProductPicture,
-                    ProductName = cartItems.ProductName
-                 })
-                .ToListAsync();
+                var cartItems =
+                    from cart in _context.Carts
+                    join product in _context.Products on cart.ProductID equals product.ProductID
+                    join category in _context.Categories on product.CategoryID equals category.CategoryID into categories
+                    from category in categories.DefaultIfEmpty()
+                    join subCategory in _context.SubCategories on product.SubCategoryID equals subCategory.SubCategoryID into subCategories
+                    from subCategory in subCategories.DefaultIfEmpty()
+                    join brand in _context.Brand on product.BrandID equals brand.BrandId into brands
+                    from brand in brands.DefaultIfEmpty()
+                    join discount in _context.Discounts on
+                        product.ProductID equals discount.ProductID into discounts
+                    from discount in discounts.Where(d => d.DiscountActive &&
+                        (d.ProductID == product.ProductID ||
+                         d.BrandID == product.BrandID ||
+                         d.CategoryID == product.CategoryID ||
+                         d.SubCategoryID == product.SubCategoryID)).DefaultIfEmpty()
+                    where cart.CartID == ShoppingCartId
+                    group new { product, category, subCategory, brand, discount }
+                        by new
+                        {
+                            product.ProductID,
+                            product.ProductName,
+                            product.Price,
+                            product.Description,
+                            product.Quantity,
+                            product.ProductPicture,
+                            category.CategoryName,
+                            subCategory.SubCategoryName,
+                            brand.BrandName,
+                            product.DiscountTag                            
+                        }
+                    into grouped
+                    select new CartsDTO
+                    {
+                        ProductID = grouped.Key.ProductID,
+                        ProductName = grouped.Key.ProductName,
+                        Price = grouped.Key.Price,
+                        Description = grouped.Key.Description,
+                        Quantity = grouped.Key.Quantity,
+                        ProductPicture = grouped.Key.ProductPicture,
+                        Category = grouped.Key.CategoryName,
+                        SubCategory = grouped.Key.SubCategoryName,
+                        Brand = grouped.Key.BrandName,
+                        DiscountAmount = grouped.Sum(x => x.discount.DiscountAmount),
+                        DiscountPercent = grouped.Sum(x => x.discount.DiscountPercent),
+                        DiscountTag = grouped.Key.DiscountTag
+                    };
+
+
+
 
                 if (cartItems == null || !cartItems.Any())
                 {
@@ -183,6 +223,7 @@ namespace LuckysDepartmentStore.Service
                 for (int x=0; x < cartVM.Count; x++)
                 {
                     cartVM[x].ProductImage = _utility.BytesToImage(cartVM[x].ProductPicture);
+                    cartVM[x].SalePrice = _utility.CalculateSalePrice(cartVM[x].DiscountAmount, cartVM[x].DiscountPercent, cartVM[x].Price);
                 }
 
                 return Utilities.ExecutionResult<List<CartsVM>>.Success(cartVM);

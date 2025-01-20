@@ -36,10 +36,9 @@ namespace LuckysDepartmentStore.Controllers
                 var cart = _shoppingCartService.GetCart();
                 await _shoppingCartService.AddToCartAsync(item, cart);
 
-
-                return Json(new { success = true });
+                return RedirectToAction("Index");
             }
-            return Json(new { success = false });
+            return RedirectToAction("Item", "Home", new { productId = item.ProductID });
         }
         public async Task<ActionResult> RemoveFromCartAsync(ItemVM item)
         {

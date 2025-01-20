@@ -74,6 +74,9 @@ namespace LuckysDepartmentStore.MappingProfiles
 
             CreateMap<Product, ProductVM>()
              .ReverseMap();
+
+            CreateMap<ItemDTO, ItemVM>()
+            .ReverseMap();
         }
     }
 }
