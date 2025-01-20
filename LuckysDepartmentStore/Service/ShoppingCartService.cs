@@ -64,7 +64,9 @@ namespace LuckysDepartmentStore.Service
                         Price = product.Price,
                         CreatedDate = DateTime.Now,
                         ProductPicture = product.ProductPicture,
-                        ProductName = product.ProductName
+                        ProductName = product.ProductName,
+                        Color = product.ColorID,
+                       // Size = product.Sizes
                     };
                     _context.Carts.Add(cartItem);
                 }
@@ -72,7 +74,7 @@ namespace LuckysDepartmentStore.Service
                 {
                     // If the item does exist in the cart, 
                     // then add one to the quantity
-                    cartItem.Quantity += product.Quantity;
+                    cartItem.Quantity += cartItem.Quantity;
                 }
                 // Save changes
                 await _context.SaveChangesAsync();
@@ -186,7 +188,7 @@ namespace LuckysDepartmentStore.Service
                             product.ProductName,
                             product.Price,
                             product.Description,
-                            product.Quantity,
+                            cart.Quantity,
                             product.ProductPicture,
                             category.CategoryName,
                             subCategory.SubCategoryName,

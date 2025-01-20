@@ -10,5 +10,7 @@
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public byte[]? ProductPicture { get; set; }
         public string ProductName { get; set; }
+        public int? Color { get; set; }
+        public int? Size { get; set; }
     }
 }

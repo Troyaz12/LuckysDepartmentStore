@@ -91,12 +91,12 @@
                     </div>
 
                     <span class="pt-2">Color</span>
-                <div class="pl-2">
+                <div id="ColorsContainer" class="pl-2">
                     @if (Model.ColorProduct != null && @Model.Color != null)
                     {
                         @for (var x = 0; x < @Model.Color.Count; x++)
                         {
-                            <input type="radio" class="btn-check options-radio" name="options" id="option@(x)" autocomplete="off" @(x == 0 ? "checked" : "")>
+                            <input type="radio" class="btn-check options-radio" value="@Model.Color[x]" name="options" id="option@(x)" autocomplete="off" @(x == 0 ? "checked" : "")>
                             <label class="btn gold-btn" for="option@(x)">@Model.Color[x]</label>
                         }
                     }
@@ -112,6 +112,7 @@
                         <input type="hidden" id="SizeSelection" name="SizeSelection" value="@Model.SizeSelection">
                         <input type="hidden" id="ProductImage" name="ProductImage" value="@Model.ProductImage">
                         <input type="hidden" id="ProductName" name="ProductName" value="@Model.ProductName">
+                    <input type="hidden" name="ColorSelection" id="ColorSelection" value="@Model.Color[0]" />
 
                         <div class="p-1">
                     
@@ -190,6 +191,13 @@
                 $(this).addClass("selected");
 
 
+            });
+            document.querySelectorAll('input[name="options"]').forEach((elem) => {
+             
+                elem.addEventListener("change", function (event) {     
+                    console.log("test");
+                document.getElementById("ColorSelection").value = event.target.value;
+                });
             });
         });
     </script>

@@ -49,5 +49,6 @@ namespace LuckysDepartmentStore.Models.ViewModels.Home
         public string? DiscountTag { get; set; }
         public Decimal SalePrice { get; set; }
 
+
     }
 }
