@@ -96,8 +96,8 @@
                     {
                         @for (var x = 0; x < @Model.Color.Count; x++)
                         {
-                            <input type="radio" class="btn-check options-radio" value="@Model.Color[x]" name="options" id="option@(x)" autocomplete="off" @(x == 0 ? "checked" : "")>
-                            <label class="btn gold-btn" for="option@(x)">@Model.Color[x]</label>
+                            <input type="radio" class="btn-check options-radio" value="@Model.ColorProduct[x].ColorID" name="options" id="option@(x)" autocomplete="off" @(x == 0 ? "checked" : "")>
+                            <label class="btn gold-btn" for="option@(x)">@Model.ColorProduct[x].Name</label>
                         }
                     }
                 </div>
@@ -112,7 +112,7 @@
                         <input type="hidden" id="SizeSelection" name="SizeSelection" value="@Model.SizeSelection">
                         <input type="hidden" id="ProductImage" name="ProductImage" value="@Model.ProductImage">
                         <input type="hidden" id="ProductName" name="ProductName" value="@Model.ProductName">
-                    <input type="hidden" name="ColorSelection" id="ColorSelection" value="@Model.Color[0]" />
+                    <input type="hidden" name="ColorID" id="ColorID" value="@Model.ColorProduct[0].ColorID" />
 
                         <div class="p-1">
                     
@@ -184,7 +184,6 @@
                 e.preventDefault();
                 var index = $(this).data("index");
                 var sizeID = $(this).data("sizeid");
-                console.log("test2");
                 $("#SizeSelection").val(sizeID);
                 // Remove 'selected' class from all buttons 
                 $("#sizesContainer .size-button").removeClass("selected"); // Add 'selected' class to the clicked button 
@@ -195,8 +194,7 @@
             });
             document.querySelectorAll('input[name="options"]').forEach((elem) => {
              
-                elem.addEventListener("change", function (event) {     
-                    console.log("test");
+                elem.addEventListener("change", function (event) {    
                 document.getElementById("ColorSelection").value = event.target.value;
                 });
             });

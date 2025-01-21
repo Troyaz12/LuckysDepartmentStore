@@ -28,7 +28,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Home
         public List<string>? Color { get; set; }
         public List<ColorProductVM> ColorProduct { get; set; } = new List<ColorProductVM>();
         public int? ColorID { get; set; }
-        public string? ColorSelection { get; set; }
+        public int? ColorSelection { get; set; }
 
         [Display(Name = "CreatedDate")]
         public DateTime CreatedDate { get; set; }

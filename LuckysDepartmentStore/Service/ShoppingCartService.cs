@@ -64,8 +64,8 @@ namespace LuckysDepartmentStore.Service
                         CreatedDate = DateTime.Now,
                         ProductPicture = product.ProductPicture,
                         ProductName = product.ProductName,
-                        Color = product.ColorID,
-                       // Size = product.Sizes
+                        Color = product.ColorSelection,
+                        Size = product.SizeSelection
                     };
                     _context.Carts.Add(cartItem);
                 }
@@ -209,8 +209,8 @@ namespace LuckysDepartmentStore.Service
                         DiscountAmount = grouped.Sum(x => x.discount.DiscountAmount),
                         DiscountPercent = grouped.Sum(x => x.discount.DiscountPercent),
                         DiscountTag = grouped.Key.DiscountTag,
-                     //   Size = grouped.Key.Size,
-                    //    Color = grouped.Key.Color
+                        Size = grouped.Key.Size,
+                        Color = grouped.Key.Color
                     };
 
 
