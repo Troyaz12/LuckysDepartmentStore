@@ -17,5 +17,7 @@
         public decimal? DiscountAmount { get; set; }
         public decimal? DiscountPercent { get; set; }
         public string? DiscountTag { get; set; }
+        public string? Size { get; set; }
+        public string Color { get; set; }
     }
 }

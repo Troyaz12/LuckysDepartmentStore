@@ -50,7 +50,6 @@ namespace LuckysDepartmentStore.Service
                     c => c.CartID == ShoppingCartId
                     && c.ProductID == product.ProductID);
 
-
                 if (cartItem == null)
                 {
                     product.ProductPicture = _utility.StringToBytes(product.ProductImage);
@@ -160,8 +159,6 @@ namespace LuckysDepartmentStore.Service
         }
         public async Task<Utilities.ExecutionResult<List<CartsVM>>> GetCartItems(string ShoppingCartId)
         {
-           // List<Carts> cartItems = null;
-
             try
             {
                 var cartItems =
@@ -193,7 +190,9 @@ namespace LuckysDepartmentStore.Service
                             category.CategoryName,
                             subCategory.SubCategoryName,
                             brand.BrandName,
-                            product.DiscountTag                            
+                            product.DiscountTag,
+                            cart.Size,
+                            cart.Color
                         }
                     into grouped
                     select new CartsDTO
@@ -209,7 +208,9 @@ namespace LuckysDepartmentStore.Service
                         Brand = grouped.Key.BrandName,
                         DiscountAmount = grouped.Sum(x => x.discount.DiscountAmount),
                         DiscountPercent = grouped.Sum(x => x.discount.DiscountPercent),
-                        DiscountTag = grouped.Key.DiscountTag
+                        DiscountTag = grouped.Key.DiscountTag,
+                     //   Size = grouped.Key.Size,
+                    //    Color = grouped.Key.Color
                     };
 
 
