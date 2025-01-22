@@ -20,82 +20,121 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-                  <body>
+<body>
+
 @if (Model != null)
 {
     <ul class="list-group">
         @foreach (var item in Model)
         {
-        <div class="container">
-            <div class="d-flex flex-row w-100">              
+                <div class="container">
 
-                <image src="@item.ProductImage" id="ProductPicture" name="ProductPicture" class="image-container">
-
-                <div class="d-flex flex-column">
-                    <div class="p-2 text-black">                       
-                        <h3>@item.ProductName</h3>
-                        <div>
-                            @item.Description
+                    <!-- Button Row -->
+                    <div class="d-flex flex-row w-100">
+                        <div class="d-flex flex-column col-md-3">
+                           
+                        </div>
+                        <div class="d-flex flex-column col-md-3">
+                           
+                        </div>
+                        <div class="d-flex flex-column col-md-2">
+                           
+                        </div>
+                        <div class="d-flex flex-column col-md-2">
+                            <form id="addToCartForm" asp-controller="Checkout" asp-action="AddressAndPayment" enctype="multipart/form-data">
+                                <div class="p-2 text-white">
+                                    <input type="submit" id="addressButton" value="Checkout" class="btn btn-info mt-1 w-100" style="background-color: gold" />
+                                </div>
+                            </form>
+                        </div>
+                        <div class="d-flex flex-column col-md-2">
+                            <form id="addToCartForm" asp-controller="Home" asp-action="Index" enctype="multipart/form-data">
+                                <div class="p-2 text-white">
+                                    <input type="submit" id="continueShopping" value="Continue Shopping" class="btn btn-info mt-1 w-100" style="background-color: gold" />
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    
-                    <div class="text-black">
 
-                        @if(item.DiscountAmount == 0 || item.DiscountPercent == 0 )
-                        {
-                            <span class="p-2 pt-3 pb-3">
-                                @string.Format("{0:C}",@item.Price)
-                            </span>
-                        }
-                        else
-                        {
-                        
-                            <div style="padding-top:5px;">
+                    <!-- Header Row -->
+                    <div class="d-flex flex-row w-100 row-with-borders">
+                        <div class="d-flex flex-column col-md-3">
+                            Item
+                        </div>
+                        <div class="d-flex flex-column col-md-3">
+                            Description
+                        </div>
+                        <div class="d-flex flex-column col-md-2">
+                            Quantity
+                        </div>
+                        <div class="d-flex flex-column col-md-2">
+                            Price
+                        </div>
+                        <div class="d-flex flex-column col-md-2">
+                            SubTotal
+                        </div>
+                    </div>
 
-
-                                <p class="card-text" style="text-decoration: line-through;">@string.Format("{0:C2}", @item.Price)</p>
-                                <p>
-                                     Discount:
-                                     @if (@item.DiscountAmount != null && @item.DiscountAmount > 0)
-                                     {
-                                        <span>-@item.DiscountAmount</span>
-                                     }
-                                    @if (@item.DiscountPercent != null && @item.DiscountPercent > 0)
-                                     {
-                                         <span>@string.Format("{0:0}%", @item.DiscountPercent * 100)</span>
-                                     }
-                                </p>
-                                <p>Sale Price: <span class="card-text" style="color: red;">@string.Format("{0:C2}", @item.SalePrice)</span></p>
+                    <!-- Data Rows -->
+                    <div class="d-flex flex-row w-100">
+                        <div class="d-flex flex-column col-md-3">
+                            <img src="@item.ProductImage" id="ProductPicture" name="ProductPicture" class="image-containerCheckout">
+                        </div>
+                        <div class="d-flex flex-column col-md-3">
+                            <div class="text-black">
+                                <h5>@item.ProductName</h5>
+                                <div>@item.Description</div>
+                                <div id="sizesContainer">
+                                    <label asp-for="@item.SizeString" class="control-label"></label>
+                                    <span>: @item.SizeString</span>
+                                </div>
+                                <div>
+                                    <label asp-for="@item.ColorString" class="control-label"></label>
+                                    <span>: @item.ColorString</span>
+                                </div>
                             </div>
-                        }
+                        </div>
+                        <div class="d-flex flex-column col-md-2">
+                            <div class="pl-2">
+                                <span>@item.Quantity</span>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column col-md-2">
+                            <div class="text-black">
+                                @if (item.DiscountAmount == 0 || item.DiscountPercent == 0)
+                                {
+                                    <span class="p-2 pt-3 pb-3">
+                                        @string.Format("{0:C}", @item.Price)
+                                    </span>
+                                }
+                                else
+                                {
+                                    <div style="padding-top:5px;">
+                                        <p class="card-text" style="text-decoration: line-through;">@string.Format("{0:C2}", @item.Price)</p>
+                                        <p>
+                                            Discount:
+                                            @if (@item.DiscountAmount != null && @item.DiscountAmount > 0)
+                                            {
+                                                <span>-@item.DiscountAmount</span>
+                                            }
+                                            @if (@item.DiscountPercent != null && @item.DiscountPercent > 0)
+                                            {
+                                                <span>@string.Format("{0:0}%", @item.DiscountPercent * 100)</span>
+                                            }
+                                        </p>
+                                        <p>Sale Price: <span class="card-text" style="color: red;">@string.Format("{0:C2}", @item.SalePrice)</span></p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column col-md-2">
+                            <span>100</span>
+                        </div>
                     </div>
-
-                    <div class="pl-2 pb-2" id="sizesContainer">
-                        <label asp-for="@item.SizeString" class="control-label"></label>
-                        <span>: @item.SizeString</span>
-                       @*  <label class="form-control">@item.SizeString</label>   *@                 
-                    </div>
-                    
-                    <div class="pl-2">
-                        <label asp-for="@item.ColorString" class="control-label"></label>
-                        <span>: @item.ColorString</span>
-                       @*  <label class="form-control">@item.ColorString</label>   *@                
-                    </div>
-                      <div class="pl-2">
-                        <label asp-for="@item.Quantity" class="control-label"></label>
-                        <span>: @item.Quantity</span>
-                      @*   <label class="form-control">@item.Quantity</label>    *@                 
-                    </div>
-
                 </div>
-            </div>
-        </div>
+
         }
-          <form id="addToCartForm" asp-controller="Checkout" asp-action="AddressAndPayment" enctype="multipart/form-data">
-                <div class="p-2 text-white">
-                    <input type="submit" id="addressButton" value="Checkout" class="btn btn-info mt-1 w-100" style="background-color: gold" />
-                </div>
-            </form>
+      
 
     </ul>
 }

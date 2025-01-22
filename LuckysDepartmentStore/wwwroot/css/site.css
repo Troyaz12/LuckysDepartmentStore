@@ -196,6 +196,13 @@ body {
     padding: 20px;
 }
 
+.image-containerCheckout {
+    width: 250px; /* Adjust to your preferred width */
+    height: 250px; /* Adjust to your preferred height */
+    object-fit: cover; /* This ensures the image covers the entire container while maintaining its aspect ratio */
+   
+}
+
 .image-box {
     background-color: #f7f7f7; /* Grey background */
     padding: 30px; /* Optional padding for some space around the image */
@@ -247,4 +254,10 @@ input[type="radio"].btn-check:checked + .gold-btn {
     background-color: gold !important; /* Green background when selected */
     border-color: green !important;
     color: white !important; /* White text for contrast */
+}
+
+.row-with-borders {
+    border-top: 2px solid #000; /* Top border */
+    border-bottom: 2px solid #000; /* Bottom border */
+    margin-bottom: 1rem;
 }
