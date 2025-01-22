@@ -256,8 +256,14 @@ input[type="radio"].btn-check:checked + .gold-btn {
     color: white !important; /* White text for contrast */
 }
 
-.row-with-borders {
+.row-with-borders-header {
     border-top: 2px solid #000; /* Top border */
     border-bottom: 2px solid #000; /* Bottom border */
     margin-bottom: 1rem;
+}
+
+.row-with-borders-item {
+    border-bottom: 1px solid #000; /* Bottom border */
+    margin-bottom: 1rem;
+    padding-bottom: 2rem; /* Add padding to the bottom */
 }

@@ -51,7 +51,8 @@ namespace LuckysDepartmentStore.Service
                 // Get the matching cart instances
                 var cartItem = await _context.Carts.SingleOrDefaultAsync(
                     c => c.CartID == ShoppingCartId
-                    && c.ProductID == product.ProductID);
+                    && c.ProductID == product.ProductID
+                    && c.Color == product.ColorSelection);
 
                 if (cartItem == null)
                 {
