@@ -29,5 +29,23 @@ namespace LuckysDepartmentStore.Service
 
             return newColorId;
         }
+        public string GetColorName(int id)
+        {
+            var colorName = _context.Colors
+                .Where(c => c.ColorID == id)
+                .Select(c => c.Name)
+                .SingleOrDefaultAsync().Result;
+
+            return colorName;
+        }
+        public string GetSizeName(int id)
+        {
+            var size = _context.Sizes
+                .Where(c => c.SizesID == id)
+                .Select(c => c.Size)
+                .SingleOrDefaultAsync().Result;
+
+            return size;
+        }
     }
 }

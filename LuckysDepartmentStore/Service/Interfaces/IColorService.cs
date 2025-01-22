@@ -5,6 +5,7 @@ namespace LuckysDepartmentStore.Service.Interfaces
     public interface IColorService
     {
         public int Create(string name);
-        //  public ProductVM AddProductColor(ProductVM product);
+        public string GetColorName(int id);
+        public string GetSizeName(int id);
     }
 }

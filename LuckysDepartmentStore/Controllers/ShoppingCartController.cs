@@ -24,7 +24,7 @@ namespace LuckysDepartmentStore.Controllers
             var cartID = _shoppingCartService.GetCart();
             var allItems = await _shoppingCartService.GetCartItems(cartID);
 
-
+            
 
             return View(allItems.Data);
         }

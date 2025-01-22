@@ -20,13 +20,16 @@ namespace LuckysDepartmentStore.Service
         public const string CartSessionKey = "CartId";    
         private readonly IHttpContextAccessor _httpContext;
         public Utility _utility;
+        public IColorService _colorService;
 
-    public ShoppingCartService(LuckysContext context, IMapper mapper, IHttpContextAccessor httpContext, Utility utility)
+        public ShoppingCartService(LuckysContext context, IMapper mapper, IHttpContextAccessor httpContext, 
+            Utility utility, IColorService color)
         {
             _context = context;
             _mapper = mapper;
             _httpContext = httpContext;
             _utility = utility;
+             _colorService = color;
         }
 
         public string GetCart()
@@ -227,6 +230,8 @@ namespace LuckysDepartmentStore.Service
                 {
                     cartVM[x].ProductImage = _utility.BytesToImage(cartVM[x].ProductPicture);
                     cartVM[x].SalePrice = _utility.CalculateSalePrice(cartVM[x].DiscountAmount, cartVM[x].DiscountPercent, cartVM[x].Price);
+                    cartVM[x].SizeString = _colorService.GetSizeName(cartVM[x].Size);
+                    cartVM[x].ColorString = _colorService.GetColorName(cartVM[x].Color);
                 }
 
                 return Utilities.ExecutionResult<List<CartsVM>>.Success(cartVM);

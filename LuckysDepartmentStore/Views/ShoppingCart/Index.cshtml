@@ -71,23 +71,32 @@
                     </div>
 
                     <div class="pl-2 pb-2" id="sizesContainer">
-                        <label asp-for="@item.Size" class="control-label"></label>
-                        <label asp-for="@item.Size" class="form-control"/>                    
+                        <label asp-for="@item.SizeString" class="control-label"></label>
+                        <span>: @item.SizeString</span>
+                       @*  <label class="form-control">@item.SizeString</label>   *@                 
                     </div>
                     
                     <div class="pl-2">
-                        <label asp-for="@item.Color" class="control-label"></label>
-                        <label asp-for="@item.Color" class="form-control"/>                    
+                        <label asp-for="@item.ColorString" class="control-label"></label>
+                        <span>: @item.ColorString</span>
+                       @*  <label class="form-control">@item.ColorString</label>   *@                
                     </div>
                       <div class="pl-2">
                         <label asp-for="@item.Quantity" class="control-label"></label>
-                        <label asp-for="@item.Quantity" class="form-control"/>                    
+                        <span>: @item.Quantity</span>
+                      @*   <label class="form-control">@item.Quantity</label>    *@                 
                     </div>
 
                 </div>
             </div>
         </div>
         }
+          <form id="addToCartForm" asp-controller="Checkout" asp-action="AddressAndPayment" enctype="multipart/form-data">
+                <div class="p-2 text-white">
+                    <input type="submit" id="addressButton" value="Checkout" class="btn btn-info mt-1 w-100" style="background-color: gold" />
+                </div>
+            </form>
+
     </ul>
 }
 else

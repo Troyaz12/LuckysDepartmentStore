@@ -48,10 +48,8 @@
                                 <span>
                                     No reviews yet
                                 </span>
-                            </p>
-                    
+                            </p>                    
                         }
-
 
                     </div>
                     <div class="text-black">
@@ -63,11 +61,8 @@
                         </span>
                     }
                     else
-                    {
-                        
+                    {                        
                         <div style="padding-top:5px;">
-
-
                             <p class="card-text" style="text-decoration: line-through;">@string.Format("{0:C2}", @Model.Price)</p>
                             <p>
                                  Discount:
@@ -91,16 +86,16 @@
                     </div>
 
                     <span class="pt-2">Color</span>
-                <div id="ColorsContainer" class="pl-2">
-                    @if (Model.ColorProduct != null && @Model.Color != null)
-                    {
-                        @for (var x = 0; x < @Model.Color.Count; x++)
+                    <div id="ColorsContainer" class="pl-2">
+                        @if (Model.ColorProduct != null && @Model.Color != null)
                         {
-                            <input type="radio" class="btn-check options-radio" value="@Model.ColorProduct[x].ColorID" name="options" id="option@(x)" autocomplete="off" @(x == 0 ? "checked" : "")>
-                            <label class="btn gold-btn" for="option@(x)">@Model.ColorProduct[x].Name</label>
+                            @for (var x = 0; x < @Model.Color.Count; x++)
+                            {
+                                <input type="radio" class="btn-check options-radio" value="@Model.ColorProduct[x].ColorID" name="options" id="option@(x)" autocomplete="off" @(x == 0 ? "checked" : "")>
+                                <label class="btn gold-btn" for="option@(x)">@Model.ColorProduct[x].Name</label>
+                            }
                         }
-                    }
-                </div>
+                    </div>
 
 
                     <form id="addToCartForm" asp-controller="ShoppingCart" asp-action="AddToCart" enctype="multipart/form-data">
@@ -138,6 +133,8 @@
             });
 
             updateSizes();
+            document.getElementById("ColorSelection").value = @Model.ColorProduct[0].ColorID;
+
 
             function updateSizes(event){
 

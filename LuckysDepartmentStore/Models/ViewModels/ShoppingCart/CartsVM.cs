@@ -1,4 +1,6 @@
-﻿namespace LuckysDepartmentStore.Models.ViewModels.ShoppingCart
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace LuckysDepartmentStore.Models.ViewModels.ShoppingCart
 {
     public class CartsVM
     {
@@ -11,11 +13,15 @@
         public byte[]? ProductPicture { get; set; }
         public string? ProductImage { get; set; }
         public string ProductName { get; set; }
-        public string Size { get; set; }
-        public string Color { get; set; }
+        public int Size { get; set; }
+        public int Color { get; set; }
         public string Description { get; set; }
         public decimal DiscountAmount { get; set; }
         public decimal DiscountPercent { get; set; }
         public decimal SalePrice { get; set; }
+        [Display(Name = "Size")]
+        public string? SizeString { get; set; }
+        [Display(Name = "Color")]
+        public string? ColorString { get; set; }
     }
 }
