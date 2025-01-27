@@ -7,5 +7,7 @@ namespace LuckysDepartmentStore.Service.Interfaces
         public int Create(string name);
         public string GetColorName(int id);
         public string GetSizeName(int id);
+        public int CreateSize(string name);
+
     }
 }

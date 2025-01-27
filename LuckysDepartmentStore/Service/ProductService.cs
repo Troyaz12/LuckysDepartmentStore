@@ -55,6 +55,18 @@ namespace LuckysDepartmentStore.Service
                         }
                     }
                 }
+                if ((product != null && product.SizeID == null))
+                {
+                    for (int x = 0; x < product.ColorProduct.Count; x++)
+                    {
+                        if (product.ColorProduct[x].SizeID == 0 || product.ColorProduct[x].SizeID == null)
+                        {
+                            var sizeId = _colorService.CreateSize(product.ColorProduct[x].SizeName);
+
+                            product.ColorProduct[x].SizeID = sizeId;
+                        }
+                    }
+                }
                 if ((product != null && product.CategoryID == null) || product.CategoryID == 0)
                 {
                     product.CategoryID = _categoryService.Create(product);
@@ -714,7 +726,7 @@ namespace LuckysDepartmentStore.Service
                 }
                 else if (searchString != null)
                 {                   
-                    var upperSearchQuery = searchString.ToUpper().Trim();
+                    var upperSearchQuery = searchString.ToLower().Trim();
                     var keywords = searchString.Split(' ').Select(k => k.ToUpper().Trim()).ToList();
 
                     var exactMatches = _context.Products.Where(p =>

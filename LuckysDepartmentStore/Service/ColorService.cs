@@ -47,5 +47,17 @@ namespace LuckysDepartmentStore.Service
 
             return size;
         }
+        public int CreateSize(string name)
+        {
+            var newSize = new Sizes();
+            newSize.Size = name;
+
+            _context.Add(newSize);
+            var sizeResult = _context.SaveChanges();
+
+            int newSizeId = newSize.SizesID;
+
+            return newSizeId;
+        }
     }
 }
