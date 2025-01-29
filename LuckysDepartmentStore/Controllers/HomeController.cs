@@ -109,7 +109,7 @@ namespace LuckysDepartmentStore.Controllers
 
 
 
-            return View(product.Data);
+            return View(product);
         }
 
         [HttpPost] // get all sizes for each color
