@@ -47,6 +47,13 @@ namespace LuckysDepartmentStore.Controllers
         {
             var productList = await _productService.GetProductsByDiscount(categorySelection, subCategorySelection, brandSelection, productID, discountTags);
 
+            if (!productList.IsSuccess)
+            {
+                TempData["ErrorMessage"] = productList.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
+            }
+
             return View(productList.Data);
         }
         [HttpGet]
