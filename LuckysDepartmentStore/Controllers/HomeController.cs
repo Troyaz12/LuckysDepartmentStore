@@ -23,7 +23,7 @@ namespace LuckysDepartmentStore.Controllers
 
             if (!frontPageData.IsSuccess)
             {
-                ViewBag.FailureMessage = frontPageData.ErrorMessage;
+                ViewBag.ErrorMessage = frontPageData.ErrorMessage;
 
                 return View();
             }
@@ -102,14 +102,20 @@ namespace LuckysDepartmentStore.Controllers
         [HttpGet]
         public IActionResult Item(int? productId)
         {
-            var product = _productService.GetItem((int) productId);
+            var product = _productService.GetItem((int) productId);           
+
+            if (!product.IsSuccess)
+            {
+                ViewBag.ErrorMessage = product.ErrorMessage;
+
+                return View(new ItemVM());
+            }
+
             product.Data.Color = product.Data.ColorProduct.Select(product => product.Name)
-                .Distinct()
-                .ToList();
+               .Distinct()
+               .ToList();
 
-
-
-            return View(product);
+            return View(product.Data);
         }
 
         [HttpPost] // get all sizes for each color

@@ -525,7 +525,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch(Exception e)
             {
-                return ExecutionResult<ItemVM>.Failure(e.Message);
+                return ExecutionResult<ItemVM>.Failure("Unable to retrieve item.");
             }
         }
         public List<ProductVmDTO> GetProductsWithDiscount()
