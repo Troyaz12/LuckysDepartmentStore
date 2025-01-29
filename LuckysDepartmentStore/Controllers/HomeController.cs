@@ -62,6 +62,13 @@ namespace LuckysDepartmentStore.Controllers
         {
             var productList = await _productService.GetProductsSearch(category, subCategory, brand, productID, searchString);
 
+            if (!productList.IsSuccess)
+            {
+                TempData["ErrorMessage"] = productList.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
+            }
+
             return View(productList.Data);
         }
         public IActionResult Login(string inputEmail, string inputPassword)

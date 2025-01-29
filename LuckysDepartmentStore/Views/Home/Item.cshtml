@@ -78,9 +78,9 @@
                 <div class="pl-2 pb-2 text-white" id="sizesContainer"></div>
                 <span class="pt-2">Color</span>
                 <div id="ColorsContainer" class="pl-2">
-                    @if (Model.ColorProduct != null && @Model.Color.Count > 0)
+                    @if (Model.ColorProduct != null && Model.ColorProduct.Count > 0 && @Model.Color.Count > 0)
                     {
-                        @for (var x = 0; x < @Model.Color.Count; x++)
+                        @for (var x = 0; x < @Model.ColorProduct.Count; x++)
                         {
                             <input type="radio" class="btn-check options-radio" value="@Model.ColorProduct[x].ColorID" name="options" id="option@(x)" autocomplete="off" @(x == 0 ? "checked" : "")>
                             <label class="btn gold-btn" for="option@(x)">@Model.ColorProduct[x].Name</label>
@@ -95,7 +95,12 @@
                     <input type="hidden" id="SizeSelection" name="SizeSelection" value="@Model.SizeSelection">
                     <input type="hidden" id="ProductImage" name="ProductImage" value="@Model.ProductImage">
                     <input type="hidden" id="ProductName" value="@Model.ProductName">
-                    <input type="hidden" name="ColorID" id="ColorID" value="@Model.ColorProduct[0].ColorID" />
+
+                    @if (Model.ColorProduct != null && Model.ColorProduct.Count > 0)
+                    {
+                        <input type="hidden" name="ColorID" id="ColorID" value="@Model.ColorProduct[0].ColorID" />
+                    }
+
                     <div class="p-1">
                         <label asp-for="Quantity" class="control-label"></label>
                         <input asp-for="Quantity" type="number" class="form-control" id="Quantity" />

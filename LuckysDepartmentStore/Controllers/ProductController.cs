@@ -1,6 +1,9 @@
-﻿using LuckysDepartmentStore.Models.ViewModels.Product;
+﻿using LuckysDepartmentStore.Migrations;
+using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace LuckysDepartmentStore.Controllers
 {
@@ -19,23 +22,23 @@ namespace LuckysDepartmentStore.Controllers
         }
 
         // GET: Product/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> DetailsAsync(int id)
         {
-            var details = _productService.GetDetails(id);
+            var details = await _productService.GetDetails(id);
+            var sizes = await _productService.GetSize();
 
-            if(details.IsSuccess == false)
+            if (!details.IsSuccess || !sizes.IsSuccess)
             {
-                TempData["FailureMessage"] = details.ErrorMessage;
-
-                return RedirectToAction(nameof(Index));
+                TempData["FailureMessage"] = "Error getting discount data.";
+                return RedirectToAction("Index", "Error");
             }
 
-            var sizes = _productService.GetSize();
+            
             var allDetails = details.Data;
 
             for (int x = 0; x < allDetails.ColorProduct.Count; x++)
             {
-                var selectedSize = sizes.FirstOrDefault(s => s.SizesID == allDetails.ColorProduct[x].SizeID);
+                var selectedSize = sizes.Data.FirstOrDefault(s => s.SizesID == allDetails.ColorProduct[x].SizeID);
 
                 if (selectedSize != null)
                 {
@@ -52,14 +55,37 @@ namespace LuckysDepartmentStore.Controllers
         }
 
         // GET: Product/Create
-        public ActionResult Create()
+        public async Task<ActionResult> CreateAsync()
         {
             ProductCreateVM product = new ProductCreateVM();
-            product.Color = _productService.GetColors();
-            product.Category = _productService.GetCategory();
-            product.SubCategory = _productService.GetSubCategory();
-            product.Brand = _productService.GetBrand();
-            product.Sizes = _productService.GetSize();
+
+            try
+            {
+                var color = await _productService.GetColors();
+                var category = await _productService.GetCategory();
+                var subCategory = await _productService.GetSubCategory();
+                var brand = await _productService.GetBrand();
+                var sizes = await _productService.GetSize();
+
+                if (!color.IsSuccess || !category.IsSuccess || !subCategory.IsSuccess || !brand.IsSuccess || !sizes.IsSuccess)
+                {
+                    TempData["FailureMessage"] = "Error getting discount data.";
+                    return RedirectToAction("Index", "Error");
+                }
+
+                product.Color = color.Data;
+                product.Category = category.Data;
+                product.SubCategory = subCategory.Data;
+                product.Brand = brand.Data;
+                product.Sizes = sizes.Data;
+            }
+            catch (Exception ex) 
+            {
+                TempData["FailureMessage"] = "Error getting product data.";
+
+                return RedirectToAction("Index", "Error");
+
+            }            
 
             return View(product);
         }
@@ -89,34 +115,66 @@ namespace LuckysDepartmentStore.Controllers
         }
 
         // GET: Product/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> EditAsync(int id)
         {
-            ProductEditVM productEditVM = _productService.GetAProduct(id);
-
-            productEditVM.Color = _productService.GetColors();
-            productEditVM.Category = _productService.GetCategory();
-            productEditVM.SubCategory = _productService.GetSubCategory();
-            productEditVM.Brand = _productService.GetBrand();
-
-            var sizes = _productService.GetSize();            
-            productEditVM.Sizes = sizes;
-
-            for (int x = 0; x < productEditVM.ColorProduct.Count; x++)
+            try
             {
-                var selectedSize = sizes.FirstOrDefault(s => s.SizesID == productEditVM.ColorProduct[x].SizeID);
+                var productEditVM = await _productService.GetAProduct(id);
 
-                if (selectedSize != null)
+                var colors = await _productService.GetColors();
+                var category = await _productService.GetCategory();
+                var subCategory = await _productService.GetSubCategory();
+                var brand = await _productService.GetBrand();
+                var sizes = await _productService.GetSize();
+
+                if (colors.IsSuccess)
                 {
-                    productEditVM.ColorProduct[x].SizeName = selectedSize.Size;
-                }
-                else
-                {
-                    productEditVM.ColorProduct[x].SizeName = "Size not found";
+                    productEditVM.Data.Color = colors.Data;
                 }
 
+                if (category.IsSuccess)
+                {
+                    productEditVM.Data.Category = category.Data;
+                }
+
+                if (subCategory.IsSuccess)
+                {
+                    productEditVM.Data.SubCategory = subCategory.Data;
+                }
+
+                if (brand.IsSuccess)
+                {
+                    productEditVM.Data.Brand = brand.Data;
+                }
+
+                if (sizes.IsSuccess)
+                {
+                    productEditVM.Data.Sizes = sizes.Data;
+                }                 
+
+                for (int x = 0; x < productEditVM.Data.ColorProduct.Count; x++)
+                {
+                    var selectedSize = sizes.Data.FirstOrDefault(s => s.SizesID == productEditVM.Data.ColorProduct[x].SizeID);
+
+                    if (selectedSize != null)
+                    {
+                        productEditVM.Data.ColorProduct[x].SizeName = selectedSize.Size;
+                    }
+                    else
+                    {
+                        productEditVM.Data.ColorProduct[x].SizeName = "Size not found";
+                    }
+
+                }
+
+                return View(productEditVM.Data);
             }
+            catch (Exception ex)
+            {
+                TempData["FailureMessage"] = "Error getting product data.";
 
-            return View(productEditVM);
+                return RedirectToAction("Index", "Error");
+            }            
         }
 
         // POST: Product/Edit/5

@@ -10,6 +10,7 @@ using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Utility = LuckysDepartmentStore.Utilities.Utility;
@@ -109,33 +110,63 @@ namespace LuckysDepartmentStore.Service
                 throw new Exception("An error occurred while processing your request", ex);
             }
         }
-        public List<Color> GetColors()
+        public async Task<ExecutionResult<List<Color>>> GetColors()
         {
-            var color = _context.Colors               
-                .ToList();
+            try
+            {
+                var color = await _context.Colors
+               .ToListAsync();
 
-            return color;
+                return ExecutionResult<List<Color>>.Success(color);
+
+            }
+            catch (Exception ex)
+            {
+                return ExecutionResult<List<Color>>.Failure("Unable to search products.");
+            }
+            
         }
-        public List<Category> GetCategory()
+        public async Task<ExecutionResult<List<Category>>> GetCategory()
         {
-            var categories = _context.Categories
-                .ToList();
+            try
+            {
+                var categories = await _context.Categories
+              .ToListAsync();
 
-            return categories;
+                return ExecutionResult<List<Category>>.Success(categories);
+            }
+            catch(Exception ex)
+            {
+                return ExecutionResult<List<Category>>.Failure("Unable to search categories.");
+            }
         }
-        public List<SubCategory> GetSubCategory()
+        public async Task<ExecutionResult<List<SubCategory>>> GetSubCategory()
         {
-            var subCategory = _context.SubCategories
-                .ToList();
+            try
+            {
+                var subCategory = await _context.SubCategories
+                .ToListAsync();
 
-            return subCategory;
+                return ExecutionResult<List<SubCategory>>.Success(subCategory);
+            }
+            catch(Exception ex)
+            {
+                return ExecutionResult<List<SubCategory>>.Failure("Unable to search Subcategories.");
+            }        
         }
-        public List<Brand> GetBrand()
+        public async Task<ExecutionResult<List<Brand>>> GetBrand()
         {
-            var brands = _context.Brand
-                .ToList();
+            try
+            {
+                var brands = await _context.Brand
+                .ToListAsync();
 
-            return brands;
+                return ExecutionResult<List<Brand>>.Success(brands);
+            }
+            catch (Exception ex)
+            {
+                return ExecutionResult<List<Brand>>.Failure("Unable to search brands.");
+            }
         }
 
         public List<ProductVM> GetProductsSearchBar(string categorySearch, string searchString)
@@ -204,9 +235,11 @@ namespace LuckysDepartmentStore.Service
                 return ExecutionResult<List<ProductVM>>.Failure("Unable to search products.");
             }
         }
-        public ProductEditVM GetAProduct(int productId)
+        public async Task<ExecutionResult<ProductEditVM>> GetAProduct(int productId)
         {
-            var productDTO =
+            try
+            {
+                var productDTO = await(
                 from Product in _context.Products
                 join Category in _context.Categories on Product.CategoryID equals Category.CategoryID
                 join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID
@@ -228,32 +261,36 @@ namespace LuckysDepartmentStore.Service
                     SubCategoryId = SubCategory.SubCategoryID,
                     DiscountTags = Product.DiscountTag,
                     SearchWords = Product.SearchWords
-                };
+                }).FirstOrDefaultAsync();
 
-            var colorProductDTO =
-                from ColorProducts in _context.ColorProducts
-                join Colors in _context.Colors on ColorProducts.ColorID equals Colors.ColorID
-                where ColorProducts.ProductID == productId
-                select new ColorProductEditDTO
-                {
-                    ProductID = ColorProducts.ProductID,
-                    ColorID = ColorProducts.ColorID,
-                    Quantity = ColorProducts.Quantity,
-                    Name = Colors.Name,
-                    ColorProductID = ColorProducts.ColorProductID,
-                    SizeID = ColorProducts.SizeID
-                };
+                var colorProductDTO = await(
+                    from ColorProducts in _context.ColorProducts
+                    join Colors in _context.Colors on ColorProducts.ColorID equals Colors.ColorID
+                    where ColorProducts.ProductID == productId
+                    select new ColorProductEditDTO
+                    {
+                        ProductID = ColorProducts.ProductID,
+                        ColorID = ColorProducts.ColorID,
+                        Quantity = ColorProducts.Quantity,
+                        Name = Colors.Name,
+                        ColorProductID = ColorProducts.ColorProductID,
+                        SizeID = ColorProducts.SizeID
+                    }).ToListAsync();
 
-            var product = productDTO.FirstOrDefault();
+             //   var product = productDTO.FirstOrDefault();
 
-            var productModel = _utility.MapEditProduct(product);
+                var productModel = _utility.MapEditProduct(productDTO);
 
-            var colorProducts = _mapper.Map<List<ColorProductVM>>(colorProductDTO);
+                var colorProducts = _mapper.Map<List<ColorProductVM>>(colorProductDTO);
 
-            productModel.ColorProduct = colorProducts;
-            
+                productModel.ColorProduct = colorProducts;
 
-            return productModel;
+                return ExecutionResult<ProductEditVM>.Success(productModel);
+            }
+            catch(Exception ex)
+            {
+                return ExecutionResult<ProductEditVM>.Failure("Unable to edit products.");
+            }
         }
         public async Task<ExecutionResult<ProductEditVM>> EditProduct(ProductEditVM productEdit)
         {
@@ -317,10 +354,10 @@ namespace LuckysDepartmentStore.Service
             }
         }
 
-        public ExecutionResult<ProductDetailVM> GetDetails(int productId)
+        public async Task<ExecutionResult<ProductDetailVM>> GetDetails(int productId)
         {          
 
-            var productDTO =
+            var productDTO = await(
              from Product in _context.Products
              join Category in _context.Categories on Product.CategoryID equals Category.CategoryID
              join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID
@@ -344,9 +381,9 @@ namespace LuckysDepartmentStore.Service
                  DiscountTags = Product.DiscountTag,
                  SearchWords = Product.SearchWords
 
-             };
+             }).FirstOrDefaultAsync();
 
-            var colorProductDTO =
+            var colorProductDTO = await(
                 from ColorProducts in _context.ColorProducts
                 join Colors in _context.Colors on ColorProducts.ColorID equals Colors.ColorID
                 where ColorProducts.ProductID == productId
@@ -358,16 +395,14 @@ namespace LuckysDepartmentStore.Service
                     Name = Colors.Name,
                     ColorProductID = ColorProducts.ColorProductID,
                     SizeID  = ColorProducts.SizeID
-                };
+                }).ToListAsync();            
 
-            var product = productDTO.FirstOrDefault();
-
-            if(product == null)
+            if(productDTO == null)
             {
                 return ExecutionResult<ProductDetailVM>.Failure("Cannot find product in database. Product ID does not exist."); 
             }
 
-            var productModel = _utility.MapDetailProduct(product);
+            var productModel = _utility.MapDetailProduct(productDTO);
 
             var colorProducts = _mapper.Map<List<ColorProductVM>>(colorProductDTO);
 
@@ -397,12 +432,19 @@ namespace LuckysDepartmentStore.Service
             }
 
         }
-        public List<Sizes> GetSize()
+        public async Task<ExecutionResult<List<Sizes>>> GetSize()
         {
-            var size = _context.Sizes
-                .ToList();
+            try
+            {
+                var size = await _context.Sizes
+                .ToListAsync();
 
-            return size;
+                return ExecutionResult<List<Sizes>>.Success(size);
+            }
+            catch (Exception ex)
+            {
+                return ExecutionResult<List<Sizes>>.Failure("An error occured. Cannot get sizes.");
+            }
         }
         public ExecutionResult<ItemVM> GetItem(int productId)
         {

@@ -42,12 +42,23 @@ namespace LuckysDepartmentStore.Controllers
         }
 
         // GET: DiscountController/Create
-        public ActionResult Create(DiscountVM discount)
+        public async Task<ActionResult> Create(DiscountVM discount)
         {
             DiscountCreateVM product = new DiscountCreateVM();
-            product.Category = _productService.GetCategory();
-            product.SubCategory = _productService.GetSubCategory();
-            product.Brand = _productService.GetBrand();
+            var category = await _productService.GetCategory();
+            var subCategory = await _productService.GetSubCategory();
+            var brand = await _productService.GetBrand();
+
+            if (!category.IsSuccess || !subCategory.IsSuccess || !brand.IsSuccess)
+            {
+                TempData["FailureMessage"] = "Error getting product data.";
+
+                return RedirectToAction("Index", "Error");
+            }
+
+            product.Category = category.Data;
+            product.SubCategory = subCategory.Data;
+            product.Brand = brand.Data;
 
             return View(product);
         }
@@ -64,7 +75,7 @@ namespace LuckysDepartmentStore.Controllers
                     
                     if (discount.ProductID.HasValue)
                     {
-                        var productExists = _productService.GetDetails(discount.ProductID ?? 0);
+                        var productExists = await _productService.GetDetails(discount.ProductID ?? 0);
 
                         if (!productExists.IsSuccess)
                         {
@@ -89,22 +100,25 @@ namespace LuckysDepartmentStore.Controllers
         }
 
         // GET: DiscountController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> EditAsync(int id)
         {
-            var discount = _discountService.GetDiscount(id);          
+            var discount = _discountService.GetDiscount(id);
+            var category = await _productService.GetCategory();
+            var subCategory = await _productService.GetSubCategory();
+            var brand = await _productService.GetBrand();
 
-            if (!discount.IsSuccess)
+            if (!category.IsSuccess || !subCategory.IsSuccess || !brand.IsSuccess || !discount.IsSuccess)
             {
-                TempData["FailureMessage"] = discount.ErrorMessage;
+                TempData["FailureMessage"] = "Error getting discount data.";
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Error");
             }
 
             var discountProducts = _mapper.Map<DiscountEditVM>(discount.Data);
-            discountProducts.Category = _productService.GetCategory();
-            discountProducts.SubCategory = _productService.GetSubCategory();
-            discountProducts.Brand = _productService.GetBrand();
 
+            discountProducts.Category = category.Data;
+            discountProducts.SubCategory = subCategory.Data;
+            discountProducts.Brand = brand.Data;
 
             return View(discountProducts);
         }
