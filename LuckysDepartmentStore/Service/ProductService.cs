@@ -1,18 +1,15 @@
 ﻿using AutoMapper;
-using Azure;
 using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.DTO.Discount;
 using LuckysDepartmentStore.Models.DTO.Home;
 using LuckysDepartmentStore.Models.DTO.Products;
-using LuckysDepartmentStore.Models.ViewModels.Discount;
 using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Utility = LuckysDepartmentStore.Utilities.Utility;
 
 namespace LuckysDepartmentStore.Service
@@ -39,75 +36,134 @@ namespace LuckysDepartmentStore.Service
             _brandService = brandService;
             _utility = utility;
         }
-        public async Task<Product> CreateAsync(ProductCreateVM product)
+        public async Task<ExecutionResult<Product>> CreateAsync(ProductCreateVM product)
         {
-
-            try
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                if ((product != null && product.ColorID == null))
+
+                try
                 {
-                    for (int x = 0; x < product.ColorProduct.Count; x++)
+                    if ((product != null && product.ColorID == null))
                     {
-                        if (product.ColorProduct[x].ColorID == 0 || product.ColorProduct[x].ColorID == null)
+                        for (int x = 0; x < product.ColorProduct.Count; x++)
                         {
-                            var colorId = _colorService.Create(product.ColorProduct[x].Name);
-                            
-                            product.ColorProduct[x].ColorID = colorId;
+                            if (product.ColorProduct[x].ColorID == 0 || product.ColorProduct[x].ColorID == null)
+                            {
+                                var colorIdEx = await _colorService.Create(product.ColorProduct[x].Name);
+
+                                if (!colorIdEx.IsSuccess)
+                                {                                    
+                                    return ExecutionResult<Product>.Failure("Cannot create color.");
+                                }
+
+                                var colorId = colorIdEx.Data;
+                                product.ColorProduct[x].ColorID = colorId;
+                            }
                         }
                     }
-                }
-                if ((product != null && product.SizeID == null))
-                {
-                    for (int x = 0; x < product.ColorProduct.Count; x++)
+                    if ((product != null && product.SizeID == null))
                     {
-                        if (product.ColorProduct[x].SizeID == 0 || product.ColorProduct[x].SizeID == null)
+                        for (int x = 0; x < product.ColorProduct.Count; x++)
                         {
-                            var sizeId = _colorService.CreateSize(product.ColorProduct[x].SizeName);
+                            if (product.ColorProduct[x].SizeID == 0 || product.ColorProduct[x].SizeID == null)
+                            {
+                                var sizeIdRes = await _colorService.CreateSize(product.ColorProduct[x].SizeName);
 
-                            product.ColorProduct[x].SizeID = sizeId;
+                                if (!sizeIdRes.IsSuccess)
+                                {
+                                    // Rollback the transaction on error
+                                    await transaction.RollbackAsync();
+                                    return ExecutionResult<Product>.Failure("Cannot create size.");
+                                }
+
+                                product.ColorProduct[x].SizeID = sizeIdRes.Data;
+                            }
                         }
                     }
-                }
-                if ((product != null && product.CategoryID == null) || product.CategoryID == 0)
-                {
-                    product.CategoryID = _categoryService.Create(product);
-                }
-                if ((product != null && product.SubCategoryID == null) || product.SubCategoryID == 0)
-                {
-                    product.SubCategoryID = _subCategoryService.Create(product);
-                }
-                if ((product != null && product.BrandID == null) || product.BrandID == 0)
-                {
-                    product.BrandID = _brandService.Create(product);
-                }
+                    if ((product != null && product.CategoryID == null) || product.CategoryID == 0)
+                    {
+                        var categoryRes = await _categoryService.Create(product);
 
-                var newProduct = _mapper.Map<Product>(product);
+                        if (!categoryRes.IsSuccess)
+                        {
+                            // Rollback the transaction on error
+                            await transaction.RollbackAsync();
+                            return ExecutionResult<Product>.Failure("Cannot create category.");
+                        }
 
-                newProduct.ProductPicture = _utility.ImageBytes(product.ProductPictureFile);
+                        product.CategoryID = categoryRes.Data;
+                    }
 
-                _context.Add(newProduct);
-                await _context.SaveChangesAsync();
+                    if ((product != null && product.SubCategoryID == null) || product.SubCategoryID == 0)
+                    {
+                        var subcategoryRes = await _subCategoryService.Create(product);
 
-                int productId = newProduct.ProductID;
-                
-                foreach(ColorProductVM colors in product.ColorProduct)
-                {                    
-                    var newColorProduct = _mapper.Map<ColorProduct>(colors);
-                    newColorProduct.ProductID = productId;
+                        if (!subcategoryRes.IsSuccess)
+                        {
+                            // Rollback the transaction on error
+                            await transaction.RollbackAsync();
+                            return ExecutionResult<Product>.Failure("Cannot create subcategory.");
+                        }
 
-                    _context.Add(newColorProduct);
+                        product.SubCategoryID = subcategoryRes.Data;
+                    }
+
+
+                    if ((product != null && product.BrandID == null) || product.BrandID == 0)
+                    {
+                        var brandRes = await _brandService.Create(product);
+
+                        if (!brandRes.IsSuccess)
+                        {
+                            // Rollback the transaction on error
+                            await transaction.RollbackAsync();
+                            return ExecutionResult<Product>.Failure("Cannot create brand.");
+                        }
+
+                        product.BrandID = brandRes.Data;
+                    }
+
+                    var newProduct = _mapper.Map<Product>(product);
+
+                    newProduct.ProductPicture = _utility.ImageBytes(product.ProductPictureFile);
+
+                    _context.Add(newProduct);
                     await _context.SaveChangesAsync();
-                }
 
-                return newProduct;
-            }
-            catch (DbUpdateException ex)
-            {             
-                throw new InvalidOperationException("Error saving product to database", ex);
-            }
-            catch (Exception ex)
-            {             
-                throw new Exception("An error occurred while processing your request", ex);
+                    int productId = newProduct.ProductID;
+
+                    //foreach (ColorProductVM colors in product.ColorProduct)
+                    //{
+                    //    var newColorProduct = _mapper.Map<ColorProduct>(colors);
+                    //    newColorProduct.ProductID = productId;
+
+                    //    _context.Add(newColorProduct);
+
+                    //}
+
+                    var newColorProducts = product.ColorProduct
+                       .Select(cp =>
+                       {
+                           var newColorProduct = _mapper.Map<ColorProduct>(cp);
+                           newColorProduct.ProductID = productId;
+                           return newColorProduct;
+                       })
+                       .ToList();
+
+                    _context.AddRange(newColorProducts);
+                    await _context.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+                    return ExecutionResult<Product>.Success(newProduct);
+                }
+                catch (DbUpdateException ex)
+                {
+                    return ExecutionResult<Product>.Failure($"Order failed: {ex.Message}");                   
+                }
+                catch (Exception ex)
+                {
+                    return ExecutionResult<Product>.Failure($"Order failed: {ex.Message}");
+                }
             }
         }
         public async Task<ExecutionResult<List<Color>>> GetColors()

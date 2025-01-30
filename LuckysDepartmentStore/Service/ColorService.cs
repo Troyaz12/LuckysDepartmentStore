@@ -3,6 +3,7 @@ using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
+using LuckysDepartmentStore.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace LuckysDepartmentStore.Service
@@ -17,17 +18,24 @@ namespace LuckysDepartmentStore.Service
             _context = context;
             _mapper = mapper;
         }
-        public int Create(string name)
+        public async Task<ExecutionResult<int>> Create(string name)
         {
-            var newColor = new Color();
-            newColor.Name = name;
+            try
+            {
+                var newColor = new Color();
+                newColor.Name = name;
 
-            _context.Add(newColor);
-            var ColorResult = _context.SaveChanges();
+                _context.Add(newColor);
+                var ColorResult = await _context.SaveChangesAsync();
 
-            int newColorId = newColor.ColorID;
+                int newColorId = newColor.ColorID;
 
-            return newColorId;
+                return ExecutionResult<int>.Success(newColorId);
+            }
+            catch (Exception ex)
+            {
+                return ExecutionResult<int>.Failure("Unable to create color.");
+            }
         }
         public string GetColorName(int id)
         {
@@ -47,17 +55,24 @@ namespace LuckysDepartmentStore.Service
 
             return size;
         }
-        public int CreateSize(string name)
+        public async Task<ExecutionResult<int>> CreateSize(string name)
         {
-            var newSize = new Sizes();
-            newSize.Size = name;
+            try
+            {
+                var newSize = new Sizes();
+                newSize.Size = name;
 
-            _context.Add(newSize);
-            var sizeResult = _context.SaveChanges();
+                _context.Add(newSize);
+                var sizeResult = await _context.SaveChangesAsync();
 
-            int newSizeId = newSize.SizesID;
+                int newSizeId = newSize.SizesID;
 
-            return newSizeId;
+                return ExecutionResult<int>.Success(newSizeId);
+            }
+            catch (Exception ex)
+            {
+                return ExecutionResult<int>.Failure("Unable to create color.");
+            }
         }
     }
 }

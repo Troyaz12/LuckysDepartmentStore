@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using LuckysDepartmentStore.Service.Interfaces;
+using LuckysDepartmentStore.Migrations;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace LuckysDepartmentStore.Controllers
 {
@@ -39,7 +41,7 @@ namespace LuckysDepartmentStore.Controllers
         //
         // POST: /Checkout/AddressAndPayment
         [HttpPost]
-        public async Task<ActionResult> AddressAndPayment(int SelectedShippingAddressID, int SelectedPaymentOptionsID, List<ShippingAddressVM> ShippingAddresses, List<PaymentOptionsVM> PaymentOptions)//OrderModelVM values)
+        public async Task<ActionResult> AddressAndPayment(int SelectedShippingAddressID, int SelectedPaymentOptionsID, List<ShippingAddressVM> ShippingAddresses, List<PaymentOptionsVM> PaymentOptions)
         {
             var order = new Order();
 
@@ -73,6 +75,12 @@ namespace LuckysDepartmentStore.Controllers
 
                 //Save Order
                 var orderId = await _checkoutService.Order(order);
+
+                if (!orderId.IsSuccess)
+                {
+                    TempData["FailureMessage"] = "Error getting discount data.";
+                    return RedirectToAction("Index", "Error");
+                }
 
                 //Process the order
                 var cart = _shoppingCartService.GetCart();
@@ -108,7 +116,7 @@ namespace LuckysDepartmentStore.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(AddressAndPayment));
             }
             catch
             {
@@ -129,7 +137,7 @@ namespace LuckysDepartmentStore.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(AddressAndPayment));
             }
             catch
             {
@@ -150,7 +158,7 @@ namespace LuckysDepartmentStore.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(AddressAndPayment));
             }
             catch
             {
@@ -159,11 +167,11 @@ namespace LuckysDepartmentStore.Controllers
         }
         //
         // GET: /Checkout/Complete
-        public ActionResult Complete(int id)
+        public async Task<ActionResult> CompleteAsync(int id)
         {
-            var isValid = _checkoutService.IsValid(id, User.Identity.Name);
+            var isValid = await _checkoutService.IsValid(id, User.Identity.Name);
 
-            if (isValid)
+            if (isValid.IsSuccess)
             {
                 return View(id);
             }

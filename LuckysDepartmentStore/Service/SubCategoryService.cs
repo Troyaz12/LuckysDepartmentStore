@@ -3,6 +3,7 @@ using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
+using LuckysDepartmentStore.Utilities;
 
 namespace LuckysDepartmentStore.Service
 {
@@ -16,18 +17,26 @@ namespace LuckysDepartmentStore.Service
             _mapper = mapper;
         }
 
-        public int Create(ProductCreateVM product)
+        public async Task<ExecutionResult<int>> Create(ProductCreateVM product)
         {
-            var subCategory = new SubCategory();
-            subCategory.SubCategoryName = product.SubCategorySelection;
-            subCategory.SubCategoryDescription = product.SubCategorySelection;
+            try
+            {
+                var subCategory = new SubCategory();
+                subCategory.SubCategoryName = product.SubCategorySelection;
+                subCategory.SubCategoryDescription = product.SubCategorySelection;
 
-            _context.Add(subCategory);
-            var subCategoryResult = _context.SaveChanges();
+                _context.Add(subCategory);
+                var subCategoryResult = await _context.SaveChangesAsync();
 
-            int newSubCategoryId = subCategory.SubCategoryID;
+                int newSubCategoryId = subCategory.SubCategoryID;
 
-            return newSubCategoryId;
+                return ExecutionResult<int>.Success(newSubCategoryId);
+            }
+            catch (Exception ex)
+            {
+                return ExecutionResult<int>.Failure($"Subcategory creation failed.");
+
+            }            
         }
     }
 }

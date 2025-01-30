@@ -4,6 +4,7 @@ using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using LuckysDepartmentStore.Utilities;
 
 namespace LuckysDepartmentStore.Service
 {
@@ -17,17 +18,24 @@ namespace LuckysDepartmentStore.Service
             _mapper = mapper;
         }
 
-        public int Create(ProductCreateVM product)
+        public async Task<ExecutionResult<int>> Create(ProductCreateVM product)
         {
-            var newBrand = new Brand();
-            newBrand.BrandName = product.BrandSelection;
+            try
+            {
+                var newBrand = new Brand();
+                newBrand.BrandName = product.BrandSelection;
 
-            _context.Add(newBrand);
-            var brandResult = _context.SaveChanges();
+                _context.Add(newBrand);
+                var brandResult = _context.SaveChanges();
 
-            int newBrandId = newBrand.BrandId;
+                int newBrandId = newBrand.BrandId;
 
-            return newBrandId;
+                return ExecutionResult<int>.Success(newBrandId);
+            }
+            catch (Exception ex)
+            {
+                return ExecutionResult<int>.Failure("Failed to update brand service.");
+            }
         }
     }
 }

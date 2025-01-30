@@ -4,6 +4,7 @@ using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using LuckysDepartmentStore.Utilities;
 
 namespace LuckysDepartmentStore.Service
 {
@@ -16,18 +17,26 @@ namespace LuckysDepartmentStore.Service
             _context = context;
             _mapper = mapper;
         }
-        public int Create(ProductCreateVM product)
+        public async Task<ExecutionResult<int>> Create(ProductCreateVM product)
         {
-            var newCategory = new Category();
-            newCategory.CategoryName = product.CategorySelection;
-            newCategory.CategoryDescription = product.CategorySelection;
+            try
+            {
 
-            _context.Add(newCategory);
-            var categoryResult = _context.SaveChanges();
+                var newCategory = new Category();
+                newCategory.CategoryName = product.CategorySelection;
+                newCategory.CategoryDescription = product.CategorySelection;
 
-            int newCategoryId = newCategory.CategoryID;
+                _context.Add(newCategory);
+                var categoryResult = await _context.SaveChangesAsync();
 
-            return newCategoryId;
+                int newCategoryId = newCategory.CategoryID;
+
+                return ExecutionResult<int>.Success(newCategoryId);
+            }
+            catch (Exception ex)
+            {
+                return ExecutionResult<int>.Failure("Failed to update payment total.");
+            }
         }
     }
 }
