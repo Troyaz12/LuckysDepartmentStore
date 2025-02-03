@@ -7,9 +7,9 @@ namespace LuckysDepartmentStore.Service.Interfaces
     public interface IDiscountService
     {
         public Task<ExecutionResult<DiscountEditVM>> UpdateDiscount(DiscountEditVM discount);
-        public ExecutionResult<int> DeleteDiscount(int discountId);
-        public ExecutionResult<DiscountVM> GetDiscount(int discountID);
+        public Task<ExecutionResult<int>> DeleteDiscount(int discountId);
+        public Task<ExecutionResult<DiscountVM>> GetDiscount(int discountID);
         public Task<Discount> CreateAsync(DiscountCreateVM discount);
-        public ExecutionResult<List<DiscountVM>> GetActiveDiscounts();
+        public Task<ExecutionResult<List<DiscountVM>>> GetActiveDiscounts();
     }
 }

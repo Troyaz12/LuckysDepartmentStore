@@ -23,11 +23,11 @@ namespace LuckysDepartmentStore.Service
             _utility = utility;
         }     
 
-        public ExecutionResult<int> DeleteDiscount(int discountId)
+        public async Task<ExecutionResult<int>> DeleteDiscount(int discountId)
         {
             try
             {
-                var discount = _context.Discounts.Find(discountId);
+                var discount = await _context.Discounts.FindAsync(discountId);
 
                 if (discount == null)
                 {
@@ -35,21 +35,21 @@ namespace LuckysDepartmentStore.Service
                 }
 
                 _context.Discounts.Remove(discount);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
+
+                return ExecutionResult<int>.Success(discountId);
             }
             catch (Exception ex)
             {
                 return ExecutionResult<int>.Failure("Unable to delete discount.");
             }
-
-            return ExecutionResult<int>.Success(discountId);
         }
 
-        public ExecutionResult<DiscountVM> GetDiscount(int discountId)
+        public async Task<ExecutionResult<DiscountVM>> GetDiscount(int discountId)
         {
             try
             {
-                var discount = (
+                var discount = await (
                    from Discount in _context.Discounts
                    join Category in _context.Categories on Discount.CategoryID equals Category.CategoryID into categories
                    from Category in categories.DefaultIfEmpty()
@@ -73,7 +73,7 @@ namespace LuckysDepartmentStore.Service
                        BrandSelection = Brand.BrandName,
                        DiscountTag = Discount.DiscountTag,
                        ExpirationDate = Discount.ExpirationDate
-                   }).FirstOrDefault();
+                   }).FirstOrDefaultAsync();
 
                 if (discount == null)
                 {
@@ -162,11 +162,11 @@ namespace LuckysDepartmentStore.Service
             }
         }
 
-        public ExecutionResult<List<DiscountVM>> GetActiveDiscounts()
+        public async Task<ExecutionResult<List<DiscountVM>>> GetActiveDiscounts()
         {
             try
             {
-                var discount =
+                var discount = await (
                     from Discount in _context.Discounts
                     join Category in _context.Categories on Discount.CategoryID equals Category.CategoryID into categories
                     from Category in categories.DefaultIfEmpty()
@@ -190,7 +190,7 @@ namespace LuckysDepartmentStore.Service
                         BrandSelection = Brand.BrandName,
                         DiscountTag = Discount.DiscountTag,
                         ExpirationDate = Discount.ExpirationDate
-                    };
+                    }).ToListAsync();
 
                 if (discount == null)
                 {
@@ -198,16 +198,12 @@ namespace LuckysDepartmentStore.Service
                 }
 
                 var discountProducts = _mapper.Map<List<DiscountVM>>(discount);
-                var discountDTOList = discount.ToList();
-                
+                //var discountDTOList = discount.ToList();
 
                 for (int x=0; x < discountProducts.Count; x++)
                 {
-                    discountProducts[x].DiscountImage = _utility.BytesToImage(discountDTOList[x].DiscountArt);
+                    discountProducts[x].DiscountImage = _utility.BytesToImage(discount[x].DiscountArt);
                 }
-
-
-
 
                 return ExecutionResult<List<DiscountVM>>.Success(discountProducts);
 

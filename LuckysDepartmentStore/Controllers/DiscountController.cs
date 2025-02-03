@@ -3,37 +3,40 @@ using LuckysDepartmentStore.Models.ViewModels.Discount;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace LuckysDepartmentStore.Controllers
 {
     public class DiscountController(IProductService _productService, IDiscountService _discountService, IMapper _mapper) : Controller
     {
         // GET: DiscountController
-        public ActionResult Index()
+        [HttpGet]
+        public async Task<ActionResult> Index()
         {
-            var discounts = _discountService.GetActiveDiscounts();
+            var discounts = await _discountService.GetActiveDiscounts();
 
             if (!discounts.IsSuccess)
             {
-                ViewBag.FailureMessage = discounts.ErrorMessage;
+                TempData["FailureMessage"] = "Error getting product data.";
 
-                return View();
+                return RedirectToAction("Index", "Error");
             }
 
             return View(discounts.Data);
         }
 
         // GET: DiscountController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet]
+        public async Task<ActionResult> DetailsAsync(int id)
         {
 
-            var discount = _discountService.GetDiscount(id);
+            var discount = await _discountService.GetDiscount(id);
 
             if (!discount.IsSuccess)
             {
-                TempData["FailureMessage"] = discount.ErrorMessage;
+                TempData["FailureMessage"] = "Error getting product data.";
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Error");
             }
 
 
@@ -42,6 +45,7 @@ namespace LuckysDepartmentStore.Controllers
         }
 
         // GET: DiscountController/Create
+        [HttpGet]
         public async Task<ActionResult> Create(DiscountVM discount)
         {
             DiscountCreateVM product = new DiscountCreateVM();
@@ -100,9 +104,10 @@ namespace LuckysDepartmentStore.Controllers
         }
 
         // GET: DiscountController/Edit/5
+        [HttpGet]
         public async Task<ActionResult> EditAsync(int id)
         {
-            var discount = _discountService.GetDiscount(id);
+            var discount = await _discountService.GetDiscount(id);
             var category = await _productService.GetCategory();
             var subCategory = await _productService.GetSubCategory();
             var brand = await _productService.GetBrand();
@@ -133,7 +138,7 @@ namespace LuckysDepartmentStore.Controllers
                 var discountEdited = await _discountService.UpdateDiscount(discount);
 
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Discount");
             }
             catch
             {
@@ -144,23 +149,18 @@ namespace LuckysDepartmentStore.Controllers
         // POST: DiscountController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> DeleteAsync(int id)
         {
-           
-                var result = _discountService.DeleteDiscount(id);
 
-                if (!result.IsSuccess)
-                {
-                    TempData["FailureMessage"] = result.ErrorMessage;
-
-                    return RedirectToAction(nameof(Index));
-                }
-
+            var result = await _discountService.DeleteDiscount(id);
+          
+            if (!result.IsSuccess || !result.IsSuccess)
+            {
+                TempData["FailureMessage"] = "Error getting discount data.";
+                return RedirectToAction("Index", "Error");
+            }
 
             return RedirectToAction(nameof(Index));
-           
-           
-           
         }
     }
 }

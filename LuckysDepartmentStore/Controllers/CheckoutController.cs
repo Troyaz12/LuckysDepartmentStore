@@ -15,6 +15,7 @@ namespace LuckysDepartmentStore.Controllers
     public class CheckoutController(ICheckoutService _checkoutService, IShoppingCartService _shoppingCartService, IConsumerService _consumerService, UserManager<ApplicationUser> _userManager) : Controller
     {
         // GET: CheckoutController
+        [HttpGet]
         public async Task<ActionResult> AddressAndPayment()
         {
             OrderModelVM ordervm = new OrderModelVM()
@@ -98,12 +99,14 @@ namespace LuckysDepartmentStore.Controllers
             }
         }
         // GET: CheckoutController/Details/5
+        [HttpGet]
         public ActionResult Details(int id)
         {
             return View();
         }
 
         // GET: CheckoutController/Create
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
@@ -125,6 +128,7 @@ namespace LuckysDepartmentStore.Controllers
         }
 
         // GET: CheckoutController/Edit/5
+        [HttpGet]
         public ActionResult Edit(int id)
         {
             return View();
@@ -146,6 +150,7 @@ namespace LuckysDepartmentStore.Controllers
         }
 
         // GET: CheckoutController/Delete/5
+        [HttpGet]
         public ActionResult Delete(int id)
         {
             return View();
@@ -167,6 +172,7 @@ namespace LuckysDepartmentStore.Controllers
         }
         //
         // GET: /Checkout/Complete
+        [HttpGet]
         public async Task<ActionResult> CompleteAsync(int id)
         {
             var isValid = await _checkoutService.IsValid(id, User.Identity.Name);

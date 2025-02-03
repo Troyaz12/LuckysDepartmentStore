@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
-using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.EntityFrameworkCore;
@@ -37,23 +36,39 @@ namespace LuckysDepartmentStore.Service
                 return ExecutionResult<int>.Failure("Unable to create color.");
             }
         }
-        public string GetColorName(int id)
+        public async Task<ExecutionResult<string>> GetColorName(int id)
         {
-            var colorName = _context.Colors
-                .Where(c => c.ColorID == id)
-                .Select(c => c.Name)
-                .SingleOrDefaultAsync().Result;
+            try
+            {
+                var colorName = await _context.Colors
+               .Where(c => c.ColorID == id)
+               .Select(c => c.Name)
+               .SingleOrDefaultAsync();
 
-            return colorName;
+                return ExecutionResult<string>.Success(colorName);
+            }
+            catch (Exception ex)
+            {
+                return ExecutionResult<string>.Failure("Unable to get color name.");
+            }
+           
         }
-        public string GetSizeName(int id)
+        public async Task<ExecutionResult<string>> GetSizeName(int id)
         {
-            var size = _context.Sizes
-                .Where(c => c.SizesID == id)
-                .Select(c => c.Size)
-                .SingleOrDefaultAsync().Result;
+            try
+            {
+                var size = await _context.Sizes
+               .Where(c => c.SizesID == id)
+               .Select(c => c.Size)
+               .SingleOrDefaultAsync();
 
-            return size;
+                return ExecutionResult<string>.Success(size);                
+            }
+            catch (Exception ex) 
+            {
+                return ExecutionResult<string>.Failure("Unable to get size name.");
+            }
+           
         }
         public async Task<ExecutionResult<int>> CreateSize(string name)
         {

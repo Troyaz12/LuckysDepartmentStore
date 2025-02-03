@@ -17,8 +17,8 @@
 
 @if (ViewBag.ErrorMessage == null)
 {
-    <div id="carouselExample" class="carousel carousel-dark slide mt-2 mb-4" style="background-color: rgb(234,244,253)">
-        <div class="carousel-inner">
+    <div id="carouselExample" class="carousel carousel-dark slide pb-5 extra-margin">
+        <div class="carousel-inner pt-3 pb-3">
             <div class="carousel-item active">
                 <a asp-action="SearchProduct" asp-route-category="coats" asp-route-subCategory="Womens">
                     <img src="img/InUse/PromotionalAds/winterCoats.jpg" class="d-block max-height" alt="Winter Coats Ad">
@@ -55,11 +55,11 @@
         </button>
     </div>
 
-    <div style="background-color: rgb(244,240,255)">
+    <div style="background-color: #e0f7fa" class="pt-5">
         <h1 class="text-center big-header">Discounts</h1>
         <h2 class="text-center small-header">Check out out weekly discounts.</h2>
 
-        <div class="container text-center">
+        <div class="container text-center custom-container">
             <div class="row">
                 @if (Model != null)
                 {
@@ -69,7 +69,7 @@
                             <div class="card">
                                 <a asp-action="SearchDiscount" asp-route-subCategorySelection="@discount.SubCategorySelection" asp-route-categorSelection="@discount.CategorySelection"
                                 asp-route-brandSelection="@discount.BrandSelection" asp-route-productID="@discount.ProductID" asp-route-discountTags="@discount.DiscountTag">
-                                    <img src="@discount.DiscountImage" id="DiscountImage" name="DiscountImage" class="image-fluid image-container" alt="Discount Image">
+                                    <img src="@discount.DiscountImage" id="DiscountImage" name="DiscountImage" class="image-fluid image-containerDiscount" alt="Discount Image">
                                 </a>
                             </div>
                         </div>

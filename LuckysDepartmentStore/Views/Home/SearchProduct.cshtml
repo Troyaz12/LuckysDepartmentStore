@@ -31,7 +31,7 @@
                 @foreach (var product in Model)
                 {
                     <div class="col-md-4 mb-4">
-                        <div class="card">
+                        <div class="custom-card">
                             <div class="image-box">
                                 <a asp-action="Item" asp-route-productId="@product.ProductID">
                                     <img src="@product.ProductImage" id="ProductImage" name="ProductImage" class="img-fluid image-container" alt="Product Image">

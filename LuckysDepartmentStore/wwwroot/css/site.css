@@ -124,7 +124,7 @@ body {
 .small-header {
     font-family: "Lato", serif;
 }
-.card {
+.custom-card {
     padding-top: 30px;
     display: flex;
     justify-content: center;
@@ -132,7 +132,7 @@ body {
     border: none;
 }
 
-.card img {
+.custom-card img {
      max-width: 100%;
      /*height: auto;*/
 }
@@ -188,7 +188,12 @@ body {
     object-fit: cover; /* This ensures the image covers the entire container while maintaining its aspect ratio */
     padding:20px;
 }
-
+.image-containerDiscount {
+    width: 398px; /* Adjust to your preferred width */
+    height: 350px; /* Adjust to your preferred height */
+    object-fit: cover; /* This ensures the image covers the entire container while maintaining its aspect ratio */
+    
+}
 .image-containerItem {
     width: 600px; /* Adjust to your preferred width */
     height: 600px; /* Adjust to your preferred height */
@@ -266,4 +271,43 @@ input[type="radio"].btn-check:checked + .gold-btn {
     border-bottom: 1px solid #000; /* Bottom border */
     margin-bottom: 1rem;
     padding-bottom: 2rem; /* Add padding to the bottom */
+}
+
+.extra-margin {
+    margin-bottom: 55px; /* Adjust this value as needed */  
+}
+
+.layoutBody-margin {
+    margin-top: 250px; /* Adjust this value as needed */
+}
+
+.custom-container {
+    padding-left: 2%; /* Adjust values as needed */
+    padding-right: 2%;
+}
+.custom-row {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure header stays on top */
+}
+
+.navbar {
+    position: fixed;
+    top: 145px; /* Adjust based on the height of the header */
+    left: 0;
+    width: 100%;
+    z-index: 1000; 
+    background-color: white;
+    border-bottom: 2px solid #ccc;
+}
+
+.content {
+    margin-top: 100px; /* Adjust based on the combined height of the header and navbar */
 }

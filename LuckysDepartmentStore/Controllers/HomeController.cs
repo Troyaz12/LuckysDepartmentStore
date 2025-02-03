@@ -1,5 +1,6 @@
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Home;
+using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Identity;
@@ -16,27 +17,28 @@ namespace LuckysDepartmentStore.Controllers
         //{
         //    _logger = logger;
         //}
-
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> IndexAsync()
         {
-            var frontPageData = _discountService.GetActiveDiscounts();
+            var frontPageData = await _discountService.GetActiveDiscounts();
 
             if (!frontPageData.IsSuccess)
             {
-                ViewBag.ErrorMessage = frontPageData.ErrorMessage;
+                TempData["FailureMessage"] = "Error getting product data.";
 
-                return View();
+                return RedirectToAction("Index", "Error");
             }
 
             return View(frontPageData.Data);
         }
-
+        [HttpGet]
         public IActionResult Privacy()
         {
             return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [HttpGet]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
@@ -71,12 +73,14 @@ namespace LuckysDepartmentStore.Controllers
 
             return View(productList.Data);
         }
+        [HttpGet]
         public IActionResult Login(string inputEmail, string inputPassword)
         {
 
 
             return View();
         }
+        [HttpGet]
         public IActionResult CreateNewAccount()
         {
 
@@ -108,21 +112,20 @@ namespace LuckysDepartmentStore.Controllers
                     ModelState.AddModelError("", "The user name or password provided is incorrect.");
                 }
             }
-            // If we got this far, something failed, redisplay form
+            
             return View(model);
-        
-               // return View();
+
 		}
         [HttpGet]
-        public IActionResult Item(int? productId)
+        public async Task<IActionResult> Item(int? productId)
         {
-            var product = _productService.GetItem((int) productId);           
+            var product = await _productService.GetItem((int) productId);           
 
             if (!product.IsSuccess)
             {
-                ViewBag.ErrorMessage = product.ErrorMessage;
+                TempData["ErrorMessage"] = product.ErrorMessage;
 
-                return View(new ItemVM());
+                return RedirectToAction("Index", "Error");
             }
 
             product.Data.Color = product.Data.ColorProduct.Select(product => product.Name)
@@ -139,7 +142,7 @@ namespace LuckysDepartmentStore.Controllers
                 .Where(product => product.Name == product.SelectedColor)
                 .Select(product => new Sizes
                 { 
-                    Size = product.SizeName, 
+                    Size = product.SizeName,
                     SizesID = product.SizeID
                 })
                 .Distinct()
@@ -147,6 +150,7 @@ namespace LuckysDepartmentStore.Controllers
 
             return PartialView("_ButtonPartial", allSizes);            
         }
+        [HttpPost]
         private void MigrateShoppingCart(string UserName)
         {
             // Associate shopping cart items with logged-in user

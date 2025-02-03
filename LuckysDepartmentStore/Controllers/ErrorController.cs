@@ -10,6 +10,7 @@ namespace LuckysDepartmentStore.Controllers
         {
             _logger = logger;
         }
+        [HttpGet]
         public IActionResult Index()
         {
             var errorMessage = TempData["ErrorMessage"] as string;

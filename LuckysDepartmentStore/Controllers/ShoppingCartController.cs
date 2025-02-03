@@ -1,4 +1,5 @@
 ﻿using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.DTO.ShoppingCart;
 using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
@@ -19,17 +20,17 @@ namespace LuckysDepartmentStore.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var cartID = _shoppingCartService.GetCart();
-            var allItems = await _shoppingCartService.GetCartItems(cartID);
-
-            
+            var allItems = await _shoppingCartService.GetCartItems(cartID);            
 
             return View(allItems.Data);
         }
-        // GET: /Store/AddToCart/5
-        public async Task<IActionResult> AddToCartAsync(ItemVM item)
+        // Post: /Store/AddToCart/5
+        [HttpPost]
+        public async Task<IActionResult> AddToCartAsync(CartItemsDTO item)
         {
             if (ModelState.IsValid)
             {               
@@ -40,7 +41,8 @@ namespace LuckysDepartmentStore.Controllers
             }
             return RedirectToAction("Item", "Home", new { productId = item.ProductID });
         }
-        public async Task<ActionResult> RemoveFromCartAsync(ItemVM item)
+        [HttpPost]
+        public async Task<ActionResult> RemoveFromCartAsync(CartItemsDTO item)
         {
             if (ModelState.IsValid)
             {
@@ -53,6 +55,7 @@ namespace LuckysDepartmentStore.Controllers
         }
 
         //[ChildActionOnly]
+        [HttpGet]
         public ActionResult CartSummary()
         {
             var cart = _shoppingCartService.GetCart();

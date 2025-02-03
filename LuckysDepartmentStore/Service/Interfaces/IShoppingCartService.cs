@@ -1,4 +1,5 @@
 ﻿using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.DTO.ShoppingCart;
 using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Models.ViewModels.ShoppingCart;
@@ -9,7 +10,7 @@ namespace LuckysDepartmentStore.Service.Interfaces
 {
     public interface IShoppingCartService
     {
-        public Task<ExecutionResult<CartsVM>> AddToCartAsync(ItemVM product, string ShoppingCartId);
+        public Task<ExecutionResult<CartsVM>> AddToCartAsync(CartItemsDTO product, string ShoppingCartId);
 
         public Task<ExecutionResult<int>> RemoveFromCart(Product product, string ShoppingCartId);
 

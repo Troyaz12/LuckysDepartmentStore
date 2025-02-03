@@ -80,10 +80,10 @@
                 <div id="ColorsContainer" class="pl-2">
                     @if (Model.ColorProduct != null && Model.ColorProduct.Count > 0 && @Model.Color.Count > 0)
                     {
-                        @for (var x = 0; x < @Model.ColorProduct.Count; x++)
+                        @for (var x = 0; x < @Model.Color.Count; x++)
                         {
                             <input type="radio" class="btn-check options-radio" value="@Model.ColorProduct[x].ColorID" name="options" id="option@(x)" autocomplete="off" @(x == 0 ? "checked" : "")>
-                            <label class="btn gold-btn" for="option@(x)">@Model.ColorProduct[x].Name</label>
+                            <label class="btn gold-btn" for="option@(x)">@Model.Color[x]</label>
                         }
                     }
                 </div>
@@ -94,7 +94,7 @@
                     <input type="hidden" id="ColorSelection" name="ColorSelection" value="@Model.ColorSelection">
                     <input type="hidden" id="SizeSelection" name="SizeSelection" value="@Model.SizeSelection">
                     <input type="hidden" id="ProductImage" name="ProductImage" value="@Model.ProductImage">
-                    <input type="hidden" id="ProductName" value="@Model.ProductName">
+                    <input type="hidden" id="ProductName" name="ProductName" value="@Model.ProductName">
 
                     @if (Model.ColorProduct != null && Model.ColorProduct.Count > 0)
                     {

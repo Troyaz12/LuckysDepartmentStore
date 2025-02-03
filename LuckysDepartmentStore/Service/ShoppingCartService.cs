@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
 using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
-using LuckysDepartmentStore.Models.DTO.Home;
 using LuckysDepartmentStore.Models.DTO.ShoppingCart;
-using LuckysDepartmentStore.Models.ViewModels.Consumer;
-using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Models.ViewModels.ShoppingCart;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
@@ -44,7 +41,7 @@ namespace LuckysDepartmentStore.Service
             return GetCart();
 
         }
-        public async Task<Utilities.ExecutionResult<CartsVM>> AddToCartAsync(ItemVM product, string ShoppingCartId)
+        public async Task<ExecutionResult<CartsVM>> AddToCartAsync(CartItemsDTO product, string ShoppingCartId)
         {            
             try
             {
@@ -84,17 +81,17 @@ namespace LuckysDepartmentStore.Service
 
                 var cartVM = _mapper.Map<CartsVM>(cartItem);
 
-                return Utilities.ExecutionResult<CartsVM>.Success(cartVM);
+                return ExecutionResult<CartsVM>.Success(cartVM);
             }
             catch(Exception ex)
             {
-                return Utilities.ExecutionResult<CartsVM>.Failure("Unable to add to cart.");
+                return ExecutionResult<CartsVM>.Failure("Unable to add to cart.");
             }
 
             
         }
 
-        public async Task<Utilities.ExecutionResult<int>> RemoveFromCart(Product product, string ShoppingCartId)
+        public async Task<ExecutionResult<int>> RemoveFromCart(Product product, string ShoppingCartId)
         {
             int itemCount = 0;
 
@@ -121,18 +118,18 @@ namespace LuckysDepartmentStore.Service
                 }
                 else
                 {
-                    return Utilities.ExecutionResult<int>.Failure("Unable to get cart items.");
+                    return ExecutionResult<int>.Failure("Unable to get cart items.");
                 }
 
             }
             catch (Exception ex)
             {
-                return Utilities.ExecutionResult<int>.Failure("Unable to remove cart item.");
+                return ExecutionResult<int>.Failure("Unable to remove cart item.");
             }
 
-            return Utilities.ExecutionResult<int>.Success(itemCount);
+            return ExecutionResult<int>.Success(itemCount);
         }
-        public async Task<Utilities.ExecutionResult<int>> EmptyCart(string ShoppingCartId)
+        public async Task<ExecutionResult<int>> EmptyCart(string ShoppingCartId)
         {
             List<Carts> cartItems = null;
 
@@ -144,7 +141,7 @@ namespace LuckysDepartmentStore.Service
 
                 if (cartItems == null || !cartItems.Any())
                 {
-                    return Utilities.ExecutionResult<int>.Failure("Unable to get cart items.");
+                    return ExecutionResult<int>.Failure("Unable to get cart items.");
                 }
 
                 foreach (var cartItem in cartItems)
@@ -156,16 +153,16 @@ namespace LuckysDepartmentStore.Service
             }
             catch(Exception ex)
             {
-                return Utilities.ExecutionResult<int>.Failure("Unable to remove cart item.");
+                return ExecutionResult<int>.Failure("Unable to remove cart item.");
             }
 
-                return Utilities.ExecutionResult<int>.Success(cartItems.Count());
+                return ExecutionResult<int>.Success(cartItems.Count());
         }
-        public async Task<Utilities.ExecutionResult<List<CartsVM>>> GetCartItems(string ShoppingCartId)
+        public async Task<ExecutionResult<List<CartsVM>>> GetCartItems(string ShoppingCartId)
         {
             try
             {
-                var cartItems =
+                var cartItems = await(
                     from cart in _context.Carts
                     join product in _context.Products on cart.ProductID equals product.ProductID
                     join category in _context.Categories on product.CategoryID equals category.CategoryID into categories
@@ -215,14 +212,14 @@ namespace LuckysDepartmentStore.Service
                         DiscountTag = grouped.Key.DiscountTag,
                         Size = grouped.Key.Size,
                         Color = grouped.Key.Color
-                    };
+                    }).ToListAsync();
 
 
 
 
                 if (cartItems == null || !cartItems.Any())
                 {
-                    return Utilities.ExecutionResult<List<CartsVM>>.Failure("Unable to get cart items.");
+                    return ExecutionResult<List<CartsVM>>.Failure("Unable to get cart items.");
                 }
 
                 var cartVM = _mapper.Map<List<CartsVM>>(cartItems);
@@ -231,18 +228,22 @@ namespace LuckysDepartmentStore.Service
                 {
                     cartVM[x].ProductImage = _utility.BytesToImage(cartVM[x].ProductPicture);
                     cartVM[x].SalePrice = _utility.CalculateSalePrice(cartVM[x].DiscountAmount, cartVM[x].DiscountPercent, cartVM[x].Price);
-                    cartVM[x].SizeString = _colorService.GetSizeName(cartVM[x].Size);
-                    cartVM[x].ColorString = _colorService.GetColorName(cartVM[x].Color);
+
+                    var sizeName = await _colorService.GetSizeName(cartVM[x].Size);
+                    cartVM[x].SizeString = sizeName.Data;
+
+                    var colorName =  await _colorService.GetColorName(cartVM[x].Color);
+                    cartVM[x].ColorString = colorName.Data;
                 }
 
-                return Utilities.ExecutionResult<List<CartsVM>>.Success(cartVM);
+                return ExecutionResult<List<CartsVM>>.Success(cartVM);
             }
             catch (Exception ex)
             {
-                return Utilities.ExecutionResult<List<CartsVM>>.Failure("Unable to get cart items.");
+                return ExecutionResult<List<CartsVM>>.Failure("Unable to get cart items.");
             }           
         }
-        public async Task<Utilities.ExecutionResult<int>> GetCount(string ShoppingCartId)
+        public async Task<ExecutionResult<int>> GetCount(string ShoppingCartId)
         {
             int? count = null;
             try
@@ -256,12 +257,12 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
-                return Utilities.ExecutionResult<int>.Failure("Unable to get cart items.");
+                return ExecutionResult<int>.Failure("Unable to get cart items.");
             }
 
-            return Utilities.ExecutionResult<int>.Success(count ?? 0);
+            return ExecutionResult<int>.Success(count ?? 0);
         }
-        public async Task<Utilities.ExecutionResult<decimal>> GetTotal(string ShoppingCartId)
+        public async Task<ExecutionResult<decimal>> GetTotal(string ShoppingCartId)
         {
             decimal? total = null;
             try
@@ -276,12 +277,12 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
-                return Utilities.ExecutionResult<decimal>.Failure("Unable to get cart total.");
+                return ExecutionResult<decimal>.Failure("Unable to get cart total.");
             }
 
-            return Utilities.ExecutionResult<decimal>.Success(total ?? decimal.Zero);
+            return ExecutionResult<decimal>.Success(total ?? decimal.Zero);
         }
-        public async Task<Utilities.ExecutionResult<decimal>> CreateOrder(Product order, string ShoppingCartId, int customerOrderId)
+        public async Task<ExecutionResult<decimal>> CreateOrder(Product order, string ShoppingCartId, int customerOrderId)
         { // may not need Product
 
             decimal orderTotal = 0;
