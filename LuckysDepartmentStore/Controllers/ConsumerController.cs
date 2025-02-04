@@ -23,27 +23,36 @@ namespace LuckysDepartmentStore.Controllers
 
             var newAddresses = await _consumerService.CreateShippingAddress(shippingAddress);
 
-            if (newAddresses.IsSuccess == false)
+
+            if (!newAddresses.IsSuccess)
             {
-                return View();
+                TempData["FailureMessage"] = newAddresses.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
             }
 
             var allAddresses = await _consumerService.GetShippingAddress(shippingAddress.UserId);
 
+            if (!allAddresses.IsSuccess)
+            {
+                TempData["FailureMessage"] = allAddresses.ErrorMessage;
 
-            return PartialView("_ShippingPartial", allAddresses.Data);            
-            //return Json(new { success = true, html = RenderRazorViewToString("_ShippingPartial", allAddresses.Data) });
+                return RedirectToAction("Index", "Error");
+            }
 
+            return PartialView("_ShippingPartial", allAddresses.Data);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAddresses(string userId)
         {
             var addresses = await _consumerService.GetShippingAddress(userId);
-
-            if (addresses.IsSuccess == false)
+         
+            if (!addresses.IsSuccess)
             {
-                return View();
+                TempData["FailureMessage"] = addresses.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
             }
 
             return View(addresses);
@@ -56,10 +65,12 @@ namespace LuckysDepartmentStore.Controllers
             paymentOption.UserId = user.Id;
 
             var newPaymentOption = await _consumerService.CreatePaymentOption(paymentOption);
-
-            if (newPaymentOption.IsSuccess == false)
+            
+            if (!newPaymentOption.IsSuccess)
             {
-                return View();
+                TempData["FailureMessage"] = newPaymentOption.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
             }
 
             var allPaymentOptions = await _consumerService.GetPaymentOptions(paymentOption.UserId);
@@ -73,9 +84,11 @@ namespace LuckysDepartmentStore.Controllers
         {
             var paymentOptions = await _consumerService.GetPaymentOptions(userId);
 
-            if (paymentOptions.IsSuccess == false)
+            if (!paymentOptions.IsSuccess)
             {
-                return View();
+                TempData["FailureMessage"] = paymentOptions.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
             }
 
             return View(paymentOptions);

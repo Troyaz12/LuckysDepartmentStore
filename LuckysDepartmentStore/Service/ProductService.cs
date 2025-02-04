@@ -227,37 +227,44 @@ namespace LuckysDepartmentStore.Service
 
         public async Task<ExecutionResult<List<ProductVM>>> GetProductsSearchBar(string categorySearch, string searchString)
         {
-            var products = await (
-                from Product in _context.Products
-                join Category in _context.Categories on Product.CategoryID equals Category.CategoryID
-                join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID
-                join Brand in _context.Brand on Product.BrandID equals Brand.BrandId
-                select new ProductVmDTO
+            try
+            {
+                var products = await (
+                    from Product in _context.Products
+                    join Category in _context.Categories on Product.CategoryID equals Category.CategoryID
+                    join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID
+                    join Brand in _context.Brand on Product.BrandID equals Brand.BrandId
+                    select new ProductVmDTO
+                    {
+                        ProductID = Product.ProductID,
+                        ProductName = Product.ProductName,
+                        Price = Product.Price,
+                        Description = Product.Description,
+                        Quantity = Product.Quantity,
+                        Category = Category.CategoryName,
+                        SubCategory = SubCategory.SubCategoryName,
+                        Brand = Brand.BrandName,
+                        CreatedDate = Product.CreatedDate,
+                    }).ToListAsync();
+
+                if (!string.IsNullOrEmpty(categorySearch))
                 {
-                    ProductID = Product.ProductID,
-                    ProductName = Product.ProductName,
-                    Price = Product.Price,
-                    Description = Product.Description,
-                    Quantity = Product.Quantity,
-                    Category = Category.CategoryName,
-                    SubCategory = SubCategory.SubCategoryName,
-                    Brand = Brand.BrandName,
-                    CreatedDate = Product.CreatedDate,
-                }).ToListAsync();
+                    products = products.Where(s => s.Category!.ToUpper().Contains(categorySearch.ToUpper())).ToList();
+                }
 
-            if (!string.IsNullOrEmpty(categorySearch))
-            {
-                products = products.Where(s => s.Category!.ToUpper().Contains(categorySearch.ToUpper())).ToList();
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    products = products.Where(s => s.ProductName!.ToUpper().Contains(searchString.ToUpper())).ToList();
+                }
+
+                var list = _mapper.Map<List<ProductVM>>(products);
+
+                return ExecutionResult<List<ProductVM>>.Success(list);
             }
-
-            if (!string.IsNullOrEmpty(searchString))
+            catch (Exception ex)
             {
-                products = products.Where(s => s.ProductName!.ToUpper().Contains(searchString.ToUpper())).ToList();
+                return ExecutionResult<List<ProductVM>>.Failure("Unable to get products.");
             }
-
-            var list = _mapper.Map<List<ProductVM>>(products);
-
-            return ExecutionResult<List<ProductVM>>.Success(list);
         }
         public async Task<ExecutionResult<List<ProductVM>>> GetProductsByDiscount(string? categorySelection, 
             string? subCategorySelection, string? brandSelection, int? productID, string? discountTags)
@@ -511,7 +518,7 @@ namespace LuckysDepartmentStore.Service
         {
             try { 
 
-                =var productDTO = await (
+                var productDTO = await (
                     from Product in _context.Products
                     join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
                     from Category in categories.DefaultIfEmpty()
@@ -890,8 +897,19 @@ namespace LuckysDepartmentStore.Service
                     where discountTagsArray.Any(k => EF.Functions.Like(Discount.DiscountTag.ToUpper(), "%" + k + "%"))
                     select Discount).ToListAsync();
 
-                var totalDiscountAmount = discountDTO.Sum(discount => discount.DiscountAmount);
-                var totalDiscountPercent = discountDTO.Sum(discount => discount.DiscountPercent);
+                List<Discount> discountList = new List<Discount>();
+
+                foreach(var itemDiscount in discountDTO)
+                {
+                    if (itemDiscount.DiscountTag.Equals(item.DiscountTag))
+                    {
+                        discountList.Add(itemDiscount);
+                    }
+                }
+
+
+                var totalDiscountAmount = discountList.Sum(discount => discount.DiscountAmount);
+                var totalDiscountPercent = discountList.Sum(discount => discount.DiscountPercent);
 
                 item.DiscountAmount = totalDiscountAmount;
                 item.DiscountPercent = totalDiscountPercent;
@@ -1005,9 +1023,9 @@ namespace LuckysDepartmentStore.Service
                         var productDTagsArray = productsWithDTags[x].DiscountTag.Split(',').Select(k => k.ToUpper().Trim()).ToList();
                         bool hasMatchingDiscount = false;
 
-                        foreach (var tag in productDTagsArray)//(var discount in discountTagged)
+                        foreach (var tag in productDTagsArray)
                         {
-                            if (discountTagLookup.TryGetValue(tag, out var discount)) //(productDTagsArray.Contains(discount.DiscountTag.ToUpper().Trim()))
+                            if (discountTagLookup.TryGetValue(tag, out var discount))
                             {
                                 productsWithDTags[x].DiscountAmount = (productsWithDTags[x].DiscountAmount ?? 0) + discount.DiscountAmount;
                                 productsWithDTags[x].DiscountPercent = (productsWithDTags[x].DiscountPercent ?? 0) + discount.DiscountPercent;

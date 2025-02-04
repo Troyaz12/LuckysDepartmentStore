@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using LuckysDepartmentStore.Service.Interfaces;
-using LuckysDepartmentStore.Migrations;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace LuckysDepartmentStore.Controllers
 {
@@ -26,6 +24,13 @@ namespace LuckysDepartmentStore.Controllers
 
             var shippingAddresses = await _consumerService.GetShippingAddress(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var paymentOptions = await _consumerService.GetPaymentOptions(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            if (!shippingAddresses.IsSuccess && paymentOptions.IsSuccess)
+            {
+                TempData["FailureMessage"] = "Error getting product data.";
+
+                return RedirectToAction("Index", "Error");
+            }
 
             if (shippingAddresses != null)
             {
@@ -177,14 +182,15 @@ namespace LuckysDepartmentStore.Controllers
         {
             var isValid = await _checkoutService.IsValid(id, User.Identity.Name);
 
-            if (isValid.IsSuccess)
+
+            if (!isValid.IsSuccess)
             {
-                return View(id);
+                TempData["FailureMessage"] = "Error getting product data.";
+
+                return RedirectToAction("Index", "Error");
             }
-            else
-            {
-                return View("Error");
-            }
+            
+            return View(id);
         }
     }
 }

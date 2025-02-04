@@ -23,7 +23,6 @@ namespace LuckysDepartmentStore.Service.Interfaces
           int? productID, string? keywords);
         public Task<ExecutionResult<List<Sizes>>> GetSize();
         public Task<ExecutionResult<ItemVM>> GetItem(int productId);
-//        public Task<ExecutionResult<List<ProductVmDTO>>> GetProductsWithDiscount();
         public Task<ExecutionResult<List<ProductVM>>> GetProductsSearch(string? categorySelection,
           string? subCategorySelection, string? brandSelection, int? productID, string? discountTags);
         public Task<ExecutionResult<ItemVM>> CalculateDiscount(ItemVM item);

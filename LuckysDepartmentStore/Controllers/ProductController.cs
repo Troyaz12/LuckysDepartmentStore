@@ -1,5 +1,7 @@
-﻿using LuckysDepartmentStore.Models.ViewModels.Product;
+﻿using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
+using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
@@ -17,7 +19,7 @@ namespace LuckysDepartmentStore.Controllers
 
             if (!products.IsSuccess)
             {
-                TempData["FailureMessage"] = "Error getting discount data.";
+                TempData["FailureMessage"] = products.ErrorMessage;
                 return RedirectToAction("Index", "Error");
             }
 
@@ -35,7 +37,7 @@ namespace LuckysDepartmentStore.Controllers
 
             if (!details.IsSuccess || !sizes.IsSuccess)
             {
-                TempData["FailureMessage"] = "Error getting discount data.";
+                TempData["FailureMessage"] = "Error getting details.";
                 return RedirectToAction("Index", "Error");
             }
 
@@ -76,7 +78,7 @@ namespace LuckysDepartmentStore.Controllers
 
                 if (!color.IsSuccess || !category.IsSuccess || !subCategory.IsSuccess || !brand.IsSuccess || !sizes.IsSuccess)
                 {
-                    TempData["FailureMessage"] = "Error getting discount data.";
+                    TempData["FailureMessage"] = "Error creating product.";
                     return RedirectToAction("Index", "Error");
                 }
 
@@ -88,10 +90,9 @@ namespace LuckysDepartmentStore.Controllers
             }
             catch (Exception ex) 
             {
-                TempData["FailureMessage"] = "Error getting product data.";
+                TempData["FailureMessage"] = "Error creating product.";
 
                 return RedirectToAction("Index", "Error");
-
             }            
 
             return View(product);
@@ -106,17 +107,16 @@ namespace LuckysDepartmentStore.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
-                {
+                var productSent = await _productService.CreateAsync(product);
 
-                    var productSent = await _productService.CreateAsync(product);                    
-
-                    return RedirectToAction(nameof(IndexAsync));
-                }
-                catch
+                if (!productSent.IsSuccess)
                 {
-                    return View();
+                    TempData["FailureMessage"] = productSent.ErrorMessage;
+
+                    return RedirectToAction("Index", "Error");
                 }
+
+                return RedirectToAction(nameof(IndexAsync));
             }
             return View(product);
         }
@@ -135,30 +135,19 @@ namespace LuckysDepartmentStore.Controllers
                 var brand = await _productService.GetBrand();
                 var sizes = await _productService.GetSize();
 
-                if (colors.IsSuccess)
+                if (!productEditVM.IsSuccess || !colors.IsSuccess || !category.IsSuccess ||
+                    !subCategory.IsSuccess || !brand.IsSuccess || !sizes.IsSuccess)
                 {
-                    productEditVM.Data.Color = colors.Data;
+                    TempData["FailureMessage"] = "Error editing product data.";
+
+                    return RedirectToAction("Index", "Error");
                 }
 
-                if (category.IsSuccess)
-                {
-                    productEditVM.Data.Category = category.Data;
-                }
-
-                if (subCategory.IsSuccess)
-                {
-                    productEditVM.Data.SubCategory = subCategory.Data;
-                }
-
-                if (brand.IsSuccess)
-                {
-                    productEditVM.Data.Brand = brand.Data;
-                }
-
-                if (sizes.IsSuccess)
-                {
-                    productEditVM.Data.Sizes = sizes.Data;
-                }                 
+                productEditVM.Data.Color = colors.Data;
+                productEditVM.Data.Category = category.Data;
+                productEditVM.Data.SubCategory = subCategory.Data;
+                productEditVM.Data.Brand = brand.Data;
+                productEditVM.Data.Sizes = sizes.Data;
 
                 for (int x = 0; x < productEditVM.Data.ColorProduct.Count; x++)
                 {
@@ -179,7 +168,7 @@ namespace LuckysDepartmentStore.Controllers
             }
             catch (Exception ex)
             {
-                TempData["FailureMessage"] = "Error getting product data.";
+                TempData["FailureMessage"] = "Error editing product data.";
 
                 return RedirectToAction("Index", "Error");
             }            
@@ -189,41 +178,34 @@ namespace LuckysDepartmentStore.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditAsync(ProductEditVM product)
-        {
-            try
-            {
-                var editResult = await _productService.EditProduct(product);                
+        {           
+            var editResult = await _productService.EditProduct(product);
 
-                return RedirectToAction(nameof(IndexAsync));
-            }
-            catch
+            if (!editResult.IsSuccess)
             {
-                return View();
+                TempData["FailureMessage"] = editResult.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
             }
+
+            return RedirectToAction(nameof(IndexAsync));         
         }        
 
         // POST: Product/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteAsync(int id, IFormCollection collection)
-        {
-            try
+        {          
+            var result = await _productService.Delete(id);
+
+            if (!result.IsSuccess)
             {
-                var result = await _productService.Delete(id);
-
-                if (!result.IsSuccess)
-                {
-                    TempData["FailureMessage"] = result.ErrorMessage;
-
-                    return RedirectToAction(nameof(IndexAsync));
-                }
+                TempData["FailureMessage"] = result.ErrorMessage;
 
                 return RedirectToAction(nameof(IndexAsync));
             }
-            catch
-            {
-                return View();
-            }
+
+            return RedirectToAction(nameof(IndexAsync));           
         }
 
         [HttpPost]
@@ -240,14 +222,23 @@ namespace LuckysDepartmentStore.Controllers
         [HttpPost]
         public ActionResult DeleteItem([FromBody] RemoveColorVM removeColor)
         {
-            var index = removeColor.Index;
-            var colorProducts = removeColor.CurrentList;
-
-            if (index >= 0 && index <= colorProducts.Count)
+            try
             {
-                removeColor.CurrentList.RemoveAt(index);
+                var index = removeColor.Index;
+                var colorProducts = removeColor.CurrentList;
+
+                if (index >= 0 && index <= colorProducts.Count)
+                {
+                    removeColor.CurrentList.RemoveAt(index);
+                }
+                return PartialView("_DynamicPartialList", colorProducts);
             }
-            return PartialView("_DynamicPartialList", colorProducts);
+            catch (Exception ex)
+            {
+                TempData["FailureMessage"] = "Error deleting item.";
+
+                return RedirectToAction(nameof(IndexAsync));
+            }
         }
         [HttpPost]
         public ActionResult DeleteEditItem([FromBody] RemoveColorVM removeColor)

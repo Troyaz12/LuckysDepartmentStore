@@ -2,6 +2,7 @@
 using LuckysDepartmentStore.Models.ViewModels.Discount;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
+using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
@@ -17,7 +18,7 @@ namespace LuckysDepartmentStore.Controllers
 
             if (!discounts.IsSuccess)
             {
-                TempData["FailureMessage"] = "Error getting product data.";
+                TempData["FailureMessage"] = discounts.ErrorMessage;
 
                 return RedirectToAction("Index", "Error");
             }
@@ -34,7 +35,7 @@ namespace LuckysDepartmentStore.Controllers
 
             if (!discount.IsSuccess)
             {
-                TempData["FailureMessage"] = "Error getting product data.";
+                TempData["FailureMessage"] = discount.ErrorMessage;
 
                 return RedirectToAction("Index", "Error");
             }
@@ -83,9 +84,9 @@ namespace LuckysDepartmentStore.Controllers
 
                         if (!productExists.IsSuccess)
                         {
-                            ViewBag.FailureMessage = productExists.ErrorMessage;
+                            TempData["FailureMessage"] = productExists.ErrorMessage;
 
-                            return View(discount);
+                            return RedirectToAction("Index", "Error");
                         }
                         
                     }
@@ -94,9 +95,11 @@ namespace LuckysDepartmentStore.Controllers
 
                     return RedirectToAction(nameof(Index));                    
                 }
-                catch
+                catch(Exception ex)
                 {
-                    return View(discount);
+                    TempData["FailureMessage"] = "Error creating discount.";
+
+                    return RedirectToAction("Index", "Error");
                 }
             }
             return View(discount);
@@ -137,6 +140,11 @@ namespace LuckysDepartmentStore.Controllers
             {
                 var discountEdited = await _discountService.UpdateDiscount(discount);
 
+                if (!discountEdited.IsSuccess)
+                {
+                    TempData["FailureMessage"] = discountEdited.ErrorMessage;
+                    return RedirectToAction("Index", "Error");
+                }
 
                 return RedirectToAction("Index", "Discount");
             }
@@ -156,7 +164,7 @@ namespace LuckysDepartmentStore.Controllers
           
             if (!result.IsSuccess || !result.IsSuccess)
             {
-                TempData["FailureMessage"] = "Error getting discount data.";
+                TempData["FailureMessage"] = result.ErrorMessage;
                 return RedirectToAction("Index", "Error");
             }
 

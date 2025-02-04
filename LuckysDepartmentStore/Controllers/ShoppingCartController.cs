@@ -24,7 +24,14 @@ namespace LuckysDepartmentStore.Controllers
         public async Task<IActionResult> Index()
         {
             var cartID = _shoppingCartService.GetCart();
-            var allItems = await _shoppingCartService.GetCartItems(cartID);            
+            var allItems = await _shoppingCartService.GetCartItems(cartID);
+
+            if (!allItems.IsSuccess)
+            {
+                TempData["FailureMessage"] = allItems.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
+            }
 
             return View(allItems.Data);
         }
@@ -35,7 +42,14 @@ namespace LuckysDepartmentStore.Controllers
             if (ModelState.IsValid)
             {               
                 var cart = _shoppingCartService.GetCart();
-                await _shoppingCartService.AddToCartAsync(item, cart);
+                var cartResp = await _shoppingCartService.AddToCartAsync(item, cart);
+
+                if (!cartResp.IsSuccess)
+                {
+                    TempData["FailureMessage"] = cartResp.ErrorMessage;
+
+                    return RedirectToAction("Index", "Error");
+                }
 
                 return RedirectToAction("Index");
             }
@@ -47,7 +61,14 @@ namespace LuckysDepartmentStore.Controllers
             if (ModelState.IsValid)
             {
                 var cart = _shoppingCartService.GetCart();
-                await _shoppingCartService.AddToCartAsync(item, cart);
+                var cartResp = await _shoppingCartService.AddToCartAsync(item, cart);
+
+                if (!cartResp.IsSuccess)
+                {
+                    TempData["FailureMessage"] = cartResp.ErrorMessage;
+
+                    return RedirectToAction("Index", "Error");
+                }
 
                 return RedirectToAction("Index");
             }
@@ -56,20 +77,36 @@ namespace LuckysDepartmentStore.Controllers
 
         //[ChildActionOnly]
         [HttpGet]
-        public ActionResult CartSummary()
+        public async Task<ActionResult> CartSummaryAsync()
         {
             var cart = _shoppingCartService.GetCart();
 
-            ViewData["CartCount"] = _shoppingCartService.GetCount(cart);
+            var count = await _shoppingCartService.GetCount(cart);
+
+            if (!count.IsSuccess)
+            {
+                TempData["FailureMessage"] = count.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
+            }
+
+            ViewData["CartCount"] = count.Data;
+
 
             return PartialView("CartSummary");
         }
         
         [HttpGet]
-        public IActionResult GetShoppingCartCount()
+        public async Task<IActionResult> GetShoppingCartCountAsync()
         {
             var cart = _shoppingCartService.GetCart();
-            var count = _shoppingCartService.GetCount(cart);
+            var count = await _shoppingCartService.GetCount(cart);
+
+            if (!count.IsSuccess)
+            {
+                _logger.LogError(count.ErrorMessage);
+            }
+
             return Json(new { badge = count });
         }     
     }

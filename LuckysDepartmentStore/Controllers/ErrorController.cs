@@ -14,6 +14,7 @@ namespace LuckysDepartmentStore.Controllers
         public IActionResult Index()
         {
             var errorMessage = TempData["ErrorMessage"] as string;
+            _logger.LogError(errorMessage);
 
             return View("ErrorPage", errorMessage);
         }
