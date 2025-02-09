@@ -1,10 +1,11 @@
-﻿using LuckysDepartmentStore.Models;
+﻿using AutoMapper;
 using LuckysDepartmentStore.Models.DTO.ShoppingCart;
 using LuckysDepartmentStore.Models.ViewModels.Home;
+using LuckysDepartmentStore.Models.ViewModels.ShoppingCart;
+using LuckysDepartmentStore.Service;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
 
 namespace LuckysDepartmentStore.Controllers
@@ -13,11 +14,15 @@ namespace LuckysDepartmentStore.Controllers
     {
         private readonly IShoppingCartService _shoppingCartService;
         private readonly ILogger<CartHub> _logger;
+        private readonly IProductService _productService;
+        private IMapper _mapper;
 
-        public ShoppingCartController(IShoppingCartService shoppingCartService, ILogger<CartHub> logger)
+        public ShoppingCartController(IShoppingCartService shoppingCartService, ILogger<CartHub> logger, IProductService productService, IMapper mapper)
         {
             _shoppingCartService = shoppingCartService;
             _logger = logger;
+            _productService = productService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -36,6 +41,7 @@ namespace LuckysDepartmentStore.Controllers
             return View(allItems.Data);
         }
         // Post: /Store/AddToCart/5
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> AddToCartAsync(CartItemsDTO item)
         {
@@ -55,24 +61,13 @@ namespace LuckysDepartmentStore.Controllers
             }
             return RedirectToAction("Item", "Home", new { productId = item.ProductID });
         }
+       
         [HttpPost]
-        public async Task<ActionResult> RemoveFromCartAsync(CartItemsDTO item)
+        public async Task<ActionResult> Delete(int id)
         {
-            if (ModelState.IsValid)
-            {
-                var cart = _shoppingCartService.GetCart();
-                var cartResp = await _shoppingCartService.AddToCartAsync(item, cart);
+            var removeResult = await _shoppingCartService.RemoveItemFromCart(id);
 
-                if (!cartResp.IsSuccess)
-                {
-                    TempData["FailureMessage"] = cartResp.ErrorMessage;
-
-                    return RedirectToAction("Index", "Error");
-                }
-
-                return RedirectToAction("Index");
-            }
-            return RedirectToAction("Item", "Home", new { productId = item.ProductID });
+            return RedirectToAction("Index");
         }
 
         //[ChildActionOnly]
@@ -108,6 +103,43 @@ namespace LuckysDepartmentStore.Controllers
             }
 
             return Json(new { badge = count });
-        }     
+        }
+        // GET: Product/Edit/5
+        [HttpGet]
+        public async Task<ActionResult> Edit(int id, int productId)
+        {
+            var product = await _productService.GetItem(productId);
+
+            if (!product.IsSuccess)
+            {
+                TempData["ErrorMessage"] = product.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
+            }
+
+            var cartItem = _mapper.Map<CartItemVM>(product.Data);
+            cartItem.cartItemID = id;
+
+            cartItem.Color = cartItem.ColorProduct.Select(product => product.Name)
+               .Distinct()
+               .ToList();
+
+            return View(cartItem);
+        }        
+        // GET: Product/Edit/5
+        [HttpPost]
+        public async Task<ActionResult> Edit(CartItemEdit item)
+        {
+            var itemResponse = await _shoppingCartService.EditItemInCart(item);
+
+            if (!itemResponse.IsSuccess)
+            {
+                TempData["ErrorMessage"] = itemResponse.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
+            }
+
+            return RedirectToAction("Index"); ;
+        }
     }
 }

@@ -225,5 +225,11 @@ namespace LuckysDepartmentStore.Utilities
 
             return salePrice;
         }
+        public decimal CalculateItemSubtotal(int quantity, decimal salePrice)
+        {
+           decimal itemSubtotal = quantity * salePrice;
+
+            return itemSubtotal;
+        }
     }
 }

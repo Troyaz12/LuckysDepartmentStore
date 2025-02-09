@@ -2,7 +2,7 @@
 <html>
 
 @using LuckysDepartmentStore.Models.ViewModels.ShoppingCart
-@model List<CartsVM>
+@model ShoppingCartVM
 
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -23,7 +23,7 @@
 </head>
 <body>
 
-@if (Model != null)
+@if (Model != null && Model.cartsVMs.Count>0)
 {
 
      <div class="container">
@@ -62,10 +62,9 @@
      </div>
 
     <ul class="list-group">
-        @foreach (var item in Model)
+        @foreach (var item in Model.cartsVMs)
         {
                 <div class="container">
-
 
                     <!-- Data Rows -->
                     <div class="d-flex flex-row w-100 row-with-borders-item">
@@ -83,6 +82,15 @@
                                 <div>
                                     <label asp-for="@item.ColorString" class="control-label"></label>
                                     <span>: @item.ColorString</span>
+                                </div>
+                                <div>
+                                    <a href="/ShoppingCart/Edit?id=@item.ID&productId=@item.ProductID" class="a-link-button">Edit</a>
+
+                                    <form action="/ShoppingCart/Delete" method="post" style="display: inline">
+                                        <input type="hidden" name="id" value="@item.ID" />
+                                        <button type="submit" class="a-link-button">Remove</button>
+                                    </form>
+
                                 </div>
                             </div>
                         </div>
@@ -120,15 +128,14 @@
                             </div>
                         </div>
                         <div class="d-flex flex-column col-md-2">
-                            <span>100</span>
+                            <span>@item.Subtotal</span>
                         </div>
                     </div>
                 </div>
 
         }
-      
-
     </ul>
+    <div style="display: flex; justify-content:flex-end; padding-right:11px;">Total: @Model.CartTotal</div>
 }
 else
 {

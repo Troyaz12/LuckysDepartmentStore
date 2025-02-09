@@ -1,16 +1,13 @@
 ﻿using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Consumer;
-using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace LuckysDepartmentStore.Controllers
 {
     public class ConsumerController(IConsumerService _consumerService, UserManager<ApplicationUser> _userManager) : Controller
     {
-        //private readonly UserManager<IdentityUser> _userManager;
         public IActionResult Index()
         {
             return View();
@@ -92,6 +89,33 @@ namespace LuckysDepartmentStore.Controllers
             }
 
             return View(paymentOptions);
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditShippingAddress([FromBody] ShippingAddressVM shippingAddress)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            shippingAddress.UserId = user.Id;
+
+            var newAddresses = await _consumerService.CreateShippingAddress(shippingAddress);
+
+
+            if (!newAddresses.IsSuccess)
+            {
+                TempData["FailureMessage"] = newAddresses.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
+            }
+
+            var allAddresses = await _consumerService.GetShippingAddress(shippingAddress.UserId);
+
+            if (!allAddresses.IsSuccess)
+            {
+                TempData["FailureMessage"] = allAddresses.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
+            }
+
+            return PartialView("_ShippingPartial", allAddresses.Data);
         }
     }
 }

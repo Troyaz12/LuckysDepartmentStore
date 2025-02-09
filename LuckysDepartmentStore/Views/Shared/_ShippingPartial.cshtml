@@ -57,7 +57,56 @@
                 <input type="hidden" name="ShippingAddresses[@i].State" value="@Model[i].State" />
                 <input type="hidden" name="ShippingAddresses[@i].ZipCode" value="@Model[i].ZipCode" />
                 <input type="hidden" name="ShippingAddresses[@i].ShippingAddressID" value="@Model[i].ShippingAddressID" />
+
+                <div class="col-md-12">
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#editShippingBackdrop"
+                            data-firstnameedit="@Model[i].FirstName" data-lastnameedit="@Model[i].LastName" data-address1edit="@Model[i].Address1"
+                            data-address2edit="@Model[i].Address2" data-cityedit="@Model[i].City" data-stateedit="@Model[i].State" data-zipcodeedit="@Model[i].ZipCode">
+                        Edit Shipping Address
+                    </button>
+
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="editShippingBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editShippingBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="editShippingBackdropLabel">Edit Shipping Address</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="FirstName">First Name</label>
+                                    <input name="FirstNameEdit" id="FirstNameEdit" class="form-control">
+
+                                    <label for="LastName">Last Name</label>
+                                    <input name="LastNameEdit" id="LastNameEdit" class="form-control">
+
+                                    <label for="Address1">Address1</label>
+                                    <input name="Address1Edit" id="Address1Edit" class="form-control">
+
+                                    <label for="Address2">Address2</label>
+                                    <input name="Address2Edit" id="Address2Edit" class="form-control">
+
+                                    <label for="City">City</label>
+                                    <input name="CityEdit" id="CityEdit" class="form-control">
+
+                                    <label for="State">State</label>  
+                                    <input name="StateEdit" id="StateEdit" class="form-control">
+
+                                    <label for="ZipCode">ZipCode</label>
+                                    <input name="ZipCodeEdit" id="ZipCodeEdit" class="form-control">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button id="saveBtn" type="button" class="btn btn-primary">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+            
         }     
     </div>
 </div>

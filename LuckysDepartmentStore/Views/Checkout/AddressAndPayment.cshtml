@@ -11,6 +11,7 @@
 
 @using (Html.BeginForm("AddressAndPayment", "Checkout", FormMethod.Post))
 {
+    @Html.AntiForgeryToken()
      <h2>Address And Payment</h2>
 
     <div class="scrollable-section mt-2" id="shippingAddressList">
@@ -133,8 +134,6 @@
         $('#save').on('click', function (e) {
             e.preventDefault();
 
-            console.log("Test1");
-
             var FirstName = $('#FirstName').val();
             var LastName = $('#LastName').val();
             var Address1 = $('#Address1').val();
@@ -143,9 +142,6 @@
             var State = $('#State').val();
             var ZipCode = $('#ZipCode').val();
             var SelectedShippingAddressID = $('#SelectedShippingAddressID').val();
-            
-
-            console.log("Test2" + " " + SelectedShippingAddressID);
 
             var item = {
                 FirstName: FirstName,
@@ -156,7 +152,6 @@
                 State: State,
                 ZipCode: ZipCode
             };
-            console.log("Test2.5 " + item);
             $.ajax({
                 url: '@Url.Action("CreateShippingAddress", "Consumer")',
                 type: 'POST',
@@ -165,7 +160,6 @@
 
                 success: function (data) {
                     $("#shippingAddressList").html(data);
-                    console.log("Test3");
 
                     $("#FirstName").val('');
                     $("#LastName").val('');
@@ -177,9 +171,6 @@
                     $('#staticBackdrop').modal('hide');
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                     console.log("Test4 - jqXHR: ", jqXHR);
-                    console.log("Text Status: ", textStatus);
-                    console.log("Error Thrown: ", errorThrown);
 
                     alert("Error updating list: " + errorThrown);
                 }
@@ -188,8 +179,6 @@
 
         $('#savePayment').on('click', function (e) {
             e.preventDefault();
-
-            console.log("Test1");
 
             var FirstName = $('#FirstNamePay').val();
             var LastName = $('#LastNamePay').val();
@@ -201,8 +190,7 @@
             var AccountNumber = $('#AccountNumber').val();
             var CvcCode = $('#CvcCode').val();
 
-            console.log("Test2" + FirstName + " " + LastName + " " + BillingAddress1 + " " + BillingAddress2 + " " + City + " " + State + " " + ZipCode + " " + AccountNumber + " " + CvcCode);
-
+           
             var item = {
                 FirstName: FirstName,
                 LastName: LastName,
@@ -214,7 +202,6 @@
                 AccountNumber: AccountNumber,
                 CvcCode: CvcCode
             };
-            console.log("Test2.5 " + item);
             $.ajax({
                 url: '@Url.Action("CreatePaymentOption", "Consumer")',
                 type: 'POST',
@@ -238,14 +225,118 @@
                     $('#paymentBackdrop').modal('hide');
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    console.log("Test4 - jqXHR: ", jqXHR);
-                    console.log("Text Status: ", textStatus);
-                    console.log("Error Thrown: ", errorThrown);
-
                     alert("Error updating list: " + errorThrown);
                 }
             });
         });
+
+    @*     $('body').on('click', '#edit', function () {
+            e.preventDefault();
+
+            var FirstName = $('#FirstNameEdit').val();
+            var LastName = $('#LastNameEdit').val();
+            var Address1 = $('#Address1Edit').val();
+            var Address2 = $('#Address2Edit').val() || null;
+            var City = $('#CityEdit').val();
+            var State = $('#StateEdit').val();
+            var ZipCode = $('#ZipCodeEdit').val();
+            var SelectedShippingAddressID = $('#SelectedShippingAddressID').val();
+
+            var item = {
+                FirstName: FirstName,
+                LastName: LastName,
+                Address1: Address1,
+                Address2: Address2,
+                City: City,
+                State: State,
+                ZipCode: ZipCode
+            };
+            $.ajax({
+                url: '@Url.Action("EditShippingAddress", "Consumer")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(item),
+
+                success: function (data) {
+                    $("#shippingAddressList").html(data);
+
+                    $("#FirstName").val('');
+                    $("#LastName").val('');
+                    $("#Address1").val('');
+                    $("#Address2").val('');
+                    $('#City').val('');
+                    $("#State").val('');
+                    $('#ZipCode').val('');
+                    $('#staticBackdrop').modal('hide');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+
+                    alert("Error updating list: " + errorThrown);
+                }
+            });
+        }); *@
+
+        $('#editShippingBackdrop').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var firstName = button.data('firstnameedit');
+            var lastName = button.data('lastnameedit');
+            var address1 = button.data('address1edit');
+            var address2 = button.data('address2edit');
+            var city = button.data('cityedit');
+            var state = button.data('stateedit');
+            var zipcode = button.data('zipcodeedit');
+            
+            // Update the modal's input fields
+            var modal = $(this);
+            modal.find('#FirstNameEdit').val(firstName);
+            modal.find('#LastNameEdit').val(lastName);
+            modal.find('#Address1Edit').val(address1);
+            modal.find('#Address2Edit').val(address2);
+            modal.find('#CityEdit').val(city);
+            modal.find('#StateEdit').val(state);
+            modal.find('#ZipCodeEdit').val(zipcode);
+        });
+
+        $('#saveBtn').on('click', function () {
+            var modal = $('#editShippingBackdrop');
+            var shippingAddress = {
+                FirstName: modal.find('#FirstNameEdit').val(),
+                LastName: modal.find('#LastNameEdit').val(),
+                Address1: modal.find('#Address1Edit').val(),
+                Address2: modal.find('#Address2Edit').val(),
+                City: modal.find('#CityEdit').val(),
+                State: modal.find('#StateEdit').val(),
+                ZipCode: modal.find('#ZipCodeEdit').val()
+            };
+
+            console.log("Shipping Address:", shippingAddress); // Debugging
+
+            // Send the updated data to the server using AJAX
+            $.ajax({
+                url: '@Url.Action("EditShippingAddress", "Consumer")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(shippingAddress),
+                success: function (data) {
+                    // Handle the success response
+                    if (data.success) {
+                        // Update the parent view with the updated data
+                        location.reload(); // Reload the page or update the view dynamically
+                    } else {
+                        alert('Failed to save the data.');
+                    }
+                },
+                error: function () {
+                    alert('Error occurred while saving the data.');
+                }
+            });
+
+            // Close the modal
+            modal.modal('hide');
+        });
+
+
+
 
     });
 </script>

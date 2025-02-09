@@ -23,5 +23,6 @@ namespace LuckysDepartmentStore.Models.ViewModels.ShoppingCart
         public string? SizeString { get; set; }
         [Display(Name = "Color")]
         public string? ColorString { get; set; }
+        public decimal Subtotal {  get; set; }
     }
 }

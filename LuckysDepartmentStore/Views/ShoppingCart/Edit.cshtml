@@ -1,6 +1,12 @@
-﻿@using LuckysDepartmentStore.Utilities
+﻿@using LuckysDepartmentStore.Models.ViewModels.ShoppingCart
 @using Newtonsoft.Json
-@model LuckysDepartmentStore.Models.ViewModels.Home.ItemVM
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model CartItemVM
+
 @{
     ViewData["Title"] = "Item";
 }
@@ -87,14 +93,15 @@
                         }
                     }
                 </div>
-                <form id="addToCartForm" asp-controller="ShoppingCart" asp-action="AddToCart" enctype="multipart/form-data">
+                <form id="addToCartForm" asp-controller="ShoppingCart" asp-action="Edit" enctype="multipart/form-data">
                     @Html.AntiForgeryToken()
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" id="ProductID" name="ProductID" value="@Model.ProductID">
+                    <input type="hidden" id="ID" name="ID" value="@Model.cartItemID">
                     <input type="hidden" id="Price" name="Price" value="@Model.Price">
                     <input type="hidden" id="ColorSelection" name="ColorSelection" value="@Model.ColorSelection">
                     <input type="hidden" id="SizeSelection" name="SizeSelection" value="@Model.SizeSelection">
                     <input type="hidden" id="ProductImage" name="ProductImage" value="@Model.ProductImage">
+                    <input type="hidden" id="ProductName" name="ProductName" value="@Model.ProductName">
                     <input type="hidden" id="ProductName" name="ProductName" value="@Model.ProductName">
 
                     @if (Model.ColorProduct != null && Model.ColorProduct.Count > 0)
@@ -107,7 +114,7 @@
                         <input asp-for="Quantity" type="number" class="form-control" id="Quantity" />
                     </div>
                     <div class="p-2 text-white">
-                        <input type="submit" id="addToCartButton" value="Add To Cart" class="btn btn-info mt-1 w-100" style="background-color: gold" />
+                        <input type="submit" id="Save" value="Save" class="btn btn-info mt-1 w-100" style="background-color: gold" />
                     </div>
                 </form>
             </div>

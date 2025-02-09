@@ -311,3 +311,18 @@ header {
 .content {
     margin-top: 100px; /* Adjust based on the combined height of the header and navbar */
 }
+
+.a-link-button {
+    background: none;
+    border: none;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
+    padding: 0;
+}
+
+.a-link-button:hover {
+    color: darkblue;
+}

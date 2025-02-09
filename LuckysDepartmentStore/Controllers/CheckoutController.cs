@@ -46,6 +46,7 @@ namespace LuckysDepartmentStore.Controllers
         }
         //
         // POST: /Checkout/AddressAndPayment
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<ActionResult> AddressAndPayment(int SelectedShippingAddressID, int SelectedPaymentOptionsID, List<ShippingAddressVM> ShippingAddresses, List<PaymentOptionsVM> PaymentOptions)
         {
