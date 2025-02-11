@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using AutoMapper;
 using LuckysDepartmentStore.Service.Interfaces;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.CodeAnalysis;
+using Microsoft.IdentityModel.Tokens;
 
 namespace LuckysDepartmentStore.Service
 {
@@ -147,5 +150,65 @@ namespace LuckysDepartmentStore.Service
             }
 
         }
+        public async Task<ExecutionResult<ShippingAddress>> DeleteShippingRecord(int id)
+        {
+            try
+            {
+                if (id == null)
+                {
+                    return ExecutionResult<ShippingAddress>.Failure("Payment data not recieved.");
+                }
+                var shippingAddress = await _context.ShippingAddress.FindAsync(id);
+
+                if (shippingAddress == null)
+                {
+                    return ExecutionResult<ShippingAddress>.Failure("An error occured. Cannot find delete product.");
+                }
+
+                _context.ShippingAddress.Remove(shippingAddress);
+                await _context.SaveChangesAsync();
+
+                return ExecutionResult<ShippingAddress>.Success(shippingAddress);
+            }
+            catch (Exception ex)
+            {
+                return ExecutionResult<ShippingAddress>.Failure("Unable to get address.");
+            }           
+        }
+        public async Task<ExecutionResult<ShippingAddressVM>> EditShippingRecord(ShippingAddressVM shippingAddress)
+        {
+            try
+            {
+                if (shippingAddress == null)
+                {
+                    return ExecutionResult<ShippingAddressVM>.Failure("Mo shipping address selected.");
+                }
+
+                var shippingAddressOld = await _context.ShippingAddress.FindAsync(shippingAddress.ShippingAddressID);
+
+                if (shippingAddressOld == null)
+                {
+                    return ExecutionResult<ShippingAddressVM>.Failure("Mo shipping address selected.");
+                }
+
+                shippingAddressOld.FirstName = shippingAddress.FirstName;
+                shippingAddressOld.LastName = shippingAddress.LastName;
+                shippingAddressOld.Address1 = shippingAddress.Address1;
+                shippingAddressOld.Address2 = shippingAddress.Address2;
+                shippingAddressOld.City = shippingAddress.City;
+                shippingAddressOld.State = shippingAddress.State;
+                shippingAddressOld.ZipCode =shippingAddress.ZipCode;
+
+                var productSave = _context.SaveChanges();
+
+                return ExecutionResult<ShippingAddressVM>.Success(shippingAddress);
+            }
+            catch (Exception ex)
+            {
+                return ExecutionResult<ShippingAddressVM>.Failure("Unable to edit product.");
+            }
+        }
+
+
     }
 }

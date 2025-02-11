@@ -5,13 +5,25 @@
 *@
 @{
 }
+<head>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta1/css/bootstrap.min.css" rel="stylesheet">
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+ @*    <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script> *@
 
+</head>
 
+@* 
+<div class="row">
+    *@
+<ul id="shippingContainer">
 
         @for (int i=0; i < Model.Count; i++)
         {
-                <div class="col-md-12 mb-3">
+            <li id="item-@i">
+              @*   <div class="col-md-12 mb-3"> *@
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="SelectedShippingAddressID" id="shipping_@Model[i].ShippingAddressID" value="@Model[i].ShippingAddressID">
                         <label class="form-check-label" for="shipping_@Model[i].ShippingAddressID">
@@ -52,13 +64,13 @@
 
                 
                     </div>
-                </div>
+              @*   </div> *@
 
-                <div class="mb-2">
+                @* <div class="mb-2">
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editShippingBackdrop"
                             data-firstnameedit="@Model[i].FirstName" data-lastnameedit="@Model[i].LastName" data-address1edit="@Model[i].Address1"
-                            data-address2edit="@Model[i].Address2" data-cityedit="@Model[i].City" data-stateedit="@Model[i].State" data-zipcodeedit="@Model[i].ZipCode" data-shippingaddressid="@Model[i].ShippingAddressID">
+                            data-address2edit="@Model[i].Address2" data-cityedit="@Model[i].City" data-stateedit="@Model[i].State" data-zipcodeedit="@Model[i].ZipCode">
                         Edit Shipping Address
                     </button>
 
@@ -95,8 +107,6 @@
 
                                     <label for="ZipCode">ZipCode</label>
                                     <input name="ZipCodeEdit" id="ZipCodeEdit" class="form-control">
-
-                                    <input type="hidden" name="SelectedShippingAddressID" id="SelectedShippingAddressID"/>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -104,8 +114,17 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <hr />
-                 </div>       
-                 
+                    </div> *@
+                @* </div> *@
+
+            </li>
+
+
+
+
+            
         }
+</ul>
+ @*  
+</div>
+ *@

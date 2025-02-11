@@ -3,6 +3,7 @@ using LuckysDepartmentStore.Models.ViewModels.Consumer;
 using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace LuckysDepartmentStore.Controllers
 {
@@ -96,12 +97,12 @@ namespace LuckysDepartmentStore.Controllers
             var user = await _userManager.GetUserAsync(User);
             shippingAddress.UserId = user.Id;
 
-            var newAddresses = await _consumerService.CreateShippingAddress(shippingAddress);
+            var editedAddresses = await _consumerService.EditShippingRecord(shippingAddress);
 
 
-            if (!newAddresses.IsSuccess)
+            if (!editedAddresses.IsSuccess)
             {
-                TempData["FailureMessage"] = newAddresses.ErrorMessage;
+                TempData["FailureMessage"] = editedAddresses.ErrorMessage;
 
                 return RedirectToAction("Index", "Error");
             }
@@ -116,6 +117,21 @@ namespace LuckysDepartmentStore.Controllers
             }
 
             return PartialView("_ShippingPartial", allAddresses.Data);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete([FromBody] int id)
+        {
+            var deleteAddress = await _consumerService.DeleteShippingRecord(id);
+
+            if (!deleteAddress.IsSuccess)
+            {
+                TempData["FailureMessage"] = deleteAddress.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
+            }
+            return Json(new { success = true });
+            //return RedirectToAction("AddressAndPayment", "Checkout");
         }
     }
 }

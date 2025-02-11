@@ -32,7 +32,7 @@ namespace LuckysDepartmentStore.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            if (shippingAddresses != null)
+            if (shippingAddresses != null && shippingAddresses.Data.Count > 0)
             {
                 ordervm.Shipping = shippingAddresses.Data;             
             }

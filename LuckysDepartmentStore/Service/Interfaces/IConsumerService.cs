@@ -11,6 +11,7 @@ namespace LuckysDepartmentStore.Service.Interfaces
         public Task<ExecutionResult<List<ShippingAddressVM>>> GetShippingAddress(string userId);
         public Task<ExecutionResult<bool>> CreatePaymentOption(PaymentOptionsVM paymentOption);
         public Task<ExecutionResult<List<PaymentOptionsVM>>> GetPaymentOptions(string userId);
-
+        public Task<ExecutionResult<ShippingAddress>> DeleteShippingRecord(int id);
+        public Task<ExecutionResult<ShippingAddressVM>> EditShippingRecord(ShippingAddressVM shippingAddress);
     }
 }
