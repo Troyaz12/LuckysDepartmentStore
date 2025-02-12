@@ -24,6 +24,7 @@
                         <span>
                             @Model[i].LastName 
                         </span>
+                        <br />
                         <span>
                             @Model[i].BillingAddress1
                         </span>
@@ -33,8 +34,9 @@
                                 @Model[i].BillingAddress2 
                             </span>
                         }
+                <br />
                         <span>
-                            @Model[i].City
+                            @Model[i].City,
                         </span>
                         <span>
                             @Model[i].State
@@ -42,11 +44,13 @@
                         <span>
                             @Model[i].ZipCode
                         </span>
+                        <br />
                         <span>
                             Account Number: @Model[i].AccountNumber 
                         </span>
+                        <br />
                         <span>
-                            @Model[i].CvcCode
+                            CVC: @Model[i].CvcCode
                         </span>
                     </label>
                     <input type="hidden" name="PaymentOptions[@i].FirstName" value="@Model[i].FirstName" />
