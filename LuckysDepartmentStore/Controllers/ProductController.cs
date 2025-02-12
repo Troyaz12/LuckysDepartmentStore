@@ -11,7 +11,7 @@ namespace LuckysDepartmentStore.Controllers
     {
         // GET: Product
         [HttpGet]
-        public async Task<ActionResult> IndexAsync(string category, string searchString)
+        public async Task<ActionResult> Index(string category, string searchString)
         {
             ProductListVM productList = new ProductListVM();
 
@@ -116,7 +116,7 @@ namespace LuckysDepartmentStore.Controllers
                     return RedirectToAction("Index", "Error");
                 }
 
-                return RedirectToAction(nameof(IndexAsync));
+                return RedirectToAction(nameof(Index));
             }
             return View(product);
         }
@@ -188,7 +188,7 @@ namespace LuckysDepartmentStore.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            return RedirectToAction(nameof(IndexAsync));         
+            return RedirectToAction(nameof(Index));         
         }        
 
         // POST: Product/Delete/5
@@ -202,10 +202,10 @@ namespace LuckysDepartmentStore.Controllers
             {
                 TempData["FailureMessage"] = result.ErrorMessage;
 
-                return RedirectToAction(nameof(IndexAsync));
+                return RedirectToAction(nameof(Index));
             }
 
-            return RedirectToAction(nameof(IndexAsync));           
+            return RedirectToAction(nameof(Index));           
         }
 
         [HttpPost]
@@ -237,7 +237,7 @@ namespace LuckysDepartmentStore.Controllers
             {
                 TempData["FailureMessage"] = "Error deleting item.";
 
-                return RedirectToAction(nameof(IndexAsync));
+                return RedirectToAction(nameof(Index));
             }
         }
         [HttpPost]

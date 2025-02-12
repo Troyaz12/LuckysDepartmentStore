@@ -28,8 +28,8 @@
     <div class="scrollable-section mt-2" id="shippingAddressList">
         @Html.Partial("_ShippingPartial", Model.Shipping)
     </div>
-    <p><a href="" class="link-underline-primary">Edit Address</a></p>
-    <div class="row">
+    
+    <div class="row mb-5">
         <div class="col-md-12">
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
@@ -80,7 +80,6 @@
         @await Html.PartialAsync("_PaymentPartial", Model.Payment)
      </div>
 
-    <p><a href="" class="link-underline-primary">Edit Payment Method</a></p>
     <div class="row">
         <div class="col-md-12">
             <!-- Button trigger modal -->
@@ -135,7 +134,7 @@
         </div>
     </div>
 
-<input type="submit" value="Submit Order" />
+<input type="submit" value="Submit Order" class="mt-5"/>
 
 </form>
 

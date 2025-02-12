@@ -84,6 +84,7 @@ body {
 .scrollable-section {
     height: 200px;
     overflow-y: scroll;
+    height: 30vh; /* 60% of the viewport height */
     border: 1px solid #ccc;
     padding: 10px;
 }
@@ -326,3 +327,4 @@ header {
 .a-link-button:hover {
     color: darkblue;
 }
+
