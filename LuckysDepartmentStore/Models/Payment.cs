@@ -16,7 +16,7 @@
         public int ZipCode { get; set; }
         public bool IsCheckingAccount { get; set; }
         public bool IsCreditCard { get; set; }
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; }
         public decimal? Total { get; set; }
     }
 }

@@ -4,7 +4,7 @@
     {
         public int CustomerOrderID { get; set; }
         public int ShippingAddressID { get; set; }
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; }
         public int PaymentID { get; set; }
         public virtual ShippingAddress Customer { get; set; }
         public string UserId { get; set; }

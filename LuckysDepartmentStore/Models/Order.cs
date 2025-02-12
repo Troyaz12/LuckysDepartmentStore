@@ -24,8 +24,8 @@
         public int BillingZipCode { get; set; }
         public bool IsCheckingAccount { get; set; }
         public bool IsCreditCard { get; set; }
-        public DateTime OrderDate { get; set; } = DateTime.Now;
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime OrderDate { get; set; }
+        public DateTime CreatedDate { get; set; }
         public string UserName { get; set; }
         public string UserId { get; set; }
     }

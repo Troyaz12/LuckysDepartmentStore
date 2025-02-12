@@ -11,6 +11,6 @@
         public string City { get; set; }    
         public string state {  get; set; }
         public int Zip {  get; set; }
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; }
     }
 }

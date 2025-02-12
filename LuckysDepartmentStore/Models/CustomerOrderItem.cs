@@ -7,7 +7,7 @@
         public int CustomerOrderID { get; set; }
         public Decimal Price { get; set; }
         public int Quantity { get; set; }
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; }
         public int ShippingID { get; set; }
     }
 }

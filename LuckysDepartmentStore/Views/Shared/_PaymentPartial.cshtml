@@ -7,62 +7,123 @@
 }
 
 <head>
-    <!-- Include Bootstrap CSS -->
+  @*   <!-- Include Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta1/css/bootstrap.min.css" rel="stylesheet">
-
+ *@
 </head>
-
-
-<div class="row">
-    <div class="col-md-4">
+  
         @for (int i = 0; i < Model.Count; i++)
         {
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="SelectedPaymentOptionsID" id="@Model[i].PaymentOptionsID" value="@Model[i].PaymentOptionsID">
-                <label class="form-check-label" for="@Model[i].PaymentOptionsID">
-                    <span>
-                        @Model[i].FirstName
-                    </span>
-                    <span>
-                        @Model[i].LastName
-                    </span>
-                    <span>
-                        @Model[i].BillingAddress1
-                    </span>
-                    @if (!string.IsNullOrEmpty(Model[i].BillingAddress2))
-                    {
+            <div class="col-md-12 mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="SelectedPaymentOptionsID" id="@Model[i].PaymentOptionsID" value="@Model[i].PaymentOptionsID">
+                    <label class="form-check-label" for="@Model[i].PaymentOptionsID">
                         <span>
-                            @Model[i].BillingAddress2
+                            @Model[i].FirstName
                         </span>
-                    }
-                    <span>
-                        @Model[i].City
-                    </span>
-                    <span>
-                        @Model[i].State
-                    </span>
-                    <span>
-                        @Model[i].ZipCode
-                    </span>
-                    <span>
-                        @Model[i].AccountNumber
-                    </span>
-                    <span>
-                        @Model[i].CvcCode
-                    </span>
-                </label>
-                <input type="hidden" name="PaymentOptions[@i].FirstName" value="@Model[i].FirstName" />
-                <input type="hidden" name="PaymentOptions[@i].LastName" value="@Model[i].LastName" />
-                <input type="hidden" name="PaymentOptions[@i].BillingAddress1" value="@Model[i].BillingAddress1" />
-                <input type="hidden" name="PaymentOptions[@i].BillingAddress2" value="@Model[i].BillingAddress2" />
-                <input type="hidden" name="PaymentOptions[@i].City" value="@Model[i].City" />
-                <input type="hidden" name="PaymentOptions[@i].State" value="@Model[i].State" />
-                <input type="hidden" name="PaymentOptions[@i].ZipCode" value="@Model[i].ZipCode" />
-                <input type="hidden" name="PaymentOptions[@i].AccountNumber" value="@Model[i].AccountNumber" />
-                <input type="hidden" name="PaymentOptions[@i].CvcCode" value="@Model[i].CvcCode" />
-                <input type="hidden" name="PaymentOptions[@i].PaymentOptionsID" value="@Model[i].PaymentOptionsID" />
+                        <span>
+                            @Model[i].LastName
+                        </span>
+                        <span>
+                            @Model[i].BillingAddress1
+                        </span>
+                        @if (!string.IsNullOrEmpty(Model[i].BillingAddress2))
+                        {
+                            <span>
+                                @Model[i].BillingAddress2
+                            </span>
+                        }
+                        <span>
+                            @Model[i].City
+                        </span>
+                        <span>
+                            @Model[i].State
+                        </span>
+                        <span>
+                            @Model[i].ZipCode
+                        </span>
+                        <span>
+                            @Model[i].AccountNumber
+                        </span>
+                        <span>
+                            @Model[i].CvcCode
+                        </span>
+                    </label>
+                    <input type="hidden" name="PaymentOptions[@i].FirstName" value="@Model[i].FirstName" />
+                    <input type="hidden" name="PaymentOptions[@i].LastName" value="@Model[i].LastName" />
+                    <input type="hidden" name="PaymentOptions[@i].BillingAddress1" value="@Model[i].BillingAddress1" />
+                    <input type="hidden" name="PaymentOptions[@i].BillingAddress2" value="@Model[i].BillingAddress2" />
+                    <input type="hidden" name="PaymentOptions[@i].City" value="@Model[i].City" />
+                    <input type="hidden" name="PaymentOptions[@i].State" value="@Model[i].State" />
+                    <input type="hidden" name="PaymentOptions[@i].ZipCode" value="@Model[i].ZipCode" />
+                    <input type="hidden" name="PaymentOptions[@i].AccountNumber" value="@Model[i].AccountNumber" />
+                    <input type="hidden" name="PaymentOptions[@i].CvcCode" value="@Model[i].CvcCode" />
+                    <input type="hidden" name="PaymentOptions[@i].PaymentOptionsID" value="@Model[i].PaymentOptionsID" />
+                </div>
             </div>
+
+        <div class="mb-2">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editPaymentBackdrop"
+                    data-firstnameedit="@Model[i].FirstName" data-lastnameedit="@Model[i].LastName" data-address1edit="@Model[i].BillingAddress1"
+                    data-address2edit="@Model[i].BillingAddress2" data-cityedit="@Model[i].City" data-stateedit="@Model[i].State" data-zipcodeedit="@Model[i].ZipCode"
+                    data-accountnumberedit="@Model[i].AccountNumber" data-cvccodeedit="@Model[i].CvcCode" data-paymentoptionsid="@Model[i].PaymentOptionsID">
+                Edit Payment Address
+            </button>
+
+            <button id="delete_@i" type="button" class="delete-btn-payment btn btn-primary" data-id="@Model[i].PaymentOptionsID">
+                Delete
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="editPaymentBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editPaymentBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="editPaymentBackdropLabel">Edit Payment Address</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="FirstName">First Name</label>
+                            <input name="FirstNameEdit" id="FirstNameEdit" class="form-control">
+
+                            <label for="LastName">Last Name</label>
+                            <input name="LastNameEdit" id="LastNameEdit" class="form-control">
+
+                            <label for="Address1">Address1</label>
+                            <input name="Address1Edit" id="Address1Edit" class="form-control">
+
+                            <label for="Address2">Address2</label>
+                            <input name="Address2Edit" id="Address2Edit" class="form-control">
+
+                            <label for="City">City</label>
+                            <input name="CityEdit" id="CityEdit" class="form-control">
+
+                            <label for="State">State</label>
+                            <input name="StateEdit" id="StateEdit" class="form-control">
+
+                            <label for="ZipCode">ZipCode</label>
+                            <input name="ZipCodeEdit" id="ZipCodeEdit" class="form-control">
+
+                            <label for="AccountNumber">AccountNumber</label>
+                            <input name="AccountNumberEdit" id="AccountNumberEdit" class="form-control">
+
+                            <label for="CvcCode">CvcCode</label>
+                            <input name="CvcCodeEdit" id="CvcCodeEdit" class="form-control">
+
+                            <input type="hidden" name="PaymentOptionsID" id="PaymentOptionsID" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button id="saveBtnPayment" type="button" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+        </div>
+
+
+
         }
-    </div>
-</div>
 

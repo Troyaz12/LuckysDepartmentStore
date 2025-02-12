@@ -11,7 +11,7 @@
         public int BrandID { get; set; }
         public int SubCategoryID { get; set; }
         public byte[]? ProductPicture { get; set; }
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; }
         public int DiscountID { get; set; }
         public string? DiscountTag { get; set; }
         public string? SearchWords { get; set; }

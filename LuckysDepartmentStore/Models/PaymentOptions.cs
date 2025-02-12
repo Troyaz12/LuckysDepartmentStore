@@ -9,14 +9,14 @@
         public string AccountNumber { get; set; }
         public int CvcCode {  get; set; }
         public string BillingAddress1 { get; set; }
-        public string BillingAddress2 {  get; set; }
+        public string? BillingAddress2 {  get; set; }
         public string City { get; set; }
         public string State {  get; set; }
         public int ZipCode { get; set; }
         public bool IsCheckingAccount { get; set; }
         public bool IsCreditCard { get; set; }
         public bool IsActive { get; set; }
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; }
         public string UserId { get; set; }
         public virtual ApplicationUser User { get; set; }
     }

@@ -131,7 +131,46 @@ namespace LuckysDepartmentStore.Controllers
                 return RedirectToAction("Index", "Error");
             }
             return Json(new { success = true });
-            //return RedirectToAction("AddressAndPayment", "Checkout");
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditPayment([FromBody] PaymentOptionsVM paymentOptions)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            paymentOptions.UserId = user.Id;
+
+            var editedAddresses = await _consumerService.EditPaymentRecord(paymentOptions);
+
+
+            if (!editedAddresses.IsSuccess)
+            {
+                TempData["FailureMessage"] = editedAddresses.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
+            }
+
+            var allPaymentOptions = await _consumerService.GetPaymentOptions(paymentOptions.UserId);
+
+            if (!allPaymentOptions.IsSuccess)
+            {
+                TempData["FailureMessage"] = allPaymentOptions.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
+            }
+
+            return PartialView("_PaymentPartial", allPaymentOptions.Data);
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeletePayment([FromBody] int id)
+        {
+            var deleteAddress = await _consumerService.DeletePaymentRecord(id);
+
+            if (!deleteAddress.IsSuccess)
+            {
+                TempData["FailureMessage"] = deleteAddress.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
+            }
+            return Json(new { success = true });
         }
     }
 }

@@ -7,7 +7,7 @@
         public string Review { get; set; }
         public int CustomerID { get; set; }
         public int ProductID { get; set; }
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; }
 
     }
 }

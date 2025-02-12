@@ -30,6 +30,19 @@ namespace LuckysDepartmentStore.Data
            .Property(d => d.Price)
            .HasColumnType("decimal(18,2)");
 
+            builder.Entity<Carts>()
+            .Property(c => c.Price)
+            .HasColumnType("decimal(18,2)");
+
+            builder.Entity<CustomerOrderItem>()
+                .Property(c => c.Price)
+                .HasColumnType("decimal(18,2)");
+
+            builder.Entity<Payment>()
+                .Property(p => p.Total)
+                .HasColumnType("decimal(18,2)");
+
+
             builder.Entity<ApplicationUser>()
                 .HasMany(a => a.ShippingAddress)
                 .WithOne(b => b.User)
