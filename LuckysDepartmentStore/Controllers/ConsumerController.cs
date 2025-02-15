@@ -21,7 +21,6 @@ namespace LuckysDepartmentStore.Controllers
 
             var newAddresses = await _consumerService.CreateShippingAddress(shippingAddress);
 
-
             if (!newAddresses.IsSuccess)
             {
                 TempData["FailureMessage"] = newAddresses.ErrorMessage;

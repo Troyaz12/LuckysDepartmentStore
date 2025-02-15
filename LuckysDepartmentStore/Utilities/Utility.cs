@@ -230,6 +230,26 @@ namespace LuckysDepartmentStore.Utilities
            decimal itemSubtotal = quantity * salePrice;
 
             return itemSubtotal;
+        }        
+        public bool IsSearchStringValid(string searchString, out string errorMessage)
+        {
+            errorMessage = string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                string[] prohibitedChars = new string[] { "'", "\"", ";", "--", "/*", "*/", "<", ">", "&", "/", "\\", "(", ")" };
+                foreach (var ch in prohibitedChars)
+                {
+                    if (searchString.Contains(ch))
+                    {
+                        errorMessage = "Invalid search string.";
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
+
     }
 }

@@ -43,6 +43,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.ShoppingCart
         public double? Stars { get; set; }
         public List<Sizes>? Sizes { get; set; } = new List<Sizes>();
 
+        [Required(ErrorMessage = "Size is required")]
         public int SizeSelection { get; set; }
         public decimal? DiscountAmount { get; set; }
         public decimal? DiscountPercent { get; set; }

@@ -44,7 +44,7 @@
                 <hr />
             <div class="form-group mt-2">
                 <label asp-for="DiscountDescription" class="control-label"></label>
-                <textarea asp-for="DiscountDescription" class="form-control" rows="5"></textarea>
+                <textarea asp-for="DiscountDescription" class="form-control" rows="5"></textarea>                
             </div>
                 <div class="form-group mt-2">
                     <label asp-for="DiscountPercent" class="control-label"></label>
@@ -60,8 +60,7 @@
                 </div>
                 <div class="form-group mt-2">
                     <label asp-for="DiscountArtFile" class="control-label"></label>
-                    <input asp-for="DiscountArtFile" class="form-control" type="file"/>
-                    <span asp-validation-for="DiscountArtFile" class="text-danger"></span>
+                    <input asp-for="DiscountArtFile" class="form-control" type="file"/>                    
                 </div>
                 <div class="form-group mt-2">
                     <label asp-for="DiscountActive" class="control-label"></label>
@@ -70,6 +69,7 @@
                 <div class="form-group mt-2">
                     <label asp-for="DiscountTag" class="control-label"></label>
                     <input asp-for="DiscountTag" class="form-control" type="text" />
+                    <span asp-validation-for="DiscountDescription" class="text-danger"></span>
                 </div>
                 <div class="form-group mt-2">
                     <label asp-for="ExpirationDate" class="control-label"></label>

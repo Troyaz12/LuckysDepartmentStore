@@ -1,5 +1,5 @@
-﻿$(window).on('load', function () {
-    
+﻿$(document).ready(function () {
+
         $('.options-radio').change(function (event) {
             updateSizes(event);
         });
@@ -8,16 +8,12 @@
         document.getElementById("ColorSelection").value = JSON.parse($('#ColorProduct').attr('data-color-id'))[0];
 
         function updateSizes(event) {
-            console.log("Running updateSizes...");
             var selectedRadio = event ? $(event.target) : $('.options-radio:checked');
             var selectedRadioId = selectedRadio.attr('id');
             var colorSelected = $('label[for="' + selectedRadioId + '"]').text();
-            var objectArray = [];
-
-            console.log("Selected Color: " + colorSelected);
+            var objectArray = [];         
 
             var colorProducts = $('#ColorProduct').data('products');
-            console.log("Color Products: ", colorProducts);
 
             colorProducts.forEach(function (colorProduct) {
                 objectArray.push({
@@ -32,8 +28,6 @@
                 });
             });
 
-            console.log("Object Array: ", objectArray);
-
             $.ajax({
                 url: $('#ColorProduct').attr('data-url'),
                 type: 'POST',
@@ -41,7 +35,6 @@
                 data: JSON.stringify(objectArray),
                 success: function (response) {
                     $('#sizesContainer').html(response);
-                    console.log("Sizes updated successfully.");
                 },
                 error: function (xhr, status, error) {
                     var errorMessage = xhr.status + ': ' + xhr.statusText;
@@ -58,11 +51,37 @@
             $("#sizesContainer .size-button").removeClass("selected");
             $(this).addClass("selected");
         });
+        document.getElementById('addToCartButton').addEventListener('click', function (event) {
+            var size = document.getElementById('SizeSelection');
+            var validationSize = document.getElementById('validationSize');
+            var validationQuantity = document.getElementById('validationQuantity');
 
-        document.querySelectorAll('input[name="options"]').forEach((elem) => {
-            elem.addEventListener("change", function (event) {
-                document.getElementById("ColorSelection").value = event.target.value;
-            });
+            if (size.value === '0') {
+               // alert("Please select a size before adding to cart.");
+                validationSize.style.display = 'block';
+                event.preventDefault();  // Prevent form submission
+            }
+            else {
+                validationSize.style.display = 'none';
+            }
+
+            var quantity = document.getElementById('Quantity');
+            var quantityValue = parseInt(quantity.value);
+
+            if (isNaN(quantityValue) || quantityValue <= '0') {
+                // alert("Please select a size before adding to cart.");
+                validationQuantity.style.display = 'block';
+                event.preventDefault();  // Prevent form submission
+            }
+            else {
+                validationQuantity.style.display = 'none';
+            }
+
+
         });
-    
+
+
+
+
+
 });

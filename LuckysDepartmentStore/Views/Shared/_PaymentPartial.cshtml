@@ -14,7 +14,7 @@
   
         @for (int i = 0; i < Model.Count; i++)
         {
-            <div class="col-md-12 mb-3">
+            <div class="col-md-12 mb-3" id="form-payment-container">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="SelectedPaymentOptionsID" id="@Model[i].PaymentOptionsID" value="@Model[i].PaymentOptionsID">
                     <label class="form-check-label" for="@Model[i].PaymentOptionsID">
@@ -34,7 +34,7 @@
                                 @Model[i].BillingAddress2 
                             </span>
                         }
-                <br />
+                        <br />
                         <span>
                             @Model[i].City,
                         </span>

@@ -1,13 +1,17 @@
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Service.Interfaces;
+using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc;
 using System.Diagnostics;
 
 namespace LuckysDepartmentStore.Controllers
 {
-    public class HomeController(IDiscountService _discountService, ILogger<HomeController> _logger, IProductService _productService, SignInManager<ApplicationUser> _signInManager, UserManager<ApplicationUser> _userManager, IShoppingCartService _shoppingCartService) : Controller
+    public class HomeController(IDiscountService _discountService, ILogger<HomeController> _logger, IProductService _productService, 
+        SignInManager<ApplicationUser> _signInManager, UserManager<ApplicationUser> _userManager, IShoppingCartService _shoppingCartService, 
+           Utility _utility) : Controller
     {
         //private readonly ILogger<HomeController> _logger;
 
@@ -45,6 +49,17 @@ namespace LuckysDepartmentStore.Controllers
         public async Task<IActionResult> SearchDiscount(string? categorySelection, string? subCategorySelection, 
             string? brandSelection, int? productID, string? discountTags)
         {
+            if (string.IsNullOrEmpty(discountTags))
+            {
+                discountTags = discountTags.Trim();
+            }
+
+            if (!_utility.IsSearchStringValid(discountTags, out string errorMessage))
+            {
+                TempData["ErrorMessage"] = errorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
             var productList = await _productService.GetProductsByDiscount(categorySelection, subCategorySelection, brandSelection, productID, discountTags);
 
             if (!productList.IsSuccess)
@@ -60,6 +75,18 @@ namespace LuckysDepartmentStore.Controllers
         public async Task<IActionResult> SearchProduct(string? category, string? subCategory, 
             string? brand, int? productID, string? searchString)
         {
+
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                searchString = searchString.Trim();             
+            }
+            
+            if (!_utility.IsSearchStringValid(searchString, out string errorMessage))
+            {
+                TempData["ErrorMessage"] = errorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
             var productList = await _productService.GetProductsSearch(category, subCategory, brand, productID, searchString);
 
             if (!productList.IsSuccess)
@@ -115,52 +142,5 @@ namespace LuckysDepartmentStore.Controllers
             }
             
         }
-        //[HttpPost]
-        //private void MigrateShoppingCart(string UserName)
-        //{
-        //    // Associate shopping cart items with logged-in user
-        //    var cart = _shoppingCartService.GetCart();
-
-        //    var migrateResult = _shoppingCartService.MigrateCart(UserName, cart);
-
-        //    if (!product.IsSuccess)
-        //    {
-        //        TempData["ErrorMessage"] = product.ErrorMessage;
-
-        //        return RedirectToAction("Index", "Error");
-        //    }
-
-        //    HttpContext.Session.SetString(ShoppingCart.CartSessionKey, UserName);
-        //}
-       
-        //[HttpPost]
-        //public async Task<ActionResult> Register(RegisterationModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-
-        //        var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
-        //        var result = await _userManager.CreateAsync(user, model.Password);
-
-        //        if (result.Succeeded)
-        //        {
-        //            MigrateShoppingCart(model.UserName);
-                   
-        //            return RedirectToAction("Index", "Home");
-        //        }
-        //        else
-        //        {
-        //            foreach (var error in result.Errors)
-        //            {
-        //                ModelState.AddModelError(string.Empty, error.Description);
-        //            }
-        //        }
-        //    }
-        //    // If we got this far, something failed, redisplay form
-        //    return View(model);
-        //}
-
-
-
     }
 }

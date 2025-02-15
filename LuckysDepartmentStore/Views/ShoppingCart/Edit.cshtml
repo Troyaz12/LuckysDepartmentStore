@@ -112,6 +112,7 @@
                     <div class="p-1">
                         <label asp-for="Quantity" class="control-label"></label>
                         <input asp-for="Quantity" type="number" class="form-control" id="Quantity" />
+                        <span asp-validation-for="Quantity" class="text-danger"></span>
                     </div>
                     <div class="p-2 text-white">
                         <input type="submit" id="Save" value="Save" class="btn btn-info mt-1 w-100" style="background-color: gold" />

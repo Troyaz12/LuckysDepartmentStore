@@ -59,13 +59,23 @@ namespace LuckysDepartmentStore.Controllers
 
                 return RedirectToAction("Index");
             }
-            return RedirectToAction("Item", "Home", new { productId = item.ProductID });
+
+            TempData["FailureMessage"] = "Unable to add to cart.";
+
+            return RedirectToAction("Index", "Error");
         }
        
         [HttpPost]
         public async Task<ActionResult> Delete(int id)
         {
             var removeResult = await _shoppingCartService.RemoveItemFromCart(id);
+
+            if (!removeResult.IsSuccess)
+            {
+                TempData["FailureMessage"] = removeResult.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
+            }
 
             return RedirectToAction("Index");
         }
@@ -108,6 +118,14 @@ namespace LuckysDepartmentStore.Controllers
         [HttpGet]
         public async Task<ActionResult> Edit(int id, int productId)
         {
+            if (id == 0 || productId == 0)
+            {
+                TempData["ErrorMessage"] = "Unable to get cart item.";
+
+                return RedirectToAction("Index", "Error");
+            }
+
+
             var product = await _productService.GetItem(productId);
 
             if (!product.IsSuccess)
@@ -130,16 +148,23 @@ namespace LuckysDepartmentStore.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(CartItemEdit item)
         {
-            var itemResponse = await _shoppingCartService.EditItemInCart(item);
-
-            if (!itemResponse.IsSuccess)
+            if (ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = itemResponse.ErrorMessage;
 
-                return RedirectToAction("Index", "Error");
+                var itemResponse = await _shoppingCartService.EditItemInCart(item);
+
+                if (!itemResponse.IsSuccess)
+                {
+                    TempData["ErrorMessage"] = itemResponse.ErrorMessage;
+
+                    return RedirectToAction("Index", "Error");
+                }
+
+                return RedirectToAction("Index");
+
             }
 
-            return RedirectToAction("Index"); ;
+            return View(item);
         }
     }
 }

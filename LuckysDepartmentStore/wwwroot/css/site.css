@@ -328,3 +328,7 @@ header {
     color: darkblue;
 }
 
+.error-message {
+    color: red;
+    display: none; /* Hide by default */
+}

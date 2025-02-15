@@ -30,6 +30,12 @@ namespace LuckysDepartmentStore.Controllers
         [HttpGet]
         public async Task<ActionResult> DetailsAsync(int id)
         {
+            if (id <=0)
+            {
+                TempData["FailureMessage"] = "Error getting Details.";
+
+                return RedirectToAction("Index", "Error");
+            }
 
             var discount = await _discountService.GetDiscount(id);
 
@@ -47,7 +53,7 @@ namespace LuckysDepartmentStore.Controllers
 
         // GET: DiscountController/Create
         [HttpGet]
-        public async Task<ActionResult> Create(DiscountVM discount)
+        public async Task<ActionResult> Create()
         {
             DiscountCreateVM product = new DiscountCreateVM();
             var category = await _productService.GetCategory();

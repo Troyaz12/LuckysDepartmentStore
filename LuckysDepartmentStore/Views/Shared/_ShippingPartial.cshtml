@@ -11,37 +11,42 @@
 
         @for (int i=0; i < Model.Count; i++)
         {
-                <div class="col-md-12 mb-3">
+            <div class="col-md-12 mb-3" id="form-shipping-container">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="SelectedShippingAddressID" id="shipping_@Model[i].ShippingAddressID" value="@Model[i].ShippingAddressID">
                         <label class="form-check-label" for="shipping_@Model[i].ShippingAddressID">
                            <span>
                                @Model[i].FirstName
                            </span>
+                            
                             <span>
                                 @Model[i].LastName
                             </span>
+                            
                             <br />
                             <span>
                                 @Model[i].Address1
                             </span>
-
+                            
                             @if(!string.IsNullOrEmpty(Model[i].Address2))
                             {
                                 <span>
                                     @Model[i].Address2
                                 </span>
                             }
-                <br />
+                            <br />
                             <span>
                                 @Model[i].City,
                             </span>
+                            
                             <span>
                                 @Model[i].State
                             </span>
+                            
                             <span>
                                 @Model[i].ZipCode
                             </span>
+                            
                         </label>
                         <input type="hidden" name="ShippingAddresses[@i].FirstName" value="@Model[i].FirstName" />
                         <input type="hidden" name="ShippingAddresses[@i].LastName" value="@Model[i].LastName" />
@@ -79,24 +84,30 @@
                                 <div class="modal-body">
                                     <label for="FirstName">First Name</label>
                                     <input name="FirstNameEdit" id="FirstNameEdit" class="form-control">
+                                    <span asp-validation-for="@Model[i].FirstName" class="text-danger"></span>
 
                                     <label for="LastName">Last Name</label>
                                     <input name="LastNameEdit" id="LastNameEdit" class="form-control">
+                                    <span asp-validation-for="@Model[i].LastName" class="text-danger"></span>
 
                                     <label for="Address1">Address1</label>
                                     <input name="Address1Edit" id="Address1Edit" class="form-control">
+                                    <span asp-validation-for="@Model[i].Address1" class="text-danger"></span>
 
                                     <label for="Address2">Address2</label>
                                     <input name="Address2Edit" id="Address2Edit" class="form-control">
 
                                     <label for="City">City</label>
                                     <input name="CityEdit" id="CityEdit" class="form-control">
+                                    <span asp-validation-for="@Model[i].Address1" class="text-danger"></span>
 
                                     <label for="State">State</label>
                                     <input name="StateEdit" id="StateEdit" class="form-control">
+                                    <span asp-validation-for="@Model[i].State" class="text-danger"></span>
 
                                     <label for="ZipCode">ZipCode</label>
                                     <input name="ZipCodeEdit" id="ZipCodeEdit" class="form-control">
+                                    <span asp-validation-for="@Model[i].ZipCode" class="text-danger"></span>
 
                                     <input type="hidden" name="SelectedShippingAddressID" id="SelectedShippingAddressID"/>
                                 </div>

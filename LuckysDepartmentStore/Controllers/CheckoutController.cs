@@ -181,8 +181,14 @@ namespace LuckysDepartmentStore.Controllers
         [HttpGet]
         public async Task<ActionResult> CompleteAsync(int id)
         {
-            var isValid = await _checkoutService.IsValid(id, User.Identity.Name);
+            if (id <= 0)
+            {
+                TempData["FailureMessage"] = "Error getting product data.";
 
+                return RedirectToAction("Index", "Error");
+            }
+
+            var isValid = await _checkoutService.IsValid(id, User.Identity.Name);
 
             if (!isValid.IsSuccess)
             {

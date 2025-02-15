@@ -133,8 +133,9 @@
             </div>
         </div>
     </div>
-
-<input type="submit" value="Submit Order" class="mt-5"/>
+    <div id="validationMessageShipping" class="error-message">Please select at least one shipping option.</div>
+    <div id="validationMessagePayment" class="error-message">Please select at least one payment option.</div>
+<input id="submitButton" type="submit" value="Submit Order" class="mt-5"/>
 
 </form>
 
@@ -467,6 +468,47 @@
             });
         });
 
+        document.getElementById('submitButton').addEventListener('click', function (event) {
+
+            const validationMessagePayment = document.getElementById('validationMessagePayment');
+            const validationMessageShipping = document.getElementById('validationMessageShipping');
+
+            //payment validation check
+            const radioButtonsPayment = document.querySelectorAll('#form-payment-container .form-check-input');
+            let isPaymentChecked = false;
+
+            radioButtonsPayment.forEach(radio => {
+                if (radio.checked) {
+                    isPaymentChecked = true;
+                }
+            });
+
+            if (!isPaymentChecked) {
+                validationMessagePayment.style.display = 'block';
+                event.preventDefault(); // stop submission validation fails
+            } else {
+                validationMessagePayment.style.display = 'none';                
+            }
+
+            // shipping validation check
+            const radioButtonsShipping = document.querySelectorAll('#form-shipping-container .form-check-input');
+            let isShippingChecked = false;
+
+            radioButtonsShipping.forEach(radio => {
+                if (radio.checked) {
+                    isShippingChecked = true;
+                }
+            });
+
+            if (!isShippingChecked) {
+                validationMessageShipping.style.display = 'block';
+                event.preventDefault(); // stop submission validation fails
+            } else {
+                validationMessageShipping.style.display = 'none';
+            }
+
+
+        });
 
 
     });

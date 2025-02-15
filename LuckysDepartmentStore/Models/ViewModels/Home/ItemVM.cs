@@ -17,7 +17,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Home
 
         [Display(Name = "Quantity")]
         [Required(ErrorMessage = "Quantity is required")]
-        [RegularExpression(@"^(?!0$).*$", ErrorMessage ="ProductName cannot be zero.")]
+        [Range(1, int.MaxValue, ErrorMessage = "The quantity must get greater than 0.")]
         public int Quantity { get; set; }
 
         [Display(Name = "ProductName")]

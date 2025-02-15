@@ -32,6 +32,12 @@ namespace LuckysDepartmentStore.Controllers
         [HttpGet]
         public async Task<ActionResult> DetailsAsync(int id)
         {
+            if (id == 0)
+            {
+                TempData["FailureMessage"] = "Error getting details.";
+                return RedirectToAction("Index", "Error");
+            }
+
             var details = await _productService.GetDetails(id);
             var sizes = await _productService.GetSize();
 
@@ -125,6 +131,12 @@ namespace LuckysDepartmentStore.Controllers
         [HttpGet]
         public async Task<ActionResult> EditAsync(int id)
         {
+            if (id == 0)
+            {
+                TempData["FailureMessage"] = "Error Editing Product. No id found.";
+                return RedirectToAction("Index", "Error");
+            }
+
             try
             {
                 var productEditVM = await _productService.GetAProduct(id);
@@ -178,24 +190,35 @@ namespace LuckysDepartmentStore.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditAsync(ProductEditVM product)
-        {           
-            var editResult = await _productService.EditProduct(product);
-
-            if (!editResult.IsSuccess)
+        {
+            if (ModelState.IsValid)
             {
-                TempData["FailureMessage"] = editResult.ErrorMessage;
+                var editResult = await _productService.EditProduct(product);
 
-                return RedirectToAction("Index", "Error");
+                if (!editResult.IsSuccess)
+                {
+                    TempData["FailureMessage"] = editResult.ErrorMessage;
+
+                    return RedirectToAction("Index", "Error");
+                }
+
+                return RedirectToAction(nameof(Index));
             }
 
-            return RedirectToAction(nameof(Index));         
+            return View(product);
         }        
 
         // POST: Product/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteAsync(int id, IFormCollection collection)
-        {          
+        {
+            if (id == 0)
+            {
+                TempData["FailureMessage"] = "Error deleting products.";
+                return RedirectToAction("Index", "Error");
+            }
+
             var result = await _productService.Delete(id);
 
             if (!result.IsSuccess)
@@ -214,7 +237,6 @@ namespace LuckysDepartmentStore.Controllers
             return PartialView("_DynamicPartialList", colorModel.ColorProductList);
         }
         [HttpPost]
-       // [ValidateAntiForgeryToken]
         public ActionResult UpdateListForEdit([FromBody] UpdateColorListVM product)
         {
             return PartialView("_DynamicPartialListEdit", product.ColorProductList);
