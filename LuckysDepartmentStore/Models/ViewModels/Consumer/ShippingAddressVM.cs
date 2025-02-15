@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace LuckysDepartmentStore.Models.ViewModels.Consumer
 {
@@ -25,9 +27,9 @@ namespace LuckysDepartmentStore.Models.ViewModels.Consumer
         [Display(Name = "Zip Code")]
         [Required(ErrorMessage = "ZipCode is required")]
         public int ZipCode { get; set; }
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
-        public string UserId { get; set; }
-        public virtual ApplicationUser User { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.Now;        
+        public string? UserId { get; set; }        
+        public virtual ApplicationUser? User { get; set; }
         public int SelectedShippingAddressID { get; set; }
     }
 }

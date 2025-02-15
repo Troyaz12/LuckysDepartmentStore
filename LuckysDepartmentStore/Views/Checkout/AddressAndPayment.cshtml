@@ -299,16 +299,25 @@
               contentType: 'application/json',
               data: JSON.stringify(shippingAddress),
               success: function (data) {
-                // Handle the success response                
-                $("#shippingAddressList").html(data);
+
+                    if (data.success === false) {
+                        // Display validation errors (if any)
+                        for (var field in data.errors) {
+                            var errorSpan = $("#" + field + "Edit").next('.text-danger');
+                            errorSpan.html(data.errors[field] + '<br>'); // Insert error
+                        }
+                    } else {
+                        // Successfully updated
+                        $("#shippingAddressList").html(data);
+                        modal.modal('hide');
+                    }
               },
               error: function () {
                   alert('Error occurred while saving the data.');
               }
           });
-
-          // Close the modal
-          modal.modal('hide');
+           
+          
       });
 
           $(document).on("click", ".delete-btn", function () {

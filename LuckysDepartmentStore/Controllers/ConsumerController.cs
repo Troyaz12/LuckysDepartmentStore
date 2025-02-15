@@ -96,8 +96,17 @@ namespace LuckysDepartmentStore.Controllers
             var user = await _userManager.GetUserAsync(User);
             shippingAddress.UserId = user.Id;
 
-            var editedAddresses = await _consumerService.EditShippingRecord(shippingAddress);
+            if (!ModelState.IsValid)
+            {
+                // Return errors along with the partial view
+                var errorMessages = ModelState
+                    .Where(x => x.Value.Errors.Count > 0)
+                    .ToDictionary(k => k.Key, v => v.Value.Errors.Select(e => e.ErrorMessage).ToList());
 
+                return Json(new { success = false, errors = errorMessages });
+            }
+
+            var editedAddresses = await _consumerService.EditShippingRecord(shippingAddress);
 
             if (!editedAddresses.IsSuccess)
             {
@@ -115,7 +124,8 @@ namespace LuckysDepartmentStore.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            return PartialView("_ShippingPartial", allAddresses.Data);
+            return PartialView("_ShippingPartial", allAddresses.Data);           
+
         }
 
         [HttpPost]

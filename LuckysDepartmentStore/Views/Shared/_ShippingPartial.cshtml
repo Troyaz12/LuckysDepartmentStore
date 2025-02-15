@@ -83,32 +83,35 @@
                                 </div>
                                 <div class="modal-body">
                                     <label for="FirstName">First Name</label>
-                                    <input name="FirstNameEdit" id="FirstNameEdit" class="form-control">
-                                    <span asp-validation-for="@Model[i].FirstName" class="text-danger"></span>
+                                    <input name="FirstName" id="FirstNameEdit" class="form-control">
+                                    <span class="text-danger" id="FirstNameError">
 
+
+                                    </span>
+                                  
                                     <label for="LastName">Last Name</label>
-                                    <input name="LastNameEdit" id="LastNameEdit" class="form-control">
-                                    <span asp-validation-for="@Model[i].LastName" class="text-danger"></span>
-
+                                    <input name="LastName" id="LastNameEdit" class="form-control">
+                        <span class="text-danger" id="LastNameError"></span>
+                       
                                     <label for="Address1">Address1</label>
-                                    <input name="Address1Edit" id="Address1Edit" class="form-control">
-                                    <span asp-validation-for="@Model[i].Address1" class="text-danger"></span>
-
+                                    <input name="Address1" id="Address1Edit" class="form-control">
+                        <span class="text-danger" id="Address1Error"></span>
+                        
                                     <label for="Address2">Address2</label>
-                                    <input name="Address2Edit" id="Address2Edit" class="form-control">
+                                    <input name="Address2" id="Address2Edit" class="form-control">
 
                                     <label for="City">City</label>
-                                    <input name="CityEdit" id="CityEdit" class="form-control">
-                                    <span asp-validation-for="@Model[i].Address1" class="text-danger"></span>
-
+                                    <input name="City" id="CityEdit" class="form-control">
+                        <span class="text-danger" id="CityError"></span>
+                        <br />
                                     <label for="State">State</label>
-                                    <input name="StateEdit" id="StateEdit" class="form-control">
-                                    <span asp-validation-for="@Model[i].State" class="text-danger"></span>
-
+                                    <input name="State" id="StateEdit" class="form-control">
+                        <span class="text-danger" id="StateError"></span>
+                        <br />
                                     <label for="ZipCode">ZipCode</label>
-                                    <input name="ZipCodeEdit" id="ZipCodeEdit" class="form-control">
-                                    <span asp-validation-for="@Model[i].ZipCode" class="text-danger"></span>
-
+                                    <input name="ZipCode" id="ZipCodeEdit" class="form-control">
+                        <span class="text-danger" id="ZipCodeError"></span>
+                        <br />
                                     <input type="hidden" name="SelectedShippingAddressID" id="SelectedShippingAddressID"/>
                                 </div>
                                 <div class="modal-footer">
