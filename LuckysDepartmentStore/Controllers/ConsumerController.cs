@@ -144,6 +144,16 @@ namespace LuckysDepartmentStore.Controllers
         [HttpPost]
         public async Task<IActionResult> EditPayment([FromBody] PaymentOptionsVM paymentOptions)
         {
+            if (!ModelState.IsValid)
+            {
+                // Return errors along with the partial view
+                var errorMessages = ModelState
+                    .Where(x => x.Value.Errors.Count > 0)
+                    .ToDictionary(k => k.Key, v => v.Value.Errors.Select(e => e.ErrorMessage).ToList());
+
+                return Json(new { success = false, errors = errorMessages });
+            }
+
             var user = await _userManager.GetUserAsync(User);
             paymentOptions.UserId = user.Id;
 

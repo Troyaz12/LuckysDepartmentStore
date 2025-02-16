@@ -253,72 +253,77 @@
           });
       });
 
-      $('#editShippingBackdrop').on('show.bs.modal', function (event) {
-          var button = $(event.relatedTarget); // Button that triggered the modal
-             
-          var firstName = button.data('firstnameedit');
-          var lastName = button.data('lastnameedit');
-          var address1 = button.data('address1edit');
-          var address2 = button.data('address2edit');
-          var city = button.data('cityedit');
-          var state = button.data('stateedit');
-          var zipcode = button.data('zipcodeedit');
-          var ShippingAddressID = button.data('shippingaddressid');
+        $(document).on('show.bs.modal', '#editShippingBackdrop', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
 
-          console.log("first name " + firstName);
-          // Update the modal's input fields
-          var modal = $(this);
-          modal.find('#FirstNameEdit').val(firstName);
-          modal.find('#LastNameEdit').val(lastName);
-          modal.find('#Address1Edit').val(address1);
-          modal.find('#Address2Edit').val(address2);
-          modal.find('#CityEdit').val(city);
-          modal.find('#StateEdit').val(state);
-          modal.find('#ZipCodeEdit').val(zipcode);
-          modal.find('#SelectedShippingAddressID').val(ShippingAddressID);
-      });
+            // Extract data from data-* attributes
+            var firstName = button.data('firstnameedit');
+            var lastName = button.data('lastnameedit');
+            var address1 = button.data('address1edit');
+            var address2 = button.data('address2edit');
+            var city = button.data('cityedit');
+            var state = button.data('stateedit');
+            var zipcode = button.data('zipcodeedit');
+            var shippingAddressID = button.data('shippingaddressid');
 
-       $('#saveBtn').on('click', function () {
-          var modal = $('#editShippingBackdrop');
-          console.log(modal.find('#SelectedShippingAddressID').val());
-          var shippingAddress = {
-              FirstName: modal.find('#FirstNameEdit').val(),
-              LastName: modal.find('#LastNameEdit').val(),
-              Address1: modal.find('#Address1Edit').val(),
-              Address2: modal.find('#Address2Edit').val(),
-              City: modal.find('#CityEdit').val(),
-              State: modal.find('#StateEdit').val(),
-              ZipCode: modal.find('#ZipCodeEdit').val(),
-              ShippingAddressID: modal.find('#SelectedShippingAddressID').val(),
-          };
+            // Update the modal's input fields
+            var modal = $(this);
+            modal.find('#FirstNameEdit').val(firstName);
+            modal.find('#LastNameEdit').val(lastName);
+            modal.find('#Address1Edit').val(address1);
+            modal.find('#Address2Edit').val(address2);
+            modal.find('#CityEdit').val(city);
+            modal.find('#StateEdit').val(state);
+            modal.find('#ZipCodeEdit').val(zipcode);
+            modal.find('#SelectedShippingAddressID').val(shippingAddressID);
+        });
 
-          // Send the updated data to the server using AJAX
-          $.ajax({
-              url: '@Url.Action("EditShippingAddress", "Consumer")',
-              type: 'POST',
-              contentType: 'application/json',
-              data: JSON.stringify(shippingAddress),
-              success: function (data) {
 
+        $(document).on('click', '#saveBtn', function () {
+            var modal = $('#editShippingBackdrop');
+            console.log(modal.find('#SelectedShippingAddressID').val());
+            var shippingAddress = {
+                FirstName: modal.find('#FirstNameEdit').val(),
+                LastName: modal.find('#LastNameEdit').val(),
+                Address1: modal.find('#Address1Edit').val(),
+                Address2: modal.find('#Address2Edit').val(),
+                City: modal.find('#CityEdit').val(),
+                State: modal.find('#StateEdit').val(),
+                ZipCode: modal.find('#ZipCodeEdit').val(),
+                ShippingAddressID: modal.find('#SelectedShippingAddressID').val()
+            };
+
+            // Send the updated data to the server using AJAX
+            $.ajax({
+                url: '@Url.Action("EditShippingAddress", "Consumer")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(shippingAddress),
+                success: function (data) {
                     if (data.success === false) {
                         // Display validation errors (if any)
                         for (var field in data.errors) {
-                            var errorSpan = $("#" + field + "Edit").next('.text-danger');
-                            errorSpan.html(data.errors[field] + '<br>'); // Insert error
+                            $("#" + field + "Edit").next('.text-danger').html(data.errors[field].join('<br>'));
                         }
                     } else {
                         // Successfully updated
                         $("#shippingAddressList").html(data);
                         modal.modal('hide');
                     }
-              },
-              error: function () {
-                  alert('Error occurred while saving the data.');
-              }
-          });
-           
-          
-      });
+                },
+                error: function () {
+                    alert('Error occurred while saving the data.');
+                }
+            });
+        });
+
+
+
+
+
+
+
+
 
           $(document).on("click", ".delete-btn", function () {
               var button = $(this);
@@ -421,15 +426,21 @@
                 data: JSON.stringify(shippingAddress),
                 success: function (data) {
                   // Handle the success response
-                    $("#paymentOptionList").html(data);
+                    if (data.success === false) {
+                        // Display validation errors (if any)
+                        for (var field in data.errors) {
+                            $("#" + field + "Edit").next('.text-danger').html(data.errors[field].join('<br>'));
+                        }
+                    } else {
+                        // Successfully updated
+                        $("#paymentOptionList").html(data);
+                        modal.modal('hide');
+                    }    
                 },
                 error: function () {
                     alert('Error occurred while saving the data.');
                 }
             });
-
-            // Close the modal
-            modal.modal('hide');
           });
 
         $(document).on("click", ".delete-btn-payment", function () {
