@@ -69,9 +69,9 @@
         <div class="mb-2">
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editPaymentBackdrop"
-                    data-firstnameedit="@Model[i].FirstName" data-lastnameedit="@Model[i].LastName" data-address1edit="@Model[i].BillingAddress1"
-                    data-address2edit="@Model[i].BillingAddress2" data-cityedit="@Model[i].City" data-stateedit="@Model[i].State" data-zipcodeedit="@Model[i].ZipCode"
-                    data-accountnumberedit="@Model[i].AccountNumber" data-cvccodeedit="@Model[i].CvcCode" data-paymentoptionsid="@Model[i].PaymentOptionsID">
+                data-firstnameeditpay="@Model[i].FirstName" data-lastnameeditpay="@Model[i].LastName" data-billingaddress1editpay="@Model[i].BillingAddress1"
+                data-billingaddress2editpay="@Model[i].BillingAddress2" data-cityeditpay="@Model[i].City" data-stateeditpay="@Model[i].State" data-zipcodeeditpay="@Model[i].ZipCode"
+                data-accountnumbereditpay="@Model[i].AccountNumber" data-cvccodeeditpay="@Model[i].CvcCode" data-paymentoptionsid="@Model[i].PaymentOptionsID">
                 Edit Payment Address
             </button>
 
@@ -89,38 +89,38 @@
                         </div>
                         <div class="modal-body">
                             <label for="FirstName">First Name</label>
-                            <input name="FirstName" id="FirstNameEdit" class="form-control">
+                            <input name="FirstName" id="FirstNameEditPay" class="form-control">
                             <span class="text-danger" id="FirstNameError"></span>
 
                             <label for="LastName">Last Name</label>
-                            <input name="LastName" id="LastNameEdit" class="form-control">
+                            <input name="LastName" id="LastNameEditPay" class="form-control">
                             <span class="text-danger" id="LastNameError"></span>
 
-                            <label for="Address1">Address1</label>
-                            <input name="Address1" id="Address1Edit" class="form-control">
-                            <span class="text-danger" id="Address1Error"></span>
+                            <label for="BillingAddress1">BillingAddress1</label>
+                            <input name="BillingAddress1" id="BillingAddress1EditPay" class="form-control">
+                            <span class="text-danger" id="BillingAddress1Error"></span>
 
-                            <label for="Address2">Address2</label>
-                            <input name="Address2" id="Address2Edit" class="form-control">
+                        <label for="BillingAddress2">BillingAddress2</label>
+                        <input name="BillingAddress2" id="BillingAddress2EditPay" class="form-control">
 
                             <label for="City">City</label>
-                            <input name="City" id="CityEdit" class="form-control">
+                            <input name="City" id="CityEditPay" class="form-control">
                             <span class="text-danger" id="CityError"></span>
 
                             <label for="State">State</label>
-                            <input name="State" id="StateEdit" class="form-control">
+                            <input name="State" id="StateEditPay" class="form-control">
                             <span class="text-danger" id="StateError"></span>
 
                             <label for="ZipCode">ZipCode</label>
-                            <input name="ZipCode" id="ZipCodeEdit" class="form-control">
+                            <input name="ZipCode" id="ZipCodeEditPay" class="form-control">
                             <span class="text-danger" id="ZipCodeError"></span>
 
                             <label for="AccountNumber">AccountNumber</label>
-                            <input name="AccountNumber" id="AccountNumberEdit" class="form-control">
+                            <input name="AccountNumber" id="AccountNumberEditPay" class="form-control">
                             <span class="text-danger" id="AccountNumberError"></span>
 
                             <label for="CvcCode">CvcCode</label>
-                            <input name="CvcCode" id="CvcCodeEdit" class="form-control">
+                            <input name="CvcCode" id="CvcCodeEditPay" class="form-control">
                             <span class="text-danger" id="CvcCodeError"></span>
 
                             <input type="hidden" name="PaymentOptionsID" id="PaymentOptionsID" />

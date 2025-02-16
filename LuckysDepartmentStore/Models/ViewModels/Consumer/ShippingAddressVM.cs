@@ -8,12 +8,15 @@ namespace LuckysDepartmentStore.Models.ViewModels.Consumer
     {
         public int ShippingAddressID { get; set; }
 
+        [Display(Name = "First Name")]
         [Required(ErrorMessage = "FirstName is required")]
         public string FirstName { get; set; }
 
+        [Display(Name = "Last Name")]
         [Required(ErrorMessage = "LastName is required")]
         public string LastName { get; set; }
 
+        [Display(Name = "Address")]
         [Required(ErrorMessage = "Address1 is required")]
         public string Address1 { get; set; }
         public string? Address2 { get; set; }

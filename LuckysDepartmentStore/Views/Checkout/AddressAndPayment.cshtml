@@ -168,7 +168,7 @@
                 url: '@Url.Action("CreateShippingAddress", "Consumer")',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(item),
+                data: JSON.stringify(item), 
 
                 success: function (data) {
                     $("#shippingAddressList").html(data);
@@ -374,31 +374,31 @@
           $('#editPaymentBackdrop').on('show.bs.modal', function (event) {
               var button = $(event.relatedTarget); // Button that triggered the modal
 
-                var firstName = button.data('firstnameedit');
-              var lastName = button.data('lastnameedit');
-              var address1 = button.data('address1edit');
-              var address2 = button.data('address2edit');
-              var city = button.data('cityedit');
-              var state = button.data('stateedit');
-              var zipcode = button.data('zipcodeedit');
+            var firstName = button.data('firstnameeditpay');
+            var lastName = button.data('lastnameeditpay');
+            var address1 = button.data('billingaddress1editpay');
+            var address2 = button.data('billingaddress2editpay');
+            var city = button.data('cityeditpay');
+            var state = button.data('stateeditpay');
+            var zipcode = button.data('zipcodeeditpay');
 
-              var accountNumber = button.data('accountnumberedit');
-              var cvccodeedit = button.data('cvccodeedit');
+            var accountNumber = button.data('accountnumbereditpay');
+            var cvccodeedit = button.data('cvccodeeditpay');
 
               var paymentOptionsID = button.data('paymentoptionsid');
 
             console.log("first name " + firstName);
               // Update the modal's input fields
               var modal = $(this);
-              modal.find('#FirstNameEdit').val(firstName);
-              modal.find('#LastNameEdit').val(lastName);
-              modal.find('#Address1Edit').val(address1);
-              modal.find('#Address2Edit').val(address2);
-              modal.find('#CityEdit').val(city);
-              modal.find('#StateEdit').val(state);
-              modal.find('#ZipCodeEdit').val(zipcode);
-              modal.find('#AccountNumberEdit').val(accountNumber);
-              modal.find('#CvcCodeEdit').val(cvccodeedit);
+            modal.find('#FirstNameEditPay').val(firstName);
+            modal.find('#LastNameEditPay').val(lastName);
+            modal.find('#BillingAddress1EditPay').val(address1);
+            modal.find('#BillingAddress2EditPay').val(address2);
+            modal.find('#CityEditPay').val(city);
+            modal.find('#StateEditPay').val(state);
+            modal.find('#ZipCodeEditPay').val(zipcode);
+            modal.find('#AccountNumberEditPay').val(accountNumber);
+            modal.find('#CvcCodeEditPay').val(cvccodeedit);
               modal.find('#PaymentOptionsID').val(paymentOptionsID);
           });
 
@@ -406,15 +406,15 @@
             var modal = $('#editPaymentBackdrop');
             console.log(modal.find('#PaymentOptionsID').val());
             var shippingAddress = {
-                FirstName: modal.find('#FirstNameEdit').val(),
-                LastName: modal.find('#LastNameEdit').val(),
-                BillingAddress1: modal.find('#Address1Edit').val(),
-                BillingAddress2: modal.find('#Address2Edit').val(),
-                City: modal.find('#CityEdit').val(),
-                State: modal.find('#StateEdit').val(),
-                ZipCode: modal.find('#ZipCodeEdit').val(),
-                AccountNumber: modal.find('#AccountNumberEdit').val(),
-                CvcCode: modal.find('#CvcCodeEdit').val(),
+                FirstName: modal.find('#FirstNameEditPay').val(),
+                LastName: modal.find('#LastNameEditPay').val(),
+                BillingAddress1: modal.find('#BillingAddress1EditPay').val(),
+                BillingAddress2: modal.find('#BillingAddress2EditPay').val(),
+                City: modal.find('#CityEditPay').val(),
+                State: modal.find('#StateEditPay').val(),
+                ZipCode: modal.find('#ZipCodeEditPay').val(),
+                AccountNumber: modal.find('#AccountNumberEditPay').val(),
+                CvcCode: modal.find('#CvcCodeEditPay').val(),
                 PaymentOptionsID: modal.find('#PaymentOptionsID').val(),
             };
 
@@ -427,9 +427,11 @@
                 success: function (data) {
                   // Handle the success response
                     if (data.success === false) {
+                        console.log("test:");
                         // Display validation errors (if any)
                         for (var field in data.errors) {
-                            $("#" + field + "Edit").next('.text-danger').html(data.errors[field].join('<br>'));
+                            console.log("test:" + field);
+                            $("#" + field + "EditPay").next('.text-danger').html(data.errors[field].join('<br>'));
                         }
                     } else {
                         // Successfully updated
