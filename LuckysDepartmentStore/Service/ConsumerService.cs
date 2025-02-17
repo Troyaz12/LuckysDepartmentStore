@@ -233,8 +233,8 @@ namespace LuckysDepartmentStore.Service
                 paymentOptionsOld.City = paymentOptions.City;
                 paymentOptionsOld.State = paymentOptions.State;
                 paymentOptionsOld.ZipCode = paymentOptions.ZipCode;
-                paymentOptions.AccountNumber = paymentOptions.AccountNumber;
-                paymentOptions.CvcCode = paymentOptions.CvcCode;
+                paymentOptionsOld.AccountNumber = paymentOptions.AccountNumber;
+                paymentOptionsOld.CvcCode = paymentOptions.CvcCode;
 
 
                 var paymentSave = _context.SaveChanges();

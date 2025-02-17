@@ -47,24 +47,31 @@
                         <div class="modal-body">
                             <label for="FirstName">First Name</label>
                             <input name="FirstName" id="FirstName" class="form-control">
+                            <span class="text-danger" id="FirstNameError"></span>
 
                             <label for="LastName">Last Name</label>
                             <input name="LastName" id="LastName" class="form-control">
+                            <span class="text-danger" id="LastNameError"></span>
 
                             <label for="Address1">Address1</label>
                             <input name="Address1" id="Address1" class="form-control">
+                            <span class="text-danger" id="Address1Error"></span>
 
                             <label for="Address2">Address2</label>
                             <input name="Address2" id="Address2" class="form-control">
+                            <span class="text-danger" id="Address2Error"></span>
 
                             <label for="City">City</label>
                             <input name="City" id="City" class="form-control">
+                            <span class="text-danger" id="CityError"></span>
 
                             <label for="State">State</label>
                             <input name="State" id="State" class="form-control">
+                            <span class="text-danger" id="StateError"></span>
 
                             <label for="ZipCode">ZipCode</label>
                             <input name="ZipCode" id="ZipCode" class="form-control">
+                            <span class="text-danger" id="ZipCodeError"></span>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -98,30 +105,39 @@
                         <div class="modal-body">
                             <label for="FirstName">First Name</label>
                             <input name="FirstName" id="FirstNamePay" class="form-control">
+                            <span class="text-danger" id="FirstNameError"></span>
 
                             <label for="LastName">Last Name</label>
                             <input name="LastName" id="LastNamePay" class="form-control">
+                            <span class="text-danger" id="LastNameError"></span>
 
                             <label for="AccountNumber">Credit Card Number</label>
-                            <input name="AccountNumber" id="AccountNumber" class="form-control">
+                            <input name="AccountNumber" id="AccountNumberPay" class="form-control">
+                            <span class="text-danger" id="AccountNumberError"></span>
 
                             <label for="BillingAddress1">Address 1</label>
-                            <input name="BillingAddress1" id="BillingAddress1" class="form-control">
+                            <input name="BillingAddress1" id="BillingAddress1Pay" class="form-control">
+                            <span class="text-danger" id="BillingAddress1Error"></span>
 
                             <label for="BillingAddress2">Address 2</label>
-                            <input name="BillingAddress2" id="BillingAddress2" class="form-control">
+                            <input name="BillingAddress2" id="BillingAddress2Pay" class="form-control">
+                            <span class="text-danger" id="BillingAddress2Error"></span>
 
                             <label for="City">City</label>
                             <input name="City" id="CityPay" class="form-control">
+                            <span class="text-danger" id="CityError"></span>
 
                             <label for="State">State</label>
                             <input name="State" id="StatePay" class="form-control">
+                            <span class="text-danger" id="StateError"></span>
 
                             <label for="ZipCode">ZipCode</label>
                             <input name="ZipCode" id="ZipCodePay" class="form-control">
+                            <span class="text-danger" id="ZipCodeError"></span>
 
                             <label for="CvcCode">CvcCode</label>
-                            <input name="CvcCode" id="CvcCode" class="form-control">
+                            <input name="CvcCode" id="CvcCodePay" class="form-control">
+                            <span class="text-danger" id="CvcCodeError"></span>
 
                         </div>
                         <div class="modal-footer">
@@ -151,7 +167,9 @@
             var Address2 = $('#Address2').val() || null;
             var City = $('#City').val();
             var State = $('#State').val();
-            var ZipCode = $('#ZipCode').val();
+            
+            var zipCodeValue = $('#ZipCode').val() || 0;
+            var ZipCode = zipCodeValue;
             var SelectedShippingAddressID = $('#SelectedShippingAddressID').val();
 
             var item = {
@@ -171,24 +189,29 @@
                 data: JSON.stringify(item), 
 
                 success: function (data) {
-                    $("#shippingAddressList").html(data);
-
-                    // Clear input fields after successful addition
-                    $("#FirstName").val('');
-                    $("#LastName").val('');
-                    $("#Address1").val('');
-                    $("#Address2").val('');
-                    $('#City').val('');
-                    $("#State").val('');
-                    $('#ZipCode').val('');
+                    
 
                     try {
-                    
-                        // console.log("test dialog5: ");
-                        // console.log(typeof $.fn.modal); // Should output "function" if Bootstrap is loaded correctly
-                        // console.log(typeof bootstrap); // Should still be an object                        
-                        $('#staticBackdrop').modal('hide');
-                  
+                        if (data.success === false) {
+                            // Display validation errors (if any)
+                            for (var field in data.errors) {
+                                var errorMessage = data.errors[field] + '<br/>'
+                                $("#" + field).next('.text-danger').html(errorMessage);
+
+                            }
+                        } else {
+                            // Clear input fields after successful addition
+                            $("#FirstName").val('');
+                            $("#LastName").val('');
+                            $("#Address1").val('');
+                            $("#Address2").val('');
+                            $('#City').val('');
+                            $("#State").val('');
+                            $('#ZipCode').val('');
+                            $("#shippingAddressList").html(data);
+                            // Successfully updated
+                            $('#staticBackdrop').modal('hide');
+                        }
                     } catch (error) {
                         console.error("Error hiding modal:", error);
                     }
@@ -200,19 +223,42 @@
             });
         });
 
+        $('#staticBackdrop').on('hidden.bs.modal', function () {
+            // Clear input fields
+            $("#FirstName").val('');
+            $("#LastName").val('');
+            $("#Address1").val('');
+            $("#Address2").val('');
+            $('#City').val('');
+            $("#State").val('');
+            $('#ZipCode').val('');
+
+            // Clear error messages
+            $('.text-danger').html('');
+        });
+
+
          $('#savePayment').on('click', function (e) {
           e.preventDefault();
 
           var FirstName = $('#FirstNamePay').val();
+            console.log("Test" + $('#FirstNamePay').val());
           var LastName = $('#LastNamePay').val();
-          var BillingAddress1 = $('#BillingAddress1').val();
-          var BillingAddress2 = $('#BillingAddress2').val() || null; 
+          var BillingAddress1 = $('#BillingAddress1Pay').val();
+          var BillingAddress2 = $('#BillingAddress2Pay').val() || null;
           var City = $('#CityPay').val();
           var State = $('#StatePay').val();
-          var ZipCode = $('#ZipCodePay').val();
-          var AccountNumber = $('#AccountNumber').val();
-          var CvcCode = $('#CvcCode').val();
 
+          var zipCodeValue = $('#ZipCodePay').val() || 0;
+          var ZipCode = zipCodeValue;
+
+          var accountNumberValue = $('#AccountNumberPay').val() || null;
+
+             console.log("Test" + accountNumberValue);
+            var AccountNumber = accountNumberValue;
+
+          var cvcValue = $('#CvcCodePay').val() || 0;
+            var CvcCode = cvcValue;
 
           var item = {
               FirstName: FirstName,
@@ -232,20 +278,36 @@
               data: JSON.stringify(item),
 
               success: function (data) {
-                  $("#paymentOptionList").html(data);
-                  console.log("Test3");
 
-                  $("#FirstNamePay").val('');
-                  $("#LastNamePay").val('');
-                  $("#BillingAddress1").val('');
-                  $("#BillingAddress2").val('');
-                  $('#CityPay').val('');
-                  $("#StatePay").val('');
-                  $('#ZipCodePay').val('');
-                  $('#AccountNumber').val('');
-                  $('#CvcCode').val('');
+                    try {
+                        if (data.success === false) {
+                            
+                            // Display validation errors (if any)
+                            for (var field in data.errors) {
 
-                  $('#paymentBackdrop').modal('hide');
+                                var errorMessage = data.errors[field] + '<br/>'
+                                $("#" + field + "Pay").next('.text-danger').html(errorMessage);
+                               
+                            }
+                        } else {
+                            $("#paymentOptionList").html(data);
+                            console.log("Test3");
+
+                            $("#FirstNamePay").val('');
+                            $("#LastNamePay").val('');
+                            $("#BillingAddress1Pay").val('');
+                            $("#BillingAddress2Pay").val('');
+                            $('#CityPay').val('');
+                            $("#StatePay").val('');
+                            $('#ZipCodePay').val('');
+                            $('#AccountNumberPay').val('');
+                            $('#CvcCodePay').val('');
+
+                            $('#paymentBackdrop').modal('hide');
+                        }
+                    } catch (error) {
+                        console.error("Error hiding modal:", error);
+                    }
               },
               error: function (jqXHR, textStatus, errorThrown) {
                   alert("Error updating list: " + errorThrown);
@@ -282,6 +344,9 @@
         $(document).on('click', '#saveBtn', function () {
             var modal = $('#editShippingBackdrop');
             console.log(modal.find('#SelectedShippingAddressID').val());
+
+            var zipCodeValue = modal.find('#ZipCodeEdit').val() || 0;
+
             var shippingAddress = {
                 FirstName: modal.find('#FirstNameEdit').val(),
                 LastName: modal.find('#LastNameEdit').val(),
@@ -289,7 +354,7 @@
                 Address2: modal.find('#Address2Edit').val(),
                 City: modal.find('#CityEdit').val(),
                 State: modal.find('#StateEdit').val(),
-                ZipCode: modal.find('#ZipCodeEdit').val(),
+                ZipCode: zipCodeValue,
                 ShippingAddressID: modal.find('#SelectedShippingAddressID').val()
             };
 
@@ -303,7 +368,8 @@
                     if (data.success === false) {
                         // Display validation errors (if any)
                         for (var field in data.errors) {
-                            $("#" + field + "Edit").next('.text-danger').html(data.errors[field].join('<br>'));
+                            var errorMessage = data.errors[field] + '<br/>'
+                            $("#" + field + "Edit").next('.text-danger').html(errorMessage);
                         }
                     } else {
                         // Successfully updated
@@ -374,37 +440,39 @@
           $('#editPaymentBackdrop').on('show.bs.modal', function (event) {
               var button = $(event.relatedTarget); // Button that triggered the modal
 
-            var firstName = button.data('firstnameeditpay');
-            var lastName = button.data('lastnameeditpay');
-            var address1 = button.data('billingaddress1editpay');
-            var address2 = button.data('billingaddress2editpay');
-            var city = button.data('cityeditpay');
-            var state = button.data('stateeditpay');
-            var zipcode = button.data('zipcodeeditpay');
+              var firstName = button.data('firstnameeditpay');
+              var lastName = button.data('lastnameeditpay');
+              var address1 = button.data('billingaddress1editpay');
+              var address2 = button.data('billingaddress2editpay');
+              var city = button.data('cityeditpay');
+              var state = button.data('stateeditpay');
+              var zipcode = button.data('zipcodeeditpay');
 
-            var accountNumber = button.data('accountnumbereditpay');
-            var cvccodeedit = button.data('cvccodeeditpay');
+              var accountNumber = button.data('accountnumbereditpay');
+              var cvccodeedit = button.data('cvccodeeditpay');
 
               var paymentOptionsID = button.data('paymentoptionsid');
 
-            console.log("first name " + firstName);
-              // Update the modal's input fields
+                // Update the modal's input fields
               var modal = $(this);
-            modal.find('#FirstNameEditPay').val(firstName);
-            modal.find('#LastNameEditPay').val(lastName);
-            modal.find('#BillingAddress1EditPay').val(address1);
-            modal.find('#BillingAddress2EditPay').val(address2);
-            modal.find('#CityEditPay').val(city);
-            modal.find('#StateEditPay').val(state);
-            modal.find('#ZipCodeEditPay').val(zipcode);
-            modal.find('#AccountNumberEditPay').val(accountNumber);
-            modal.find('#CvcCodeEditPay').val(cvccodeedit);
+              modal.find('#FirstNameEditPay').val(firstName);
+              modal.find('#LastNameEditPay').val(lastName);
+              modal.find('#BillingAddress1EditPay').val(address1);
+              modal.find('#BillingAddress2EditPay').val(address2);
+              modal.find('#CityEditPay').val(city);
+              modal.find('#StateEditPay').val(state);
+              modal.find('#ZipCodeEditPay').val(zipcode);
+              modal.find('#AccountNumberEditPay').val(accountNumber);
+              modal.find('#CvcCodeEditPay').val(cvccodeedit);
               modal.find('#PaymentOptionsID').val(paymentOptionsID);
           });
 
           $('#saveBtnPayment').on('click', function () {
             var modal = $('#editPaymentBackdrop');
-            console.log(modal.find('#PaymentOptionsID').val());
+
+            var zipCodeValue = modal.find('#ZipCodeEditPay').val() || 0;
+            var CvsCodeValue = modal.find('#CvcCodeEditPay').val() || 0;
+
             var shippingAddress = {
                 FirstName: modal.find('#FirstNameEditPay').val(),
                 LastName: modal.find('#LastNameEditPay').val(),
@@ -412,9 +480,9 @@
                 BillingAddress2: modal.find('#BillingAddress2EditPay').val(),
                 City: modal.find('#CityEditPay').val(),
                 State: modal.find('#StateEditPay').val(),
-                ZipCode: modal.find('#ZipCodeEditPay').val(),
+                ZipCode: zipCodeValue,
                 AccountNumber: modal.find('#AccountNumberEditPay').val(),
-                CvcCode: modal.find('#CvcCodeEditPay').val(),
+                CvcCode: CvsCodeValue,
                 PaymentOptionsID: modal.find('#PaymentOptionsID').val(),
             };
 
@@ -430,8 +498,8 @@
                         console.log("test:");
                         // Display validation errors (if any)
                         for (var field in data.errors) {
-                            console.log("test:" + field);
-                            $("#" + field + "EditPay").next('.text-danger').html(data.errors[field].join('<br>'));
+                            var errorMessage = data.errors[field] + '<br/>'
+                            $("#" + field + "EditPay").next('.text-danger').html(errorMessage);
                         }
                     } else {
                         // Successfully updated

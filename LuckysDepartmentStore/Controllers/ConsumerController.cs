@@ -16,6 +16,15 @@ namespace LuckysDepartmentStore.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateShippingAddress([FromBody] ShippingAddressVM shippingAddress)
         {
+           if (!ModelState.IsValid)
+           {
+               // Return errors along with the partial view
+               var errorMessages = ModelState
+                   .Where(x => x.Value.Errors.Count > 0)
+                   .ToDictionary(k => k.Key, v => v.Value.Errors.Select(e => e.ErrorMessage).ToList());
+
+               return Json(new { success = false, errors = errorMessages });
+           }
            var user = await _userManager.GetUserAsync(User);
            shippingAddress.UserId = user.Id;           
 
@@ -58,6 +67,16 @@ namespace LuckysDepartmentStore.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePaymentOption([FromBody] PaymentOptionsVM paymentOption)
         {
+            if (!ModelState.IsValid)
+            {
+                // Return errors along with the partial view
+                var errorMessages = ModelState
+                    .Where(x => x.Value.Errors.Count > 0)
+                    .ToDictionary(k => k.Key, v => v.Value.Errors.Select(e => e.ErrorMessage).ToList());
+
+                return Json(new { success = false, errors = errorMessages });
+            }
+
             var user = await _userManager.GetUserAsync(User);
             paymentOption.UserId = user.Id;
 
@@ -93,9 +112,6 @@ namespace LuckysDepartmentStore.Controllers
         [HttpPost]
         public async Task<IActionResult> EditShippingAddress([FromBody] ShippingAddressVM shippingAddress)
         {
-            var user = await _userManager.GetUserAsync(User);
-            shippingAddress.UserId = user.Id;
-
             if (!ModelState.IsValid)
             {
                 // Return errors along with the partial view
@@ -105,7 +121,8 @@ namespace LuckysDepartmentStore.Controllers
 
                 return Json(new { success = false, errors = errorMessages });
             }
-
+            var user = await _userManager.GetUserAsync(User);
+            shippingAddress.UserId = user.Id;
             var editedAddresses = await _consumerService.EditShippingRecord(shippingAddress);
 
             if (!editedAddresses.IsSuccess)

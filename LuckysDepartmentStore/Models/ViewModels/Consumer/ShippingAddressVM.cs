@@ -29,6 +29,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Consumer
 
         [Display(Name = "Zip Code")]
         [Required(ErrorMessage = "ZipCode is required")]
+        [Range(1, int.MaxValue, ErrorMessage = "ZipCode is required")]
         public int ZipCode { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;        
         public string? UserId { get; set; }        
