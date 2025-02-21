@@ -31,7 +31,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Product
 
         [Display(Name = "Brand")]
         public List<Brand>? Brand { get; set; }
-        public int BrandID { get; set; }
+        public int? BrandID { get; set; }
         [Display(Name = "Brand")]
         [Required(ErrorMessage = "Category is required")]
         public string? BrandSelection { get; set; }
