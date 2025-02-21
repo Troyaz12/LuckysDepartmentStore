@@ -15,12 +15,20 @@ namespace LuckysDepartmentStore.Utilities
         }
         public async Task SendCartCountUpdate()
         {
-            var cartID = _shoppingCartService.GetCart();
-            
-            var cartCount = await _shoppingCartService.GetCartCount(cartID);
+            try
+            {
+                var cartID = _shoppingCartService.GetCart();
 
-            _logger.LogInformation("Test Connection called");
-            await Clients.All.SendAsync("ReceiveCartCountUpdate", cartCount.Data);
+                var cartCount = await _shoppingCartService.GetCartCount(cartID);
+
+                _logger.LogInformation("Test Connection called");
+                await Clients.All.SendAsync("ReceiveCartCountUpdate", cartCount.Data);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            
 
         }
         public async Task TestConnection() 

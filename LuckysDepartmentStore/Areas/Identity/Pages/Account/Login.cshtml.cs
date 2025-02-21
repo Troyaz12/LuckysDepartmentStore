@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Service.Interfaces;
 
 namespace LuckysDepartmentStore.Areas.Identity.Pages.Account
 {
@@ -22,11 +23,13 @@ namespace LuckysDepartmentStore.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IShoppingCartService _shoppingCartService;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, IShoppingCartService shoppingCartService)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _shoppingCartService = shoppingCartService;
         }
 
         /// <summary>
@@ -116,6 +119,8 @@ namespace LuckysDepartmentStore.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    await _shoppingCartService.GetCartIdOnLogInAsync();
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

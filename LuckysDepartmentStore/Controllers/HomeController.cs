@@ -22,6 +22,10 @@ namespace LuckysDepartmentStore.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+
+            // Call GetCartId() early to ensure session is set up
+            var cartID = _shoppingCartService.GetCart();
+
             var frontPageData = await _discountService.GetActiveDiscounts();
 
             if (!frontPageData.IsSuccess)

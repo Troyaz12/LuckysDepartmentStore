@@ -28,7 +28,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Consumer
         [Required(ErrorMessage = "Billing address is required")]
         public string BillingAddress1 { get; set; }
 
-        public string BillingAddress2 { get; set; }
+        public string? BillingAddress2 { get; set; }
 
         [Display(Name = "City")]
         [Required(ErrorMessage = "City is required")]

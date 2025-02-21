@@ -28,7 +28,7 @@ namespace LuckysDepartmentStore.Service
             _mapper = mapper;
             _httpContext = httpContext;
             _utility = utility;
-             _colorService = color;
+            _colorService = color;
         }
 
         public string GetCart()
@@ -372,16 +372,59 @@ namespace LuckysDepartmentStore.Service
             {
                 if (!string.IsNullOrWhiteSpace(_httpContext.HttpContext.User.Identity.Name))
                 {
-                    _httpContext.HttpContext.Session.SetString(CartSessionKey, _httpContext.HttpContext.User.Identity.Name);
+                    try
+                    {
+                        _httpContext.HttpContext.Session.SetString(CartSessionKey, _httpContext.HttpContext.User.Identity.Name);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                    
                 }
                 else
                 {
-                    // Generate a new random GUID using System.Guid class
-                    Guid tempCartId = Guid.NewGuid();
-                    // Send tempCartId back to client as a cookie
-                    _httpContext.HttpContext.Session.SetString(CartSessionKey, tempCartId.ToString());
+                    try
+                    {
+                        // Generate a new random GUID using System.Guid class
+                        Guid tempCartId = Guid.NewGuid();
+                        // Send tempCartId back to client as a cookie
+                        _httpContext.HttpContext.Session.SetString(CartSessionKey, tempCartId.ToString());
+                    }catch(Exception ex)
+                    {
+
+                    }
+                    
                 }
             }
+            return _httpContext.HttpContext.Session.GetString(CartSessionKey);
+        }
+        // We're using HttpContextBase to allow access to cookies.
+        public async Task<string> GetCartIdOnLogInAsync()
+        {
+
+            // does the existing id have any items associated with it? pull items
+            if (_httpContext.HttpContext.Session.GetString(CartSessionKey) != null && !string.IsNullOrWhiteSpace(_httpContext.HttpContext.User.Identity.Name))
+            {
+                // pull items from logged in id
+                var cartGuest = await GetCartItems(CartSessionKey);
+
+                if (cartGuest.Data.cartsVMs.Count > 0) {
+                    var cartUser = await GetCartItems(CartSessionKey);
+
+                    // merge the two
+                    cartUser.Data.cartsVMs = cartUser.Data.cartsVMs.Concat(cartGuest.Data.cartsVMs).ToList();
+
+                    // save them to the logged in id
+                    await _context.SaveChangesAsync();
+
+                    // delete the temporary one
+                    var removeCartRes = RemoveCart(cartGuest.Data.cartsVMs[0].CartID);
+                }
+            }
+
+            _httpContext.HttpContext.Session.SetString(CartSessionKey, _httpContext.HttpContext.User.Identity.Name);
+
             return _httpContext.HttpContext.Session.GetString(CartSessionKey);
         }
 
@@ -508,6 +551,22 @@ namespace LuckysDepartmentStore.Service
             var cartItemSave = _context.SaveChangesAsync();
 
             return ExecutionResult<Carts>.Success(cartItemResult);
+
+        }
+        public async Task<ExecutionResult<Carts>> RemoveCart(string cartID)
+        {            
+
+            if (cartID == null)
+            {
+                return ExecutionResult<Carts>.Failure("Unable to remove item from cart.");
+            }
+
+            var cart = _context.Carts.SingleOrDefault(c => c.CartID == cartID);
+
+            _context.Carts.Remove(cart);
+            await _context.SaveChangesAsync();
+
+            return ExecutionResult<Carts>.Success(cart);
 
         }
     }

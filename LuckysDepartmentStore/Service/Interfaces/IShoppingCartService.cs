@@ -35,7 +35,9 @@ namespace LuckysDepartmentStore.Service.Interfaces
         public Task<ExecutionResult<CartsVM>> GetCartItem(int itemId);
 
         public Task<ExecutionResult<Carts>> RemoveItemFromCart(int Id);
-        public Task<ExecutionResult<Carts>> EditItemInCart(CartItemEdit cartItem);
 
+        public Task<ExecutionResult<Carts>> EditItemInCart(CartItemEdit cartItem);
+        
+        public Task<string> GetCartIdOnLogInAsync();
     }
 }

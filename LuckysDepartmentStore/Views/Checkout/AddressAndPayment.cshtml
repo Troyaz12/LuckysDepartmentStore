@@ -115,6 +115,10 @@
                             <input name="AccountNumber" id="AccountNumberPay" class="form-control">
                             <span class="text-danger" id="AccountNumberError"></span>
 
+                            <label for="CvcCode">CvcCode</label>
+                            <input name="CvcCode" id="CvcCodePay" class="form-control">
+                            <span class="text-danger" id="CvcCodeError"></span>
+
                             <label for="BillingAddress1">Address 1</label>
                             <input name="BillingAddress1" id="BillingAddress1Pay" class="form-control">
                             <span class="text-danger" id="BillingAddress1Error"></span>
@@ -134,11 +138,6 @@
                             <label for="ZipCode">ZipCode</label>
                             <input name="ZipCode" id="ZipCodePay" class="form-control">
                             <span class="text-danger" id="ZipCodeError"></span>
-
-                            <label for="CvcCode">CvcCode</label>
-                            <input name="CvcCode" id="CvcCodePay" class="form-control">
-                            <span class="text-danger" id="CvcCodeError"></span>
-
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -242,7 +241,6 @@
           e.preventDefault();
 
           var FirstName = $('#FirstNamePay').val();
-            console.log("Test" + $('#FirstNamePay').val());
           var LastName = $('#LastNamePay').val();
           var BillingAddress1 = $('#BillingAddress1Pay').val();
           var BillingAddress2 = $('#BillingAddress2Pay').val() || null;
