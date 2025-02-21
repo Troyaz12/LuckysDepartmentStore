@@ -216,12 +216,14 @@
             const subCategoryValue = subCategorySelectionIn.value;
             const brandValue = brandSelectionIn.value;
             const productIDValue = productID.value;
+            const discountTagValue = DiscountTag.value;
             
-            if(!categoryValue && !subCategoryValue && !brandValue && !productIDValue)
+            
+            if(!categoryValue && !subCategoryValue && !brandValue && !productIDValue && !discountTagValue)
             {
                 event.preventDefault();
 
-                const errorMessage = 'You must enter one of the following: Category, SubCategory, Brand or ProductID';
+                const errorMessage = 'You must enter one of the following: Category, SubCategory, Brand, ProductID or discountTag';
                 categoryError.textContent = errorMessage;
             }
 

@@ -22,7 +22,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Discount
         [Display(Name = "Category")]
         public List<Category>? Category { get; set; }
 
-        [OneChoiceRequired("CategorySelection", "SubCategorySelection", "BrandSelection", "ProductID", ErrorMessage = "A discount must have one or more of the following, Category, SubCategory, Brand, or ProductID.")]
+        [OneChoiceRequired("CategorySelection", "SubCategorySelection", "BrandSelection", "ProductID", "DiscountTag", ErrorMessage = "A discount must have one or more of the following, Category, SubCategory, Brand, DiscountTag or ProductID.")]
         public string? CategorySelection { get; set; }
         public int? CategoryID { get; set; }
 
@@ -30,7 +30,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.Discount
         public List<SubCategory>? SubCategory { get; set; }
 
         [Display(Name = "SubCategory")]
-        [OneChoiceRequired("CategorySelection", "SubCategorySelection", "BrandSelection", "ProductID", ErrorMessage = "A discount must have one of the following, Category, SubCategory, Brand, or ProductID.")]
+        [OneChoiceRequired("CategorySelection", "SubCategorySelection", "BrandSelection", "ProductID", "DiscountTag", ErrorMessage = "A discount must have one of the following, Category, SubCategory, Brand, DiscountTag or ProductID.")]
         public string? SubCategorySelection { get; set; }
         public int? SubCategoryID { get; set; }
 
@@ -38,12 +38,12 @@ namespace LuckysDepartmentStore.Models.ViewModels.Discount
         public List<Brand>? Brand { get; set; }
 
         [Display(Name = "Brand")]
-        [OneChoiceRequired("CategorySelection", "SubCategorySelection", "BrandSelection", "ProductID", ErrorMessage = "A discount must have one of the following, Category, SubCategory, Brand, or ProductID.")]
+        [OneChoiceRequired("CategorySelection", "SubCategorySelection", "BrandSelection", "ProductID", "DiscountTag", ErrorMessage = "A discount must have one of the following, Category, SubCategory, Brand, DiscountTag or ProductID.")]
         public string? BrandSelection { get; set; }
 
         public int? BrandID { get; set; }
 
-        [OneChoiceRequired("CategorySelection", "SubCategorySelection", "BrandSelection", "ProductID", ErrorMessage = "A discount must have one of the following, Category, SubCategory, Brand, or ProductID.")]
+        [OneChoiceRequired("CategorySelection", "SubCategorySelection", "BrandSelection", "ProductID", "DiscountTag", ErrorMessage = "A discount must have one of the following, Category, SubCategory, Brand, DiscountTag or ProductID.")]
         public int? ProductID { get; set; }
 
         [Display(Name = "Discount Description")]
@@ -53,6 +53,8 @@ namespace LuckysDepartmentStore.Models.ViewModels.Discount
         [DataType(DataType.DateTime)]
         [FutureDateCheck("ExpirationDate", ErrorMessage = "Expiration Date must be greater then today.")]
         public DateTime ExpirationDate { get; set; }
+
+        [OneChoiceRequired("CategorySelection", "SubCategorySelection", "BrandSelection", "ProductID", "DiscountTag", ErrorMessage = "A discount must have one or more of the following, Category, SubCategory, Brand, DiscountTag or ProductID.")]
         public string? DiscountTag { get; set; }
     }
 }
