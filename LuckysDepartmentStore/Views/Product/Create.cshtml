@@ -248,9 +248,9 @@
             var quantity = $('#QuantityInput').val() ? parseInt($('#QuantityInput').val()) : 0;
             var sizeID = $('#SizeID').val() ? parseInt($('#SizeID').val()) : null;
             var sizeName = $('#Sizes').val();
-            console.log("test dialog: " + sizeID + " " + sizeName);
+                console.log("test dialog: " + sizeID + " " + sizeName +  " " + colorID + " " + name + " " + quantity);
             var newItem = {
-                ColorID: colorID,
+                ColorID: colorID ? colorID : 0,
                 Quantity: quantity,
                 Name: name,
                 SizeID: sizeID,
@@ -258,8 +258,12 @@
             };
 
             var currentColorProducts = gatherColorProducts();
+
+            console.log(currentColorProducts);
+
             currentColorProducts.push(newItem);
 
+            console.log(currentColorProducts);
             
             var allData = {
                 ColorProductList: currentColorProducts
@@ -270,9 +274,10 @@
                 type: 'POST',
                 contentType: 'application/json', 
                 data: JSON.stringify(allData),
-
+                
                 success: function (data) 
-                { 
+                {
+                        
                     $("#dynamicList").html(data);
 
                     $("#Color").val('');
@@ -285,6 +290,7 @@
                 error: function (jqXHR, textStatus, errorThrown)
                 { 
                     alert("Error updating list: " + errorThrown);
+                            console.log(errorThrown);
                 }
             });
         });

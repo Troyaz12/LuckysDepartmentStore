@@ -113,6 +113,11 @@ namespace LuckysDepartmentStore.Controllers
         {
             if (ModelState.IsValid)
             {
+                product.ColorProduct
+                    .Where(cp => cp.ColorID == 0)
+                    .ToList()
+                    .ForEach(cp => cp.ColorID = null);
+
                 var productSent = await _productService.CreateAsync(product);
 
                 if (!productSent.IsSuccess)
