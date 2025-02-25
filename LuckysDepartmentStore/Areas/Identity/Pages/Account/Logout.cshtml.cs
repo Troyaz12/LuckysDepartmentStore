@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +18,12 @@ namespace LuckysDepartmentStore.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
+        private readonly IShoppingCartService _shoppingCartService;
 
-        public LogoutModel(SignInManager<ApplicationUser> signInManager, ILogger<LogoutModel> logger)
+        public LogoutModel(SignInManager<ApplicationUser> signInManager, ILogger<LogoutModel> logger, IShoppingCartService shoppingCartService)
         {
             _signInManager = signInManager;
+            _shoppingCartService = shoppingCartService;
             _logger = logger;
         }
 
@@ -28,17 +31,9 @@ namespace LuckysDepartmentStore.Areas.Identity.Pages.Account
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
-            if (returnUrl != null)
-            {
-                //return LocalRedirect(returnUrl);
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                // This needs to be a redirect so that the browser performs a new
-                // request and the identity for the user gets updated.
-                return RedirectToPage();
-            }
+            var cartId = _shoppingCartService.SetCartSessionKey();
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

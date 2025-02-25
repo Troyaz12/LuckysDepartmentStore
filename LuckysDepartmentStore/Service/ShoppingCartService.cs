@@ -587,5 +587,14 @@ namespace LuckysDepartmentStore.Service
                 return ExecutionResult<List<Carts>>.Failure("Unable to add items cart.");
             }
         }
+        public ExecutionResult<Guid> SetCartSessionKey()
+        {
+
+            Guid tempCartId = Guid.NewGuid();
+            // Send tempCartId back to client as a cookie
+            _httpContext.HttpContext.Session.SetString(CartSessionKey, tempCartId.ToString());
+
+            return ExecutionResult<Guid>.Success(tempCartId);            
+        }
     }
 }

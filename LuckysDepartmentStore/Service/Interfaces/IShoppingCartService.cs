@@ -39,5 +39,7 @@ namespace LuckysDepartmentStore.Service.Interfaces
         public Task<ExecutionResult<Carts>> EditItemInCart(CartItemEdit cartItem);
         
         public Task<string> GetCartIdOnLogInAsync();
+
+        public ExecutionResult<Guid> SetCartSessionKey();
     }
 }
