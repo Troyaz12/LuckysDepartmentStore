@@ -81,7 +81,8 @@ namespace LuckysDepartmentStore.MappingProfiles
             CreateMap<CartItemVM, ItemVM>()
           .ReverseMap();
 
-           
+            CreateMap<ShoppingCartVM, Carts>()
+         .ReverseMap();
 
 
         }

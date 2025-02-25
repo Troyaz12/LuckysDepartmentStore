@@ -3,6 +3,7 @@ using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.DTO.ShoppingCart;
 using LuckysDepartmentStore.Models.ViewModels.Discount;
+using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Models.ViewModels.ShoppingCart;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
@@ -16,12 +17,12 @@ namespace LuckysDepartmentStore.Service
     {
         public LuckysContext _context;
         public IMapper _mapper;
-        public const string CartSessionKey = "CartId";    
+        public const string CartSessionKey = "CartId";
         private readonly IHttpContextAccessor _httpContext;
         public Utility _utility;
         public IColorService _colorService;
 
-        public ShoppingCartService(LuckysContext context, IMapper mapper, IHttpContextAccessor httpContext, 
+        public ShoppingCartService(LuckysContext context, IMapper mapper, IHttpContextAccessor httpContext,
             Utility utility, IColorService color)
         {
             _context = context;
@@ -44,7 +45,7 @@ namespace LuckysDepartmentStore.Service
 
         }
         public async Task<ExecutionResult<CartsVM>> AddToCartAsync(CartItemsDTO product, string ShoppingCartId)
-        {            
+        {
             try
             {
                 // Get the matching cart instances
@@ -85,12 +86,12 @@ namespace LuckysDepartmentStore.Service
 
                 return ExecutionResult<CartsVM>.Success(cartVM);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return ExecutionResult<CartsVM>.Failure("Unable to add to cart.");
             }
 
-            
+
         }
 
         public async Task<ExecutionResult<int>> RemoveFromCart(Product product, string ShoppingCartId)
@@ -102,7 +103,7 @@ namespace LuckysDepartmentStore.Service
                 // Get the cart
                 var cartItem = _context.Carts.Single(
                     cart => cart.CartID == ShoppingCartId
-                    && cart.ID == product.ProductID);                
+                    && cart.ID == product.ProductID);
 
                 if (cartItem != null)
                 {
@@ -153,12 +154,12 @@ namespace LuckysDepartmentStore.Service
                 // Save changes
                 _context.SaveChangesAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return ExecutionResult<int>.Failure("Unable to remove cart item.");
             }
 
-                return ExecutionResult<int>.Success(cartItems.Count());
+            return ExecutionResult<int>.Success(cartItems.Count());
         }
         public async Task<ExecutionResult<ShoppingCartVM>> GetCartItems(string ShoppingCartId)
         {
@@ -166,7 +167,7 @@ namespace LuckysDepartmentStore.Service
             {
                 var shoppingCart = new ShoppingCartVM();
 
-                var cartItems = await(
+                var cartItems = await (
                     from cart in _context.Carts
                     join product in _context.Products on cart.ProductID equals product.ProductID
                     join category in _context.Categories on product.CategoryID equals category.CategoryID into categories
@@ -225,21 +226,21 @@ namespace LuckysDepartmentStore.Service
                     return ExecutionResult<ShoppingCartVM>.Failure("Unable to get cart items.");
                 }
                 else if (!cartItems.Any())
-                {                    
+                {
                     ExecutionResult<ShoppingCartVM>.Success(shoppingCart);
                 }
 
                 var cartVM = _mapper.Map<List<CartsVM>>(cartItems);
-                
-                for (int x=0; x < cartVM.Count; x++)
+
+                for (int x = 0; x < cartVM.Count; x++)
                 {
                     cartVM[x].ProductImage = _utility.BytesToImage(cartVM[x].ProductPicture);
                     cartVM[x].SalePrice = _utility.CalculateSalePrice(cartVM[x].DiscountAmount, cartVM[x].DiscountPercent, cartVM[x].Price);
                     cartVM[x].Subtotal = _utility.CalculateItemSubtotal(cartVM[x].Quantity, cartVM[x].SalePrice);
                     var sizeName = await _colorService.GetSizeName(cartVM[x].Size);
                     cartVM[x].SizeString = sizeName.Data;
-                    
-                    var colorName =  await _colorService.GetColorName(cartVM[x].Color);
+
+                    var colorName = await _colorService.GetColorName(cartVM[x].Color);
                     cartVM[x].ColorString = colorName.Data;
 
                     shoppingCart.CartTotal += cartVM[x].Subtotal;
@@ -252,7 +253,7 @@ namespace LuckysDepartmentStore.Service
             catch (Exception ex)
             {
                 return ExecutionResult<ShoppingCartVM>.Failure("Unable to get cart items.");
-            }           
+            }
         }
         public async Task<ExecutionResult<int>> GetCount(string ShoppingCartId)
         {
@@ -261,10 +262,10 @@ namespace LuckysDepartmentStore.Service
             {
                 // Get the count of each item in the cart and sum them up
                 count = (from cartItems in _context.Carts
-                              where cartItems.CartID == ShoppingCartId
-                              select (int?)cartItems.Quantity).Sum();
-                
-              
+                         where cartItems.CartID == ShoppingCartId
+                         select (int?)cartItems.Quantity).Sum();
+
+
             }
             catch (Exception ex)
             {
@@ -284,7 +285,7 @@ namespace LuckysDepartmentStore.Service
                 total = await _context.Carts
                                   .Where(cartItems => cartItems.CartID == ShoppingCartId)
                                   .Select(cartItems => (int?)cartItems.Quantity * cartItems.Price)
-                                  .SumAsync();                
+                                  .SumAsync();
             }
             catch (Exception ex)
             {
@@ -314,11 +315,11 @@ namespace LuckysDepartmentStore.Service
 
                     };
                     // Set the order total of the shopping cart
-                //    orderTotal += (item.Quantity * item.Price);
+                    //    orderTotal += (item.Quantity * item.Price);
 
                     _context.CustomerOrderItems.Add(customerOrderItem);
 
-                }                
+                }
 
                 // Save the order
                 await _context.SaveChangesAsync();
@@ -329,19 +330,19 @@ namespace LuckysDepartmentStore.Service
 
 
 
-                
+
                 // Empty the shopping cart
                 EmptyCart(ShoppingCartId);
 
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return Utilities.ExecutionResult<decimal>.Failure("Unable to get cart total.");
             }
 
             // Return the CustomerOrderID as the confirmation number
             return Utilities.ExecutionResult<decimal>.Success(orderTotal);
-        }      
+        }
         // When a user has logged in, migrate their shopping cart to
         // be associated with their username
         public async Task<Utilities.ExecutionResult<string>> MigrateCart(string userName, string ShoppingCartId)
@@ -367,7 +368,7 @@ namespace LuckysDepartmentStore.Service
         // We're using HttpContextBase to allow access to cookies.
         public string GetCartId()
         {
-            
+
             if (_httpContext.HttpContext.Session.GetString(CartSessionKey) == null)
             {
                 if (!string.IsNullOrWhiteSpace(_httpContext.HttpContext.User.Identity.Name))
@@ -380,7 +381,7 @@ namespace LuckysDepartmentStore.Service
                     {
 
                     }
-                    
+
                 }
                 else
                 {
@@ -390,11 +391,12 @@ namespace LuckysDepartmentStore.Service
                         Guid tempCartId = Guid.NewGuid();
                         // Send tempCartId back to client as a cookie
                         _httpContext.HttpContext.Session.SetString(CartSessionKey, tempCartId.ToString());
-                    }catch(Exception ex)
+                    }
+                    catch (Exception ex)
                     {
 
                     }
-                    
+
                 }
             }
             return _httpContext.HttpContext.Session.GetString(CartSessionKey);
@@ -406,21 +408,10 @@ namespace LuckysDepartmentStore.Service
             // does the existing id have any items associated with it? pull items
             if (_httpContext.HttpContext.Session.GetString(CartSessionKey) != null && !string.IsNullOrWhiteSpace(_httpContext.HttpContext.User.Identity.Name))
             {
+                var cart = GetCart();
                 // pull items from logged in id
-                var cartGuest = await GetCartItems(CartSessionKey);
-
-                if (cartGuest.Data.cartsVMs.Count > 0) {
-                    var cartUser = await GetCartItems(CartSessionKey);
-
-                    // merge the two
-                    cartUser.Data.cartsVMs = cartUser.Data.cartsVMs.Concat(cartGuest.Data.cartsVMs).ToList();
-
-                    // save them to the logged in id
-                    await _context.SaveChangesAsync();
-
-                    // delete the temporary one
-                    var removeCartRes = RemoveCart(cartGuest.Data.cartsVMs[0].CartID);
-                }
+            //    var cartGuest = await GetCartItems(cart);
+                var migrateResult = await MigrateAnonymousCartItems(cart);
             }
 
             _httpContext.HttpContext.Session.SetString(CartSessionKey, _httpContext.HttpContext.User.Identity.Name);
@@ -493,22 +484,22 @@ namespace LuckysDepartmentStore.Service
                         Color = grouped.Key.Color
                     }).FirstOrDefaultAsync();
 
-                    if (cartItems == null)
-                    {
-                        return ExecutionResult<CartsVM>.Failure("Unable to get cart item.");
-                    }
+                if (cartItems == null)
+                {
+                    return ExecutionResult<CartsVM>.Failure("Unable to get cart item.");
+                }
 
-                    var cartVM = _mapper.Map<CartsVM>(cartItems);
-              
-                    cartVM.ProductImage = _utility.BytesToImage(cartVM.ProductPicture);
-                    cartVM.SalePrice = _utility.CalculateSalePrice(cartVM.DiscountAmount, cartVM.DiscountPercent, cartVM.Price);
+                var cartVM = _mapper.Map<CartsVM>(cartItems);
 
-                    var sizeName = await _colorService.GetSizeName(cartVM.Size);
-                    cartVM.SizeString = sizeName.Data;
+                cartVM.ProductImage = _utility.BytesToImage(cartVM.ProductPicture);
+                cartVM.SalePrice = _utility.CalculateSalePrice(cartVM.DiscountAmount, cartVM.DiscountPercent, cartVM.Price);
 
-                    var colorName = await _colorService.GetColorName(cartVM.Color);
-                    cartVM.ColorString = colorName.Data;
-              
+                var sizeName = await _colorService.GetSizeName(cartVM.Size);
+                cartVM.SizeString = sizeName.Data;
+
+                var colorName = await _colorService.GetColorName(cartVM.Color);
+                cartVM.ColorString = colorName.Data;
+
 
                 return ExecutionResult<CartsVM>.Success(cartVM);
             }
@@ -554,7 +545,7 @@ namespace LuckysDepartmentStore.Service
 
         }
         public async Task<ExecutionResult<Carts>> RemoveCart(string cartID)
-        {            
+        {
 
             if (cartID == null)
             {
@@ -568,6 +559,33 @@ namespace LuckysDepartmentStore.Service
 
             return ExecutionResult<Carts>.Success(cart);
 
+        }
+        public async Task<ExecutionResult<List<Carts>>> MigrateAnonymousCartItems(string shoppingCartId)
+        {
+            try
+            {
+                // Retrieve existing cart items from the database
+                var cartItems = await (
+                    from cart in _context.Carts
+                    where cart.CartID == shoppingCartId
+                    select cart
+                ).ToListAsync();
+
+                foreach (var product in cartItems)
+                {
+                    // Ensure the product is correctly associated with the ShoppingCartId
+                    product.CartID = _httpContext.HttpContext.User.Identity.Name;
+
+                }
+
+                await _context.SaveChangesAsync();
+
+                return ExecutionResult<List<Carts>>.Success(cartItems);
+            }
+            catch (Exception ex)
+            {
+                return ExecutionResult<List<Carts>>.Failure("Unable to add items cart.");
+            }
         }
     }
 }
