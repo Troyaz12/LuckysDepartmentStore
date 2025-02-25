@@ -176,15 +176,18 @@ namespace LuckysDepartmentStore.Service
                     from subCategory in subCategories.DefaultIfEmpty()
                     join brand in _context.Brand on product.BrandID equals brand.BrandId into brands
                     from brand in brands.DefaultIfEmpty()
-                    join discount in _context.Discounts on
-                        product.ProductID equals discount.ProductID into discounts
-                    from discount in discounts.Where(d => d.DiscountActive &&
-                        (d.ProductID == product.ProductID ||
-                         d.BrandID == product.BrandID ||
-                         d.CategoryID == product.CategoryID ||
-                         d.SubCategoryID == product.SubCategoryID)).DefaultIfEmpty()
+                    join productDiscount in _context.Discounts on product.ProductID equals productDiscount.ProductID into productDiscounts
+                    from productDiscount in productDiscounts.Where(d => d.DiscountActive).DefaultIfEmpty()
+                    join brandDiscount in _context.Discounts on product.BrandID equals brandDiscount.BrandID into brandDiscounts
+                    from brandDiscount in brandDiscounts.Where(d => d.DiscountActive).DefaultIfEmpty()
+                    join categoryDiscount in _context.Discounts on product.CategoryID equals categoryDiscount.CategoryID into categoryDiscounts
+                    from categoryDiscount in categoryDiscounts.Where(d => d.DiscountActive).DefaultIfEmpty()
+                    join subCategoryDiscount in _context.Discounts on product.SubCategoryID equals subCategoryDiscount.SubCategoryID into subCategoryDiscounts
+                    from subCategoryDiscount in subCategoryDiscounts.Where(d => d.DiscountActive).DefaultIfEmpty()
+                    join tagDiscount in _context.Discounts on product.DiscountTag equals tagDiscount.DiscountTag into tagDiscounts
+                    from tagDiscount in tagDiscounts.Where(d => d.DiscountActive).DefaultIfEmpty()
                     where cart.CartID == ShoppingCartId
-                    group new { product, category, subCategory, brand, discount }
+                    group new { product, category, subCategory, brand, productDiscount, brandDiscount, categoryDiscount, subCategoryDiscount, tagDiscount }
                         by new
                         {
                             product.ProductID,
@@ -213,8 +216,16 @@ namespace LuckysDepartmentStore.Service
                         Category = grouped.Key.CategoryName,
                         SubCategory = grouped.Key.SubCategoryName,
                         Brand = grouped.Key.BrandName,
-                        DiscountAmount = grouped.Sum(x => x.discount.DiscountAmount),
-                        DiscountPercent = grouped.Sum(x => x.discount.DiscountPercent),
+                        DiscountAmount = grouped.Sum(x => x.productDiscount.DiscountAmount) + 
+                                        grouped.Sum(x => x.brandDiscount.DiscountAmount) + 
+                                        grouped.Sum(x => x.categoryDiscount.DiscountAmount) + 
+                                        grouped.Sum(x => x.subCategoryDiscount.DiscountAmount) + 
+                                        grouped.Sum(x => x.tagDiscount.DiscountAmount),
+                        DiscountPercent = grouped.Sum(x => x.productDiscount.DiscountPercent) + 
+                                        grouped.Sum(x => x.brandDiscount.DiscountPercent) + 
+                                        grouped.Sum(x => x.categoryDiscount.DiscountPercent) + 
+                                        grouped.Sum(x => x.subCategoryDiscount.DiscountPercent) + 
+                                        grouped.Sum(x => x.tagDiscount.DiscountPercent),
                         DiscountTag = grouped.Key.DiscountTag,
                         Size = grouped.Key.Size,
                         Color = grouped.Key.Color,
