@@ -601,6 +601,11 @@ namespace LuckysDepartmentStore.Service
 
                 var colorProducts = _mapper.Map<List<ColorProductVM>>(colorProductDTO);
 
+                var sortedList = colorProducts
+                    .OrderBy(cp => cp.ColorID ?? int.MaxValue)
+                    .ThenBy(cp => cp.SizeID ?? int.MaxValue)
+                    .ToList();
+
                 if (ratingProductDTO != null)
                 {
                     var ratings = _mapper.Map<List<RatingVM>>(ratingProductDTO);
