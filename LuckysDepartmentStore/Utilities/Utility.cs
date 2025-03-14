@@ -208,12 +208,12 @@ namespace LuckysDepartmentStore.Utilities
         {
             decimal salePrice = price;
 
-            if (discountPercent != 0)
+            if (discountPercent != 0 && discountPercent != null)
             {
                 salePrice = price - (price * (decimal)discountPercent);
             }
 
-            if (discountAmount != 0)
+            if (discountAmount != 0 && discountPercent != null)
             {
                 salePrice = salePrice - (decimal)discountAmount;
             }

@@ -192,7 +192,7 @@ body {
 }
 
 .image-container {
-    width: 350px; /* Adjust to your preferred width */
+    width: 900px; /* Adjust to your preferred width */
     height: 350px; /* Adjust to your preferred height */
     object-fit: cover; /* This ensures the image covers the entire container while maintaining its aspect ratio */
     padding:20px;

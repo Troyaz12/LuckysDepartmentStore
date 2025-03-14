@@ -16,6 +16,6 @@ namespace LuckysDepartmentStore.Models
         public int? ProductID { get; set; }
         public int? BrandID { get; set; }
         public DateTime ExpirationDate { get; set; }        
-        public required string DiscountTag { get; set; }
+        public required string? DiscountTag { get; set; }
     }
 }

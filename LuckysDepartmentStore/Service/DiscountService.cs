@@ -144,6 +144,11 @@ namespace LuckysDepartmentStore.Service
                     discount.DiscountPercent = discount.DiscountPercent/100;
                 }
 
+                if (discount.DiscountAmount != 0)
+                {
+                    discount.DiscountAmount = discount.DiscountAmount / 100;
+                }
+
                 var newDiscount = _mapper.Map<Discount>(discount);
                 newDiscount.DiscountArt = _utility.ImageBytes(discount.DiscountArtFile);
 

@@ -588,7 +588,7 @@ namespace LuckysDepartmentStore.Service
                 var item = _mapper.Map<ItemVM>(productDTO);
 
                 // check discount tag
-                if (!string.IsNullOrEmpty(item.DiscountTag))
+                if (item.DiscountAmount > 0 || item.DiscountPercent > 0)
                 {
                     var itemResult = await CalculateDiscount(item);
 
@@ -815,7 +815,7 @@ namespace LuckysDepartmentStore.Service
                 }
                 else if (productID != null)
                 {
-                   var products =
+                   var exactMatches =
                        from Product in _context.Products
                        join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
                        from Category in categories.DefaultIfEmpty()
@@ -839,6 +839,23 @@ namespace LuckysDepartmentStore.Service
                            ProductPicture = Product.ProductPicture,
                            DiscountTag = Product.DiscountTag
                        };
+
+                    // find discounts
+                    var products = from p in exactMatches                                   
+                                   join DiscountsByTag in _context.Discounts on p.ProductID equals DiscountsByTag.ProductID into DiscountsTag
+                                   from DiscountsByTag in DiscountsTag.DefaultIfEmpty()
+
+                                   select new ProductVM
+                                   {
+                                       ProductID = p.ProductID,
+                                       ProductName = p.ProductName,
+                                       Price = p.Price,
+                                       Description = p.Description,
+                                       Quantity = p.Quantity,
+                                       ProductPicture = p.ProductPicture,
+                                       DiscountAmount = (decimal?)DiscountsByTag.DiscountAmount,
+                                       DiscountPercent = (decimal?)DiscountsByTag.DiscountPercent
+                                   };
 
                     var resultList = await products.ToListAsync();
 
@@ -868,13 +885,43 @@ namespace LuckysDepartmentStore.Service
                         ).ToList();
                     }
 
-                    var products = exactMatches;
+                    // find discounts
+                    var products = from p in exactMatches
+                                   join DiscountsByBrand in _context.Discounts on p.BrandID equals DiscountsByBrand.BrandID into DiscountBrand
+                                   from DiscountsByBrand in DiscountBrand.DefaultIfEmpty()
+                                   join DiscountsByCategory in _context.Discounts on p.CategoryID equals DiscountsByCategory.CategoryID into DiscountCategory
+                                   from DiscountsByCategory in DiscountCategory.DefaultIfEmpty()
+                                   join DiscountsBySubcategory in _context.Discounts on p.SubCategoryID equals DiscountsBySubcategory.SubCategoryID into DiscountSubCategory
+                                   from DiscountsBySubcategory in DiscountSubCategory.DefaultIfEmpty()
+                                   join DiscountsByTag in _context.Discounts on p.DiscountTag equals DiscountsByTag.DiscountTag into DiscountsTag
+                                   from DiscountsByTag in DiscountsTag.DefaultIfEmpty()
+                                   join DiscountsByProduct in _context.Discounts on p.ProductID equals DiscountsByProduct.ProductID into DiscountsProduct
+                                   from DiscountsByProduct in DiscountsProduct.DefaultIfEmpty()
 
-                    var productSearch = _mapper.Map<List<ProductVM>>(products);
+                                   select new ProductVM
+                                   {
+                                       ProductID = p.ProductID,
+                                       ProductName = p.ProductName,
+                                       Price = p.Price,
+                                       Description = p.Description,
+                                       Quantity = p.Quantity,
+                                       ProductPicture = p.ProductPicture,
+                                       DiscountAmount = (decimal?)DiscountsByBrand?.DiscountAmount ?? (decimal?)DiscountsByCategory?.DiscountAmount 
+                                            ?? (decimal?)DiscountsBySubcategory?.DiscountAmount ?? (decimal?)DiscountsByTag?.DiscountAmount ?? (decimal?)DiscountsByProduct?.DiscountAmount,
+
+                                       DiscountPercent = (decimal?)DiscountsByBrand?.DiscountPercent ?? (decimal?)DiscountsByCategory?.DiscountPercent
+                                            ?? (decimal?)DiscountsBySubcategory?.DiscountPercent ?? (decimal?)DiscountsByTag?.DiscountPercent ?? (decimal?)DiscountsByProduct?.DiscountPercent
+                                   };
+
+
+                    var prodList = products.ToList();
+
+                    var productSearch = _mapper.Map<List<ProductVM>>(prodList);
 
                     for (int x = 0; x < productSearch.Count; x++)
                     {
                         productSearch[x].ProductImage = _utility.BytesToImage(productSearch[x].ProductPicture);
+                        productSearch[x].SalePrice = _utility.CalculateSalePrice(productSearch[x].DiscountAmount, productSearch[x].DiscountPercent, productSearch[x].Price);
                     }
 
                     return ExecutionResult<List<ProductVM>>.Success(productSearch);
@@ -891,28 +938,30 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                var discountTagsArray = item.DiscountTag.Split(',').Select(k => k.ToUpper().Trim()).ToList();
-                var discountDTO = await (
-                    from Discount in _context.Discounts
-                    where discountTagsArray.Any(k => EF.Functions.Like(Discount.DiscountTag.ToUpper(), "%" + k + "%"))
-                    select Discount).ToListAsync();
+                // check for other discounts
+                if (!string.IsNullOrEmpty(item.DiscountTag)) {
+                    var discountTagsArray = item.DiscountTag.Split(',').Select(k => k.ToUpper().Trim()).ToList();
+                    var discountDTO = await (
+                        from Discount in _context.Discounts
+                        where discountTagsArray.Any(k => EF.Functions.Like(Discount.DiscountTag.ToUpper(), "%" + k + "%"))
+                        select Discount).ToListAsync();
 
-                List<Discount> discountList = new List<Discount>();
+                    List<Discount> discountList = new List<Discount>();
 
-                foreach(var itemDiscount in discountDTO)
-                {
-                    if (itemDiscount.DiscountTag.Equals(item.DiscountTag))
+                    foreach (var itemDiscount in discountDTO)
                     {
-                        discountList.Add(itemDiscount);
+                        if (itemDiscount.DiscountTag.Equals(item.DiscountTag))
+                        {
+                            discountList.Add(itemDiscount);
+                        }
                     }
+
+                    var totalDiscountAmount = discountList.Sum(discount => discount.DiscountAmount);
+                    var totalDiscountPercent = discountList.Sum(discount => discount.DiscountPercent);
+
+                    item.DiscountAmount = totalDiscountAmount;
+                    item.DiscountPercent = totalDiscountPercent;
                 }
-
-
-                var totalDiscountAmount = discountList.Sum(discount => discount.DiscountAmount);
-                var totalDiscountPercent = discountList.Sum(discount => discount.DiscountPercent);
-
-                item.DiscountAmount = totalDiscountAmount;
-                item.DiscountPercent = totalDiscountPercent;
 
                 item.SalePrice = _utility.CalculateSalePrice(item.DiscountAmount, item.DiscountPercent, item.Price);
 
