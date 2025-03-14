@@ -53,7 +53,7 @@ namespace LuckysDepartmentStore.Controllers
         public async Task<IActionResult> SearchDiscount(string? categorySelection, string? subCategorySelection, 
             string? brandSelection, int? productID, string? discountTags)
         {
-            if (string.IsNullOrEmpty(discountTags))
+            if (!string.IsNullOrEmpty(discountTags))
             {
                 discountTags = discountTags.Trim();
             }
