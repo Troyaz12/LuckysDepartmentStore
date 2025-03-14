@@ -59,58 +59,25 @@
             <input type="hidden" id="ProductID" name="ProductID" value="@Model.ProductID">
             <input type="hidden" id="DiscountID" name="DiscountID" value="@Model.DiscountID">
 
-
-            <div class="dropdown">
-                <label asp-for="Category">Category</label>
-                <input asp-for="CategorySelection" type="text" class="form-control dropdown-toggle" id="Category" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
-                <span asp-validation-for="CategorySelection" class="text-danger"></span>
-                <ul class="dropdown-menu" aria-labelledby="Category">
-                    @if (Model.Category != null)
-                    {
-                        @foreach (var color in Model.Category)
-                        {
-                            <li><a class="dropdown-item" data-stored-value="@color.CategoryID">@color.CategoryName</a></li>
-                        }
-                    }
-                </ul>
+            <div class="form-group">
+                <label asp-for="Category" class="control-label"></label>
+                <span class="form-control">@Model.CategorySelection</span>               
             </div>
-            <div class="dropdown">
+            <div class="form-group">
                 <label asp-for="SubCategory">SubCategory</label>
-                <input asp-for="SubCategorySelection" type="text" class="form-control dropdown-toggle" id="SubCategory" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
-                <span asp-validation-for="SubCategorySelection" class="text-danger"></span>
-                <ul class="dropdown-menu" aria-labelledby="SubCategory" name="color">
-                    @if (Model.SubCategory != null)
-                    {
-                        @foreach (var color in Model.SubCategory)
-                        {
-                            <li><a class="dropdown-item" data-stored-value="@color.SubCategoryID">@color.SubCategoryName</a></li>
-                        }
-                    }
-                </ul>
+                <span class="form-control">@Model.SubCategorySelection</span>
             </div>
-            <div class="dropdown">
+            <div class="form-group">
                 <label asp-for="Brand">Brand</label>
-                <input asp-for="BrandSelection" type="text" class="form-control dropdown-toggle" id="Brand" data-bs-toggle="dropdown" aria-expanded="false" placeholder="Select or type" autocomplete="off">
-                <span asp-validation-for="BrandSelection" class="text-danger"></span>
-                <ul class="dropdown-menu" aria-labelledby="Brand">
-                    @if (Model.Brand != null)
-                    {
-                        @foreach (var color in Model.Brand)
-                        {
-                            <li><a class="dropdown-item" data-stored-value="@color.BrandId">@color.BrandName</a></li>
-                        }
-                    }
-                </ul>
+                <span class="form-control">@Model.BrandSelection</span>
             </div>
             <div class="form-group">
                 <label asp-for="DiscountTags" class="control-label"></label>
-                <input asp-for="DiscountTags" class="form-control" />
-                <span asp-validation-for="DiscountTags" class="text-danger"></span>
+                <span class="form-control" style="min-height: 38px;">@Model.DiscountTags</span>
             </div>
             <div class="form-group">
                 <label asp-for="SearchWords" class="control-label"></label>
-                <input asp-for="SearchWords" class="form-control" />
-                <span asp-validation-for="SearchWords" class="text-danger"></span>
+                <span class="form-control" style="min-height: 38px;">@Model.SearchWords</span>
             </div>
         </div>
     </div>

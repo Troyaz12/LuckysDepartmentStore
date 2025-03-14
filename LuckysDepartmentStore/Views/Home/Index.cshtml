@@ -74,7 +74,8 @@
                         <div class="col-md-4 mb-4">
                             <div class="card">
                                 <a asp-action="SearchDiscount" asp-route-subCategorySelection="@discount.SubCategorySelection" asp-route-categorSelection="@discount.CategorySelection"
-                                asp-route-brandSelection="@discount.BrandSelection" asp-route-productID="@discount.ProductID" asp-route-discountTags="@discount.DiscountTag">
+                                asp-route-brandSelection="@discount.BrandSelection" asp-route-productID="@discount.ProductID" asp-route-discountTags="@discount.DiscountTag"
+                                asp-route-discountDescription = "@discount.DiscountDescription">
                                     <img src="@discount.DiscountImage" id="DiscountImage" name="DiscountImage" class="image-fluid image-containerDiscount" alt="Discount Image">
                                 </a>
                             </div>

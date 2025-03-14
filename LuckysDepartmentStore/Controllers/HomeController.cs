@@ -51,7 +51,7 @@ namespace LuckysDepartmentStore.Controllers
         }
         [HttpGet]
         public async Task<IActionResult> SearchDiscount(string? categorySelection, string? subCategorySelection, 
-            string? brandSelection, int? productID, string? discountTags)
+            string? brandSelection, int? productID, string? discountTags, string? discountDescription)
         {
             if (!string.IsNullOrEmpty(discountTags))
             {
@@ -72,6 +72,7 @@ namespace LuckysDepartmentStore.Controllers
 
                 return RedirectToAction("Index", "Error");
             }
+            TempData["description"] = discountDescription;
 
             return View(productList.Data);
         }

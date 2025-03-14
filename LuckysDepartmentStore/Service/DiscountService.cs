@@ -180,6 +180,7 @@ namespace LuckysDepartmentStore.Service
                     join Brand in _context.Brand on Discount.BrandID equals Brand.BrandId into Brands
                     from Brand in Brands.DefaultIfEmpty()
                     where Discount.DiscountActive == true
+                        && Discount.ProductID == null
                     select new DiscountDTO
                     {
                         DiscountID = Discount.DiscountID,
