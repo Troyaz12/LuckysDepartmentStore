@@ -101,6 +101,10 @@ namespace LuckysDepartmentStore.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
+            string description = "Showing results for \"" + searchString + "\"" + "(" + productList.Data.Count + " items" + ")";
+
+            TempData["description"] = description;
+
             return View(productList.Data);
         }
         [HttpGet]

@@ -20,7 +20,16 @@
 
 </head>
 <body>
-        <h1 class="big-header"> @TempData["description"] </h1>
+        <div class="mb-5 ps-2">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Discounts</li>
+                </ol>
+            </nav>
+
+            <h3> @TempData["description"] </h3>
+        </div>
 
         <div class="container">
             <div class="row">

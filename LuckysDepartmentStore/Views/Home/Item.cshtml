@@ -15,23 +15,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
-<input type="hidden" id="errorMessage" value="@ViewBag.ErrorMessage" />
-
-
 <input type="hidden" id="ColorProduct" data-url="@Url.Action("GetSizeButtons", "Home")"
        data-products='@Html.Raw(JsonConvert.SerializeObject(Model.ColorProduct))'
        data-color-id='@Html.Raw(JsonConvert.SerializeObject(Model.ColorProduct.Select(p => p.ColorID).ToList()))' />
 
-
-
-
 <div class="container">
-    @if (ViewBag.ErrorMessage != null)
-    {
-        <p>@ViewBag.ErrorMessage</p>
-    }
-    else
-    {
+   
+         <div class="mb-3 ps-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Item</li>
+                </ol>
+            </nav>        
+        </div>
+
         <div class="d-flex flex-row w-100">
             <img src="@Model.ProductImage" id="ProductImage" name="ProductImage" class="image-fluid image-containerItem item" alt="Product Image">
             <div class="d-flex flex-column w-50" >
@@ -115,6 +113,6 @@
                 </form>
             </div>
         </div>     
-    }
+    
 </div>
 <script src="~/js/item.js"></script>

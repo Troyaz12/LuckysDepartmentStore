@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace LuckysDepartmentStore.Controllers
 {
-    public class ProductController(IProductService _productService) : Controller
+    public class ProductController(IProductService _productService, IColorService _colorService) : Controller
     {
         // GET: Product
         [HttpGet]
@@ -242,8 +242,21 @@ namespace LuckysDepartmentStore.Controllers
             return PartialView("_DynamicPartialList", colorModel.ColorProductList);
         }
         [HttpPost]
-        public ActionResult UpdateListForEdit([FromBody] UpdateColorListVM product)
+        public async Task<ActionResult> UpdateListForEdit([FromBody] UpdateColorListVM product)
         {
+            // create color if new
+            if (product.ColorProductList != null)
+            {
+                for (int x=0; x<product.ColorProductList.Count; x++)
+                {
+                    if (product.ColorProductList[x].ColorID == null)
+                    {
+                        var result = await _colorService.Create(product.ColorProductList[x].Name);
+                        product.ColorProductList[x].ColorID = result.Data;
+                    }
+                }
+            }
+
             return PartialView("_DynamicPartialListEdit", product.ColorProductList);
         }
         [HttpPost]

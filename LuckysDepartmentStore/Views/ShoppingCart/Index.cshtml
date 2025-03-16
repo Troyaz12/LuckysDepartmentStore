@@ -23,6 +23,14 @@
 </head>
 <body>
 
+    <div class="mb-3 ps-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
+            </ol>
+        </nav>
+    </div>
 @if (Model != null && Model.cartsVMs.Count>0)
 {
 
