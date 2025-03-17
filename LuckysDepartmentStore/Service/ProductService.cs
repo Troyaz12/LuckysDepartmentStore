@@ -534,6 +534,8 @@ namespace LuckysDepartmentStore.Service
                     from DiscountsByProduct in DiscountProduct.DefaultIfEmpty()
                     join DiscountsBySubcategory in _context.Discounts on Product.SubCategoryID equals DiscountsBySubcategory.SubCategoryID into DiscountSubCategory
                     from DiscountsBySubcategory in DiscountSubCategory.DefaultIfEmpty()
+                    join DiscountsByTag in _context.Discounts on Product.DiscountTag equals DiscountsByTag.DiscountTag into DiscountsTag
+                    from DiscountsByTag in DiscountsTag.DefaultIfEmpty()
                     where productId == Product.ProductID
 
                     select new ItemDTO
@@ -548,8 +550,8 @@ namespace LuckysDepartmentStore.Service
                         Brand = Brand.BrandName,
                         CreatedDate = Product.CreatedDate,
                         ProductPicture = Product.ProductPicture,
-                        DiscountAmount = (decimal?)DiscountsByBrand.DiscountAmount ?? (decimal?)DiscountsByCategory.DiscountAmount ?? (decimal?)DiscountsByProduct.DiscountAmount ?? (decimal?)DiscountsBySubcategory.DiscountAmount,
-                        DiscountPercent = (decimal?)DiscountsByBrand.DiscountPercent ?? (decimal?)DiscountsByCategory.DiscountPercent ?? (decimal?)DiscountsByProduct.DiscountPercent ?? (decimal?)DiscountsBySubcategory.DiscountPercent,
+                        DiscountAmount = (decimal?)DiscountsByBrand.DiscountAmount ?? (decimal?)DiscountsByCategory.DiscountAmount ?? (decimal?)DiscountsByProduct.DiscountAmount ?? (decimal?)DiscountsBySubcategory.DiscountAmount ?? (decimal?)DiscountsByTag.DiscountAmount,
+                        DiscountPercent = (decimal?)DiscountsByBrand.DiscountPercent ?? (decimal?)DiscountsByCategory.DiscountPercent ?? (decimal?)DiscountsByProduct.DiscountPercent ?? (decimal?)DiscountsBySubcategory.DiscountPercent ?? (decimal?)DiscountsByTag.DiscountPercent,
                         DiscountTag = Product.DiscountTag
                     }).FirstOrDefaultAsync();
 
