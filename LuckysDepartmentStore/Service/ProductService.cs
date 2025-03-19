@@ -38,8 +38,12 @@ namespace LuckysDepartmentStore.Service
         }
         public async Task<ExecutionResult<Product>> CreateAsync(ProductCreateVM product)
         {
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+
+            var strategy = _context.Database.CreateExecutionStrategy();
+            return await strategy.ExecuteAsync(async () =>
             {
+                using (var transaction = await _context.Database.BeginTransactionAsync())
+                {
 
                 try
                 {
@@ -165,6 +169,7 @@ namespace LuckysDepartmentStore.Service
                     return ExecutionResult<Product>.Failure($"Order failed: {ex.Message}");
                 }
             }
+            });
         }
         public async Task<ExecutionResult<List<Color>>> GetColors()
         {
