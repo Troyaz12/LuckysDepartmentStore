@@ -217,7 +217,7 @@ namespace LuckysDepartmentStore.Service
             catch(Exception ex)
             {
 
-                return ExecutionResult<List<DiscountVM>>.Failure("Unable to retrieve Discounts.");
+                return ExecutionResult<List<DiscountVM>>.Failure("Unable to retrieve Discounts." + ex.Message);
             }
 
         }

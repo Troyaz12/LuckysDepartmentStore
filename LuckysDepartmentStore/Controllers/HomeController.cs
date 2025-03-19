@@ -30,7 +30,7 @@ namespace LuckysDepartmentStore.Controllers
 
             if (!frontPageData.IsSuccess)
             {
-                TempData["FailureMessage"] = frontPageData.ErrorMessage;
+                TempData["ErrorMessage"] = frontPageData.ErrorMessage;
 
                 return RedirectToAction("Index", "Error");
             }
@@ -72,7 +72,9 @@ namespace LuckysDepartmentStore.Controllers
 
                 return RedirectToAction("Index", "Error");
             }
-            TempData["description"] = discountDescription;
+
+            string description = "Showing results for \"" + discountDescription + "\"" + "(" + productList.Data.Count + " items" + ")";
+            TempData["description"] = description;
 
             return View(productList.Data);
         }

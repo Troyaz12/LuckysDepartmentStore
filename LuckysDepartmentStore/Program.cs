@@ -15,9 +15,23 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+
+
 builder.Services.AddDbContext<LuckysContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") 
-    ?? throw new InvalidOperationException("Connection string 'LuckysContext' not found.")));
+    ?? throw new InvalidOperationException("Connection string 'LuckysContext' not found."),
+         sqlServerOptions =>
+         {
+             sqlServerOptions.EnableRetryOnFailure(
+                 maxRetryCount: 5,              // Retry up to 5 times
+                 maxRetryDelay: TimeSpan.FromSeconds(10), // Wait 10 seconds between retries
+                 errorNumbersToAdd: null        // Optionally specify SQL error codes to retry
+             );
+         }
+    )
+);
+
+
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<LuckysContext>()
