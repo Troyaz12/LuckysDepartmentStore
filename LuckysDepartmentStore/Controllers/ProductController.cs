@@ -1,9 +1,6 @@
-﻿using LuckysDepartmentStore.Models;
-using LuckysDepartmentStore.Models.ViewModels.Product;
+﻿using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
-using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace LuckysDepartmentStore.Controllers
 {

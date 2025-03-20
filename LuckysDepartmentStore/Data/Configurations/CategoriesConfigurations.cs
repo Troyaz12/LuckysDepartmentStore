@@ -12,14 +12,14 @@ namespace LuckysDepartmentStore.Data.Configurations
                             new Category
                             {
                                 CategoryID = 1,
-                                CategoryName = "Mens",
-                                CategoryDescription = "Mens products."
+                                CategoryName = "Men's",
+                                CategoryDescription = "Men's products."
                             },
                            new Category
                            {
                                CategoryID = 2,
-                               CategoryName = "Womens",
-                               CategoryDescription = "Womens products."
+                               CategoryName = "Women's",
+                               CategoryDescription = "Women's products."
                            },
                            new Category
                            {

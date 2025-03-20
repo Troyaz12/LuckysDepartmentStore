@@ -787,6 +787,13 @@ namespace LuckysDepartmentStore.Service
             {
                 if (categorySelection != null || subCategorySelection != null || brandSelection != null)
                 {
+                    string? upperSearchQuery = null;
+
+                    if (!String.IsNullOrEmpty(upperSearchQuery))
+                    {
+                        upperSearchQuery = searchString.ToLower().Trim();
+                    }                    
+
                     var products =
                        from Product in _context.Products
                        join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
@@ -795,7 +802,8 @@ namespace LuckysDepartmentStore.Service
                        from SubCategory in subCategories.DefaultIfEmpty()
                        join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
                        from Brand in Brands.DefaultIfEmpty()
-                       where (brandSelection == null || (Brand != null && Brand.BrandName == brandSelection)) &&
+                       where (Product.SearchWords != null && EF.Functions.Like(Product.SearchWords.ToUpper(), "%" + searchString + "%")) &&
+                          (brandSelection == null || (Brand != null && Brand.BrandName == brandSelection)) &&
                           (categorySelection == null || (Category != null && Category.CategoryName == categorySelection)) &&
                           (subCategorySelection == null || (SubCategory != null && SubCategory.SubCategoryName == subCategorySelection))
 
@@ -822,6 +830,13 @@ namespace LuckysDepartmentStore.Service
                     {
                         productSearch[x].ProductImage = _utility.BytesToImage(productSearch[x].ProductPicture);
                     }
+
+
+
+
+
+
+
 
                     return ExecutionResult<List<ProductVM>>.Success(productSearch);
                 }
