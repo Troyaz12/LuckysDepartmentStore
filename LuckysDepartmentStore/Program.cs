@@ -1,4 +1,6 @@
 using LuckysDepartmentStore.Data;
+using LuckysDepartmentStore.Data.Stores;
+using LuckysDepartmentStore.Data.Stores.Interfaces;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Service;
 using LuckysDepartmentStore.Service.Interfaces;
@@ -49,6 +51,7 @@ builder.Services.AddScoped<IDiscountService, DiscountService>();
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 builder.Services.AddScoped<ICheckoutService, CheckoutService>();
 builder.Services.AddScoped<IConsumerService, ConsumerService>();
+builder.Services.AddScoped<IProductStore, ProductStore>();
 
 builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
