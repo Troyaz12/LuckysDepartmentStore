@@ -36,33 +36,14 @@ namespace LuckysDepartmentStore.Controllers
             }
 
             var details = await _productService.GetDetails(id);
-            var sizes = await _productService.GetSize();
 
-            if (!details.IsSuccess || !sizes.IsSuccess)
+            if (!details.IsSuccess)
             {
                 TempData["FailureMessage"] = "Error getting details.";
                 return RedirectToAction("Index", "Error");
             }
 
-            
-            var allDetails = details.Data;
-
-            for (int x = 0; x < allDetails.ColorProduct.Count; x++)
-            {
-                var selectedSize = sizes.Data.FirstOrDefault(s => s.SizesID == allDetails.ColorProduct[x].SizeID);
-
-                if (selectedSize != null)
-                {
-                    allDetails.ColorProduct[x].SizeName = selectedSize.Size;
-                }
-                else
-                {
-                    allDetails.ColorProduct[x].SizeName = "Size not found";
-                }
-
-            }
-
-            return View(allDetails);
+            return View(details.Data);
         }
 
         // GET: Product/Create
@@ -162,21 +143,6 @@ namespace LuckysDepartmentStore.Controllers
                 productEditVM.Data.SubCategory = subCategory.Data;
                 productEditVM.Data.Brand = brand.Data;
                 productEditVM.Data.Sizes = sizes.Data;
-
-                for (int x = 0; x < productEditVM.Data.ColorProduct.Count; x++)
-                {
-                    var selectedSize = sizes.Data.FirstOrDefault(s => s.SizesID == productEditVM.Data.ColorProduct[x].SizeID);
-
-                    if (selectedSize != null)
-                    {
-                        productEditVM.Data.ColorProduct[x].SizeName = selectedSize.Size;
-                    }
-                    else
-                    {
-                        productEditVM.Data.ColorProduct[x].SizeName = "Size not found";
-                    }
-
-                }
 
                 return View(productEditVM.Data);
             }

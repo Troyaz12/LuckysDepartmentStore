@@ -17,18 +17,21 @@ namespace LuckysDepartmentStore.Service
 {
     public class ProductService : IProductService
     {
-        public LuckysContext _context;
-        public IMapper _mapper;
-        public IColorService _colorService;
-        public ICategoryService _categoryService;
-        public ISubCategoryService _subCategoryService;
-        public IBrandService _brandService;       
-        private readonly Utility _utility;
-        private IProductStore _productStore;
-
+        private readonly LuckysContext _context;
+        private readonly IMapper _mapper;
+        private readonly IColorService _colorService;
+        private readonly ICategoryService _categoryService;
+        private readonly ISubCategoryService _subCategoryService;
+        private readonly IBrandService _brandService;       
+        private readonly IUtility _utility;
+        private readonly IProductStore _productStore;
+        private readonly IColorStore _colorStore;
+        private readonly IRatingsStore _ratingsStore;
+        private readonly IDiscountStore _discountStore;
+            
         public ProductService(LuckysContext context, IMapper mapper, IColorService colorService, 
-            ICategoryService categoryService, ISubCategoryService subCategoryService, IBrandService brandService
-            , Utility utility, IProductStore productStore)
+            ICategoryService categoryService, ISubCategoryService subCategoryService, IBrandService brandService,
+            IUtility utility, IProductStore productStore, IColorStore colorStore, IRatingsStore ratingsStore, IDiscountStore discountStore)
         {
             _context = context;
             _mapper = mapper;
@@ -38,6 +41,9 @@ namespace LuckysDepartmentStore.Service
             _brandService = brandService;
             _utility = utility;
             _productStore = productStore;
+            _colorStore = colorStore;
+            _ratingsStore = ratingsStore;
+            _discountStore = discountStore;
         }
         public async Task<ExecutionResult<Product>> CreateAsync(ProductCreateVM product)
         {
@@ -139,15 +145,6 @@ namespace LuckysDepartmentStore.Service
 
                     int productId = newProduct.ProductID;
 
-                    //foreach (ColorProductVM colors in product.ColorProduct)
-                    //{
-                    //    var newColorProduct = _mapper.Map<ColorProduct>(colors);
-                    //    newColorProduct.ProductID = productId;
-
-                    //    _context.Add(newColorProduct);
-
-                    //}
-
                     var newColorProducts = product.ColorProduct
                        .Select(cp =>
                        {
@@ -178,8 +175,7 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                var color = await _context.Colors
-               .ToListAsync();
+                var color = await _colorStore.AllColors();
 
                 return ExecutionResult<List<Color>>.Success(color);
 
@@ -194,8 +190,7 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                var categories = await _context.Categories
-              .ToListAsync();
+                var categories = await _productStore.Categories();
 
                 return ExecutionResult<List<Category>>.Success(categories);
             }
@@ -208,8 +203,7 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                var subCategory = await _context.SubCategories
-                .ToListAsync();
+                var subCategory = await _productStore.SubCategories();
 
                 return ExecutionResult<List<SubCategory>>.Success(subCategory);
             }
@@ -222,8 +216,7 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                var brands = await _context.Brand
-                .ToListAsync();
+                var brands = await _productStore.Brand();
 
                 return ExecutionResult<List<Brand>>.Success(brands);
             }
@@ -237,23 +230,7 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                var products = await (
-                    from Product in _context.Products
-                    join Category in _context.Categories on Product.CategoryID equals Category.CategoryID
-                    join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID
-                    join Brand in _context.Brand on Product.BrandID equals Brand.BrandId
-                    select new ProductVmDTO
-                    {
-                        ProductID = Product.ProductID,
-                        ProductName = Product.ProductName,
-                        Price = Product.Price,
-                        Description = Product.Description,
-                        Quantity = Product.Quantity,
-                        Category = Category.CategoryName,
-                        SubCategory = SubCategory.SubCategoryName,
-                        Brand = Brand.BrandName,
-                        CreatedDate = Product.CreatedDate,
-                    }).ToListAsync();
+               var products = await _productStore.AllProductAllInfoNoDiscount();
 
                 if (!string.IsNullOrEmpty(categorySearch))
                 {
@@ -315,46 +292,8 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                var productDTO = await(
-                from Product in _context.Products
-                join Category in _context.Categories on Product.CategoryID equals Category.CategoryID
-                join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID
-                join Brand in _context.Brand on Product.BrandID equals Brand.BrandId
-                where Product.ProductID == productId
-                select new ProductEditDTO
-                {
-                    ProductID = Product.ProductID,
-                    ProductName = Product.ProductName,
-                    Price = Product.Price,
-                    Description = Product.Description,
-                    Quantity = Product.Quantity,
-                    Category = Category.CategoryName,
-                    SubCategory = SubCategory.SubCategoryName,
-                    Brand = Brand.BrandName,
-                    CreatedDate = Product.CreatedDate,
-                    BrandId = Product.BrandID,
-                    CategoryId = Category.CategoryID,
-                    SubCategoryId = SubCategory.SubCategoryID,
-                    DiscountTags = Product.DiscountTag,
-                    SearchWords = Product.SearchWords
-                }).FirstOrDefaultAsync();
-
-                var colorProductDTO = await(
-                    from ColorProducts in _context.ColorProducts
-                    join Colors in _context.Colors on ColorProducts.ColorID equals Colors.ColorID
-                    where ColorProducts.ProductID == productId
-                    select new ColorProductEditDTO
-                    {
-                        ProductID = ColorProducts.ProductID,
-                        ColorID = ColorProducts.ColorID,
-                        Quantity = ColorProducts.Quantity,
-                        Name = Colors.Name,
-                        ColorProductID = ColorProducts.ColorProductID,
-                        SizeID = ColorProducts.SizeID
-                    }).ToListAsync();
-
-             //   var product = productDTO.FirstOrDefault();
-
+                var productDTO = await _productStore.GetProductByIDNoDiscount(productId);
+                var colorProductDTO = await _colorStore.ColorsByProductID(productId);
                 var productModel = _utility.MapEditProduct(productDTO);
 
                 var colorProducts = _mapper.Map<List<ColorProductVM>>(colorProductDTO);
@@ -378,7 +317,12 @@ namespace LuckysDepartmentStore.Service
                     return ExecutionResult<ProductEditVM>.Failure("Unable to edit product.");
                 }
 
-                var productOld = await _context.Products.FindAsync(productEdit.ProductID);
+                var productOld = await _productStore.ProductByID(productEdit.ProductID);
+
+                if (productOld == null)
+                {
+                    return ExecutionResult<ProductEditVM>.Failure("Product not found.");
+                }
 
                 productOld.Price = productEdit.Price;
                 productOld.Quantity = productEdit.Quantity;
@@ -395,32 +339,21 @@ namespace LuckysDepartmentStore.Service
                     productOld.ProductPicture = _utility.ImageBytes(productEdit.ProductPictureFile);
                 }
 
-                var colorProductsEdit = _mapper.Map<List<ColorProduct>>(productEdit.ColorProduct);
+                var colorProductsEdit = _mapper.Map<List<ColorProduct>>(productEdit.ColorProduct);                
 
-                var productID = productEdit.ProductID;
+                var colorProductsDB = _context.ColorProducts.Where(e => e.ProductID == productEdit.ProductID).ToList();
 
-                var colorProductsDB = _context.ColorProducts.Where(e => e.ProductID == productID).ToList();
+                var colorProductsToRemove = colorProductsDB
+               .Where(cp => !colorProductsEdit.Any(p => p.ColorProductID == cp.ColorProductID) && cp.ColorProductID != 0)
+               .ToList();
 
-                // check for product colors that have been removed
-                foreach (ColorProduct colorProduct in colorProductsDB)
-                {
-                    if (!colorProductsEdit.Any(p => p.ColorProductID == colorProduct.ColorProductID) && colorProduct.ColorProductID != 0)
-                    {
-                        _context.ColorProducts.Remove(colorProduct);
-                    }
-                }
+                var colorProductsToAdd = colorProductsEdit
+                    .Where(cp => cp.ColorProductID == 0)
+                    .Select(cp => { cp.ProductID = productEdit.ProductID; return cp; })
+                    .ToList();
 
-                // check for product colors that have been added
-                foreach (ColorProduct colorProduct in colorProductsEdit)
-                {
-                    if (colorProduct.ColorProductID == 0)
-                    {
-                        colorProduct.ProductID = productID;
-                        _context.ColorProducts.Add(colorProduct);
-                    }
-                }
-
-                var productSave = _context.SaveChanges();
+                // Delegate persistence to ProductStore
+                await _productStore.UpdateProduct(productOld, colorProductsToAdd, colorProductsToRemove);
 
                 return ExecutionResult<ProductEditVM>.Success(productEdit);
             }
@@ -431,49 +364,12 @@ namespace LuckysDepartmentStore.Service
         }
 
         public async Task<ExecutionResult<ProductDetailVM>> GetDetails(int productId)
-        {          
+        {
+            var productDTO = await _productStore.GetProductByIDNoDiscount(productId);
+            var colorProductDTO = await _colorStore.ColorsByProductID(productId);
 
-            var productDTO = await(
-             from Product in _context.Products
-             join Category in _context.Categories on Product.CategoryID equals Category.CategoryID
-             join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID
-             join Brand in _context.Brand on Product.BrandID equals Brand.BrandId
-             where Product.ProductID == productId
-             select new ProductDetailDTO
-             {
-                 ProductID = Product.ProductID,
-                 ProductName = Product.ProductName,
-                 Price = Product.Price,
-                 Description = Product.Description,
-                 Quantity = Product.Quantity,
-                 Category = Category.CategoryName,
-                 SubCategory = SubCategory.SubCategoryName,
-                 Brand = Brand.BrandName,
-                 CreatedDate = Product.CreatedDate,
-                 BrandId = Product.BrandID,
-                 CategoryId = Category.CategoryID,
-                 SubCategoryId = SubCategory.SubCategoryID,
-                 ProductPicture = Product.ProductPicture,
-                 DiscountTags = Product.DiscountTag,
-                 SearchWords = Product.SearchWords
 
-             }).FirstOrDefaultAsync();
-
-            var colorProductDTO = await(
-                from ColorProducts in _context.ColorProducts
-                join Colors in _context.Colors on ColorProducts.ColorID equals Colors.ColorID
-                where ColorProducts.ProductID == productId
-                select new ColorProductDetailDTO
-                {
-                    ProductID = ColorProducts.ProductID,
-                    ColorID = ColorProducts.ColorID,
-                    Quantity = ColorProducts.Quantity,
-                    Name = Colors.Name,
-                    ColorProductID = ColorProducts.ColorProductID,
-                    SizeID  = ColorProducts.SizeID
-                }).ToListAsync();            
-
-            if(productDTO == null)
+            if (productDTO == null)
             {
                 return ExecutionResult<ProductDetailVM>.Failure("Cannot find product in database. Product ID does not exist."); 
             }
@@ -492,13 +388,13 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductID == productId);
-                if (product == null)
+                bool deleted = await _productStore.DeleteProduct(productId);
+
+                if (!deleted)
                 {
                     return ExecutionResult<int>.Failure("An error occured. Cannot find delete product.");
                 }
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
+                
 
                 return ExecutionResult<int>.Success(productId);
             }
@@ -512,8 +408,7 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                var size = await _context.Sizes
-                .ToListAsync();
+                var size = await _colorStore.AllSizes();
 
                 return ExecutionResult<List<Sizes>>.Success(size);
             }
@@ -524,71 +419,13 @@ namespace LuckysDepartmentStore.Service
         }
         public async Task<ExecutionResult<ItemVM>> GetItem(int productId)
         {
-            try { 
+            try {
 
-                var productDTO = await (
-                    from Product in _context.Products
-                    join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
-                    from Category in categories.DefaultIfEmpty()
-                    join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID into subCategories
-                    from SubCategory in subCategories.DefaultIfEmpty()
-                    join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
-                    from Brand in Brands.DefaultIfEmpty()
-                    join DiscountsByBrand in _context.Discounts on Product.BrandID equals DiscountsByBrand.BrandID into DiscountBrand
-                    from DiscountsByBrand in DiscountBrand.DefaultIfEmpty()
-                    join DiscountsByCategory in _context.Discounts on Product.CategoryID equals DiscountsByCategory.CategoryID into DiscountCategory
-                    from DiscountsByCategory in DiscountCategory.DefaultIfEmpty()
-                    join DiscountsByProduct in _context.Discounts on Product.ProductID equals DiscountsByProduct.ProductID into DiscountProduct
-                    from DiscountsByProduct in DiscountProduct.DefaultIfEmpty()
-                    join DiscountsBySubcategory in _context.Discounts on Product.SubCategoryID equals DiscountsBySubcategory.SubCategoryID into DiscountSubCategory
-                    from DiscountsBySubcategory in DiscountSubCategory.DefaultIfEmpty()
-                    join DiscountsByTag in _context.Discounts on Product.DiscountTag equals DiscountsByTag.DiscountTag into DiscountsTag
-                    from DiscountsByTag in DiscountsTag.DefaultIfEmpty()
-                    where productId == Product.ProductID
+                var productDTO = await _productStore.GetItem(productId);
 
-                    select new ItemDTO
-                    {
-                        ProductID = Product.ProductID,
-                        ProductName = Product.ProductName,
-                        Price = Product.Price,
-                        Description = Product.Description,
-                        Quantity = Product.Quantity,
-                        Category = Category.CategoryName,
-                        SubCategory = SubCategory.SubCategoryName,
-                        Brand = Brand.BrandName,
-                        CreatedDate = Product.CreatedDate,
-                        ProductPicture = Product.ProductPicture,
-                        DiscountAmount = (decimal?)DiscountsByBrand.DiscountAmount ?? (decimal?)DiscountsByCategory.DiscountAmount ?? (decimal?)DiscountsByProduct.DiscountAmount ?? (decimal?)DiscountsBySubcategory.DiscountAmount ?? (decimal?)DiscountsByTag.DiscountAmount,
-                        DiscountPercent = (decimal?)DiscountsByBrand.DiscountPercent ?? (decimal?)DiscountsByCategory.DiscountPercent ?? (decimal?)DiscountsByProduct.DiscountPercent ?? (decimal?)DiscountsBySubcategory.DiscountPercent ?? (decimal?)DiscountsByTag.DiscountPercent,
-                        DiscountTag = Product.DiscountTag
-                    }).FirstOrDefaultAsync();
+                var colorProductDTO = await _colorStore.ColorsByProductID(productId);
 
-                var colorProductDTO = await (
-                    from ColorProducts in _context.ColorProducts
-                    join Colors in _context.Colors on ColorProducts.ColorID equals Colors.ColorID
-                    join Sizes in _context.Sizes on ColorProducts.SizeID equals Sizes.SizesID
-                    where ColorProducts.ProductID == productId
-                    select new ColorProductItemDTO
-                    {
-                        ProductID = ColorProducts.ProductID,
-                        ColorID = ColorProducts.ColorID,
-                        Quantity = ColorProducts.Quantity,
-                        Name = Colors.Name,
-                        ColorProductID = ColorProducts.ColorProductID,
-                        SizeID = ColorProducts.SizeID,
-                        SizeName = Sizes.Size
-                    }).ToListAsync();
-
-                var ratingProductDTO = await (
-                   from Ratings in _context.Ratings
-                   where Ratings.ProductID == productId
-                   select new RatingsDTO
-                   {
-                       ProductID = Ratings.ProductID,
-                       RatingID = Ratings.RatingID,
-                       RatingValue = Ratings.RatingValue,
-                       CreatedDate = Ratings.CreatedDate
-                   }).ToListAsync();
+                var ratingProductDTO = await _ratingsStore.RatingsByProductID(productId);
 
                 if (productDTO == null || colorProductDTO == null || ratingProductDTO == null)
                 {
@@ -657,132 +494,6 @@ namespace LuckysDepartmentStore.Service
                 return ExecutionResult<ItemVM>.Failure("Unable to retrieve item.");
             }
         }
-        //public async Task<ExecutionResult<List<ProductVmDTO>>> GetProductsWithDiscount()
-        //{
-        //    try
-        //    {
-        //        var products = await
-        //            (from Product in _context.Products
-        //             join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
-        //             from Category in categories.DefaultIfEmpty()
-        //             join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID into subCategories
-        //             from SubCategory in subCategories.DefaultIfEmpty()
-        //             join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
-        //             from Brand in Brands.DefaultIfEmpty()
-        //             join DiscountsByBrand in _context.Discounts on Product.BrandID equals DiscountsByBrand.BrandID into DiscountBrand
-        //             from DiscountsByBrand in DiscountBrand.DefaultIfEmpty()
-        //             join DiscountsByCategory in _context.Discounts on Product.CategoryID equals DiscountsByCategory.CategoryID into DiscountCategory
-        //             from DiscountsByCategory in DiscountCategory.DefaultIfEmpty()
-        //             join DiscountsByProduct in _context.Discounts on Product.ProductID equals DiscountsByProduct.ProductID into DiscountProduct
-        //             from DiscountsByProduct in DiscountProduct.DefaultIfEmpty()
-        //             join DiscountsBySubcategory in _context.Discounts on Product.SubCategoryID equals DiscountsBySubcategory.SubCategoryID into DiscountSubCategory
-        //             from DiscountsBySubcategory in DiscountSubCategory.DefaultIfEmpty()
-        //             where DiscountsByBrand != null || DiscountsByCategory != null || DiscountsByProduct != null || DiscountsBySubcategory != null
-
-        //             select new ProductVmDTO
-        //             {
-        //                 ProductID = Product.ProductID,
-        //                 ProductName = Product.ProductName,
-        //                 Price = Product.Price,
-        //                 Description = Product.Description,
-        //                 Quantity = Product.Quantity,
-        //                 Category = Category.CategoryName,
-        //                 SubCategory = SubCategory.SubCategoryName,
-        //                 Brand = Brand.BrandName,
-        //                 CreatedDate = Product.CreatedDate,
-        //                 ProductPicture = Product.ProductPicture,
-        //                 DiscountAmount = (decimal?)DiscountsByBrand.DiscountAmount ?? (decimal?)DiscountsByCategory.DiscountAmount ?? (decimal?)DiscountsByProduct.DiscountAmount ?? (decimal?)DiscountsBySubcategory.DiscountAmount,
-        //                 DiscountPercent = (decimal?)DiscountsByBrand.DiscountPercent ?? (decimal?)DiscountsByCategory.DiscountPercent ?? (decimal?)DiscountsByProduct.DiscountPercent ?? (decimal?)DiscountsBySubcategory.DiscountPercent,
-        //                 DiscountTag = Product.DiscountTag
-        //             }).ToListAsync();
-
-        //        // get all discounts with tags
-        //        var discountTagged = await (
-        //                   from Discounts in _context.Discounts
-        //                   where Discounts.DiscountActive == true && !string.IsNullOrEmpty(Discounts.DiscountTag)
-        //                   select new DiscountDTO
-        //                   {
-        //                       DiscountPercent = Discounts.DiscountPercent,
-        //                       DiscountAmount = Discounts.DiscountAmount,
-        //                       DiscountActive = Discounts.DiscountActive,
-        //                       DiscountTag = Discounts.DiscountTag
-        //                   }).ToListAsync();
-
-        //        var discountTagLookup = discountTagged
-        //                    .ToDictionary(d => d.DiscountTag.ToUpper().Trim(), d => d);
-
-        //        var productsWithDTags = await
-        //                     (from Product in _context.Products
-        //                      join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
-        //                      from Category in categories.DefaultIfEmpty()
-        //                      join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID into subCategories
-        //                      from SubCategory in subCategories.DefaultIfEmpty()
-        //                      join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
-        //                      from Brand in Brands.DefaultIfEmpty()
-        //                      where !string.IsNullOrEmpty(Product.DiscountTag)
-        //                      select new ProductVmDTO
-        //                      {
-        //                          ProductID = Product.ProductID,
-        //                          ProductName = Product.ProductName,
-        //                          Price = Product.Price,
-        //                          Description = Product.Description,
-        //                          Quantity = Product.Quantity,
-        //                          Category = Category.CategoryName,
-        //                          SubCategory = SubCategory.SubCategoryName,
-        //                          Brand = Brand.BrandName,
-        //                          CreatedDate = Product.CreatedDate,
-        //                          ProductPicture = Product.ProductPicture,
-        //                          DiscountTag = Product.DiscountTag
-        //                      }).ToListAsync();
-
-
-        //        for (int x = 0; x < productsWithDTags.Count(); x++)
-        //        {
-        //            var productDTagsArray = productsWithDTags[x].DiscountTag.Split(',').Select(k => k.ToUpper().Trim()).ToList();
-
-        //            foreach (var tag in productDTagsArray)//(var discount in discountTagged)
-        //            {
-        //                if (discountTagLookup.TryGetValue(tag, out var discount)) //(productDTagsArray.Contains(discount.DiscountTag.ToUpper().Trim()))
-        //                {
-        //                    productsWithDTags[x].DiscountAmount = (productsWithDTags[x].DiscountAmount ?? 0) + discount.DiscountAmount;
-        //                    productsWithDTags[x].DiscountPercent = (productsWithDTags[x].DiscountPercent ?? 0) + discount.DiscountPercent;
-
-        //                }
-
-        //            }
-
-        //        }
-
-        //        var combinedProducts = products
-        //                    .Concat(productsWithDTags)
-        //                    .GroupBy(p => p.ProductID)
-        //                    .Select(g => new ProductVmDTO
-        //                    {
-        //                        ProductID = g.Key,
-        //                        ProductName = g.First().ProductName,
-        //                        Price = g.First().Price,
-        //                        Description = g.First().Description,
-        //                        Quantity = g.First().Quantity,
-        //                        Category = g.First().Category,
-        //                        SubCategory = g.First().SubCategory,
-        //                        Brand = g.First().Brand,
-        //                        CreatedDate = g.First().CreatedDate,
-        //                        ProductPicture = g.First().ProductPicture,
-        //                        DiscountAmount = g.Sum(x => x.DiscountAmount ?? 0),
-        //                        DiscountPercent = g.Sum(x => x.DiscountPercent ?? 0),
-        //                        DiscountTag = g.First().DiscountTag
-        //                    })
-        //                    .ToList();
-
-        //        return ExecutionResult<List<ProductVmDTO>>.Success(combinedProducts);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return ExecutionResult<List<ProductVmDTO>>.Failure("No search information provided.");
-        //    }
-            
-
-        //}
         public async Task<ExecutionResult<List<ProductVM>>> GetProductsSearch(string? categorySelection,
            string? subCategorySelection, string? brandSelection, int? productID, string? searchString)
         {
@@ -792,20 +503,20 @@ namespace LuckysDepartmentStore.Service
                 {
                     var productSearch = await _productStore.GetProductsSearch(categorySelection, subCategorySelection, brandSelection, searchString);
 
-                    return productSearch;
+                    return ExecutionResult<List<ProductVM>>.Success(productSearch);
                 }
                 else if (productID != null)
                 {
-                    var productSearch = await _productStore.GetProductByID(productID);
+                    var productSearch = await _productStore.GetProductDiscountByIDSearch(productID);
 
-                    return productSearch;
+                    return ExecutionResult<List<ProductVM>>.Success(productSearch);
 
                 }
                 else if (searchString != null)
                 {
                     var productSearch = await _productStore.GetProductSearchString(searchString);
 
-                    return productSearch;
+                    return ExecutionResult<List<ProductVM>>.Success(productSearch);
                 }
                 return ExecutionResult<List<ProductVM>>.Failure("No search information provided.");
 
@@ -863,39 +574,7 @@ namespace LuckysDepartmentStore.Service
 
                 if (subCategorySelection != null || brandSelection != null || categorySelection != null)
                 {
-                    products = await
-                            (from Product in _context.Products
-                             join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
-                             from Category in categories.DefaultIfEmpty()
-                             join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID into subCategories
-                             from SubCategory in subCategories.DefaultIfEmpty()
-                             join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
-                             from Brand in Brands.DefaultIfEmpty()
-                             join DiscountsByBrand in _context.Discounts on Product.BrandID equals DiscountsByBrand.BrandID into DiscountBrand
-                             from DiscountsByBrand in DiscountBrand.DefaultIfEmpty()
-                             join DiscountsByCategory in _context.Discounts on Product.CategoryID equals DiscountsByCategory.CategoryID into DiscountCategory
-                             from DiscountsByCategory in DiscountCategory.DefaultIfEmpty()
-                             join DiscountsBySubcategory in _context.Discounts on Product.SubCategoryID equals DiscountsBySubcategory.SubCategoryID into DiscountSubCategory
-                             from DiscountsBySubcategory in DiscountSubCategory.DefaultIfEmpty()
-                             where (DiscountsByBrand != null && Product.BrandID == DiscountsByBrand.BrandID) || (DiscountsByCategory != null && Product.CategoryID == DiscountsByCategory.CategoryID) ||
-                                (DiscountsBySubcategory != null && Product.SubCategoryID == DiscountsBySubcategory.SubCategoryID)
-
-                             select new ProductVmDTO
-                             {
-                                 ProductID = Product.ProductID,
-                                 ProductName = Product.ProductName,
-                                 Price = Product.Price,
-                                 Description = Product.Description,
-                                 Quantity = Product.Quantity,
-                                 Category = Category.CategoryName,
-                                 SubCategory = SubCategory.SubCategoryName,
-                                 Brand = Brand.BrandName,
-                                 CreatedDate = Product.CreatedDate,
-                                 ProductPicture = Product.ProductPicture,
-                                 DiscountAmount = (decimal?)DiscountsByBrand.DiscountAmount ?? (decimal?)DiscountsByCategory.DiscountAmount ?? (decimal?)DiscountsBySubcategory.DiscountAmount,
-                                 DiscountPercent = (decimal?)DiscountsByBrand.DiscountPercent ?? (decimal?)DiscountsByCategory.DiscountPercent ?? (decimal?)DiscountsBySubcategory.DiscountPercent,
-                                 DiscountTag = Product.DiscountTag
-                             }).ToListAsync();
+                    products = await _productStore.ProductsWithDiscountsSelection();
 
                 }
 
@@ -908,9 +587,7 @@ namespace LuckysDepartmentStore.Service
                                                          .ToList();
 
                     // Get all discounts and split DiscountTag outside of the query
-                    var allDiscounts = await _context.Discounts
-                                               .Where(d => d.DiscountTag != null)
-                                               .ToListAsync();
+                    var allDiscounts = await _discountStore.DiscountWithTag();
 
                     var discounts =
                         allDiscounts
@@ -924,29 +601,7 @@ namespace LuckysDepartmentStore.Service
                         .ToDictionary(d => d.DiscountTag.ToUpper().Trim(), d => d);
 
 
-                    productsWithDTags = await
-                          (from Product in _context.Products
-                           join Category in _context.Categories on Product.CategoryID equals Category.CategoryID into categories
-                           from Category in categories.DefaultIfEmpty()
-                           join SubCategory in _context.SubCategories on Product.SubCategoryID equals SubCategory.SubCategoryID into subCategories
-                           from SubCategory in subCategories.DefaultIfEmpty()
-                           join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
-                           from Brand in Brands.DefaultIfEmpty()
-                           where !string.IsNullOrEmpty(Product.DiscountTag) && discountTagsArray.Any(k => EF.Functions.Like(Product.DiscountTag.ToUpper(), "%" + k + "%"))
-                           select new ProductVmDTO
-                           {
-                               ProductID = Product.ProductID,
-                               ProductName = Product.ProductName,
-                               Price = Product.Price,
-                               Description = Product.Description,
-                               Quantity = Product.Quantity,
-                               Category = Category.CategoryName,
-                               SubCategory = SubCategory.SubCategoryName,
-                               Brand = Brand.BrandName,
-                               CreatedDate = Product.CreatedDate,
-                               ProductPicture = Product.ProductPicture,
-                               DiscountTag = Product.DiscountTag
-                           }).ToListAsync();
+                    productsWithDTags = await _productStore.ProductsWithDiscountsByTag(discountTagsArray);
 
                     for (int x = 0; x < productsWithDTags.Count(); x++)
                     {

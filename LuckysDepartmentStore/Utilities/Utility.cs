@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace LuckysDepartmentStore.Utilities
 {
-    public class Utility
+    public class Utility : IUtility
     {
         private readonly IConfiguration _config;
 
@@ -17,7 +17,7 @@ namespace LuckysDepartmentStore.Utilities
             _config = config;
         }
 
-        public ProductEditVM MapEditProduct(ProductEditDTO products)
+        public ProductEditVM MapEditProduct(ProductDTO products)
         {
 
             var productsVM = new ProductEditVM();
@@ -39,7 +39,7 @@ namespace LuckysDepartmentStore.Utilities
 
             return productsVM;
         }
-        public ProductDetailVM MapDetailProduct(ProductDetailDTO products)
+        public ProductDetailVM MapDetailProduct(ProductDTO products)
         {
 
             var productsVM = new ProductDetailVM();

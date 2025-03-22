@@ -52,10 +52,15 @@ builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 builder.Services.AddScoped<ICheckoutService, CheckoutService>();
 builder.Services.AddScoped<IConsumerService, ConsumerService>();
 builder.Services.AddScoped<IProductStore, ProductStore>();
+builder.Services.AddScoped<IColorStore, ColorsStore>();
+builder.Services.AddScoped<IRatingsStore, RatingsStore>();
+builder.Services.AddScoped<IDiscountStore, DiscountStore>();
+builder.Services.AddScoped<IBrandStore, BrandStore>();
+builder.Services.AddSingleton<IUtility, Utility>();
 
 builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<Utility>();
+//builder.Services.AddSingleton<Utility>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {

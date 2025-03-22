@@ -11,7 +11,7 @@ namespace LuckysDepartmentStore.Controllers
 {
     public class HomeController(IDiscountService _discountService, ILogger<HomeController> _logger, IProductService _productService, 
         SignInManager<ApplicationUser> _signInManager, UserManager<ApplicationUser> _userManager, IShoppingCartService _shoppingCartService, 
-           Utility _utility) : Controller
+           IUtility _utility) : Controller
     {
         //private readonly ILogger<HomeController> _logger;
 

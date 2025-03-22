@@ -14,9 +14,9 @@ namespace LuckysDepartmentStore.Service
     {
         public LuckysContext _context;
         public IMapper _mapper;
-        private readonly Utility _utility;
+        private readonly IUtility _utility;
 
-        public DiscountService(LuckysContext context, IMapper mapper, Utility utility)
+        public DiscountService(LuckysContext context, IMapper mapper, IUtility utility)
         {
             _context = context;
             _mapper = mapper;

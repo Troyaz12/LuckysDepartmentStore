@@ -5,6 +5,8 @@ using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using LuckysDepartmentStore.Utilities;
+using LuckysDepartmentStore.Data.Stores;
+using LuckysDepartmentStore.Data.Stores.Interfaces;
 
 namespace LuckysDepartmentStore.Service
 {
@@ -12,25 +14,22 @@ namespace LuckysDepartmentStore.Service
     {
         public LuckysContext _context;
         public IMapper _mapper;
-        public BrandService(LuckysContext context, IMapper mapper)
+        public IBrandStore _brandStore;
+
+        public BrandService(LuckysContext context, IMapper mapper, IBrandStore brandStore)
         {
             _context = context;
             _mapper = mapper;
+            _brandStore = brandStore;
         }
 
         public async Task<ExecutionResult<int>> Create(ProductCreateVM product)
         {
             try
             {
-                var newBrand = new Brand();
-                newBrand.BrandName = product.BrandSelection;
+                var brandID = _brandStore.CreateBrand(product);
 
-                _context.Add(newBrand);
-                var brandResult = _context.SaveChanges();
-
-                int newBrandId = newBrand.BrandId;
-
-                return ExecutionResult<int>.Success(newBrandId);
+                return ExecutionResult<int>.Success(brandID.Result);
             }
             catch (Exception ex)
             {

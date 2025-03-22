@@ -1,4 +1,5 @@
-﻿using LuckysDepartmentStore.Models;
+﻿using LuckysDepartmentStore.Data.Configurations;
+using LuckysDepartmentStore.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -71,6 +72,7 @@ namespace LuckysDepartmentStore.Data
              .HasForeignKey(co => co.ShippingAddressID)
              .OnDelete(DeleteBehavior.NoAction);
 
+            builder.ApplyConfiguration(new ColorProductConfiguration());
 
         }
 

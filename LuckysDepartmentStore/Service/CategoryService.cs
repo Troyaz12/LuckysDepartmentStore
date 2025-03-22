@@ -5,6 +5,8 @@ using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using LuckysDepartmentStore.Utilities;
+using LuckysDepartmentStore.Data.Stores.Interfaces;
+using LuckysDepartmentStore.Data.Stores;
 
 namespace LuckysDepartmentStore.Service
 {
@@ -12,26 +14,21 @@ namespace LuckysDepartmentStore.Service
     {
         public LuckysContext _context;
         public IMapper _mapper;
-        public CategoryService(LuckysContext context, IMapper mapper)
+        private ICategoryStore _categoryStore;
+
+        public CategoryService(LuckysContext context, IMapper mapper, ICategoryStore categoryStore)
         {
             _context = context;
             _mapper = mapper;
+            _categoryStore = categoryStore;
         }
         public async Task<ExecutionResult<int>> Create(ProductCreateVM product)
         {
             try
             {
+               var newCategoryId = _categoryStore.CreateCategory(product);
 
-                var newCategory = new Category();
-                newCategory.CategoryName = product.CategorySelection;
-                newCategory.CategoryDescription = product.CategorySelection;
-
-                _context.Add(newCategory);
-                var categoryResult = await _context.SaveChangesAsync();
-
-                int newCategoryId = newCategory.CategoryID;
-
-                return ExecutionResult<int>.Success(newCategoryId);
+                return ExecutionResult<int>.Success(newCategoryId.Result);
             }
             catch (Exception ex)
             {

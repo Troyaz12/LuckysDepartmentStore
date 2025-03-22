@@ -14,11 +14,11 @@ namespace LuckysDepartmentStore.Service
         public IMapper _mapper;
         public const string CartSessionKey = "CartId";
         private readonly IHttpContextAccessor _httpContext;
-        public Utility _utility;
+        public IUtility _utility;
         public IColorService _colorService;
 
         public ShippingService(LuckysContext context, IMapper mapper, IHttpContextAccessor httpContext,
-            Utility utility, IColorService color)
+            IUtility utility, IColorService color)
         {
             _context = context;
             _mapper = mapper;
