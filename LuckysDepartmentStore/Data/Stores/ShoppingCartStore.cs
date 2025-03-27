@@ -33,17 +33,6 @@ namespace LuckysDepartmentStore.Data.Stores
 
             return cartItem;
         }
-
-        //public async Task<Carts> GetCart(Product product, string ShoppingCartId)
-        //{
-        //    // Get the cart
-        //    var cartItem = await _context.Carts.SingleAsync(
-        //        cart => cart.CartID == ShoppingCartId
-        //        && cart.ID == product.ProductID);
-
-        //    return cartItem;
-        //}
-
         public Task<int> RemoveFromCart(Carts cartItem)
         {
             _context.Carts.Remove(cartItem);
@@ -270,6 +259,25 @@ namespace LuckysDepartmentStore.Data.Stores
 
 
             return cartItemSave;
+        }
+
+        public async Task<List<Carts>> MigrateAnonymousCartItems(string shoppingCartId, string newCartId)
+        {
+            var cartItems = await GetCartDataOnlyItems(shoppingCartId);
+
+            if (!cartItems.Any())
+            {
+                return cartItems; // Return empty list if no items found
+            }
+
+            foreach (var item in cartItems)
+            {
+                item.CartID = newCartId;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return cartItems;
         }
     }
 }

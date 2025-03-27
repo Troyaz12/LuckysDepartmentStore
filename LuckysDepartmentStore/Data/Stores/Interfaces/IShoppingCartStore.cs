@@ -35,5 +35,7 @@ namespace LuckysDepartmentStore.Data.Stores.Interfaces
 
         public Task<int> EditCartItem(CartItemEdit item);
 
+        public Task<List<Carts>> MigrateAnonymousCartItems(string shoppingCartId, string userId);
+
     }
 }

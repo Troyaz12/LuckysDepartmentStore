@@ -359,7 +359,7 @@ namespace LuckysDepartmentStore.Service
             {
                 var cart = GetCart();
                 // pull items from logged in id
-                var migrateResult = await MigrateCart(cart, username);
+                var migrateResult = await MigrateAnonymousCartItems(cart);
             }
 
             _httpContext.HttpContext.Session.SetString(CartSessionKey, _httpContext.HttpContext.User.Identity.Name);
@@ -431,34 +431,33 @@ namespace LuckysDepartmentStore.Service
             return ExecutionResult<int>.Success(cartItemResult);
 
         }
-        
-        //public async Task<ExecutionResult<List<Carts>>> MigrateAnonymousCartItems(string shoppingCartId)
-        //{
-        //    try
-        //    {
-        //        // Retrieve existing cart items from the database
-        //        var cartItems = await (
-        //            from cart in _context.Carts
-        //            where cart.CartID == shoppingCartId
-        //            select cart
-        //        ).ToListAsync();
 
-        //        foreach (var product in cartItems)
-        //        {
-        //            // Ensure the product is correctly associated with the ShoppingCartId
-        //            product.CartID = _httpContext.HttpContext.User.Identity.Name;
+        public async Task<ExecutionResult<List<Carts>>> MigrateAnonymousCartItems(string anonymousCartId)
+        {
+            try
+            {
+                var userId = _httpContext.HttpContext.User.Identity.Name;
 
-        //        }
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return ExecutionResult<List<Carts>>.Failure("User not authenticated.");
+                }
 
-        //        await _context.SaveChangesAsync();
+                if (string.IsNullOrEmpty(anonymousCartId))
+                {
+                    return ExecutionResult<List<Carts>>.Failure("Invalid anonymous cart ID.");
+                }
 
-        //        return ExecutionResult<List<Carts>>.Success(cartItems);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ExecutionResult<List<Carts>>.Failure("Unable to add items cart.");
-        //    }
-        //}
+                // Retrieve existing cart items from the database
+                var cartItems = await _shoppingCartStore.MigrateAnonymousCartItems(anonymousCartId, userId);
+
+                return ExecutionResult<List<Carts>>.Success(cartItems);
+            }
+            catch (Exception ex)
+            {
+                return ExecutionResult<List<Carts>>.Failure("Unable to add items cart.");
+            }
+        }
         public ExecutionResult<Guid> SetCartSessionKey()
         {
 
