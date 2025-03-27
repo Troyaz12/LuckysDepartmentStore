@@ -11,6 +11,7 @@ using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.CodeAnalysis;
 using Microsoft.IdentityModel.Tokens;
+using LuckysDepartmentStore.Data.Stores.Interfaces;
 
 namespace LuckysDepartmentStore.Service
 {
@@ -18,10 +19,15 @@ namespace LuckysDepartmentStore.Service
     {
         public LuckysContext _context { get; set; }
         public IMapper _mapper;
-        public ConsumerService(LuckysContext context, IMapper mapper)
+        private readonly ICustomerStore _customerStore;
+        private readonly IPaymentStore _paymentStore;
+
+        public ConsumerService(LuckysContext context, IMapper mapper, ICustomerStore customerStore, IPaymentStore paymentStore)
         {
             _context = context;
             _mapper = mapper;
+            _customerStore = customerStore;
+            _paymentStore = paymentStore;
         }
 
         public async Task<ExecutionResult<bool>> CreateShippingAddress(ShippingAddressVM shippingAddress)
@@ -44,8 +50,7 @@ namespace LuckysDepartmentStore.Service
                 newAddress.ZipCode = shippingAddress.ZipCode;
                 newAddress.UserId = shippingAddress.UserId;
 
-                var addressId = await _context.ShippingAddress.AddAsync(newAddress);
-                await _context.SaveChangesAsync();
+                await _customerStore.CreateCustomerShippingAddress(newAddress);
             }
             catch (Exception ex)
             {
@@ -64,20 +69,7 @@ namespace LuckysDepartmentStore.Service
 
             try
             {
-                var allAddresses = await _context.ShippingAddress
-                .Where(address => address.UserId == userId)
-                .Select(address => new ShippingAddressDTO
-                { 
-                    FirstName = address.FirstName,
-                    LastName = address.LastName,
-                    Address1 = address.Address1,
-                    Address2 = address.Address2,
-                    City = address.City,
-                    State = address.State,
-                    ZipCode = address.ZipCode,
-                    ShippingAddressID = address.ShippingAddressID
-                  })
-                .ToListAsync();
+                var allAddresses = await _customerStore.GetShippingAddress(userId);
 
                 var addressListVM = _mapper.Map<List<ShippingAddressVM>>(allAddresses);
 
@@ -101,9 +93,8 @@ namespace LuckysDepartmentStore.Service
             try
             {
                 var newPaymentOption = _mapper.Map<PaymentOptions>(paymentOption);
-
-                var paymentOptionId = await _context.PaymentOptions.AddAsync(newPaymentOption);
-                await _context.SaveChangesAsync();
+                await _paymentStore.CreatePaymentOption(newPaymentOption);
+                
             }
             catch (Exception ex)
             {
@@ -122,25 +113,7 @@ namespace LuckysDepartmentStore.Service
 
             try
             {
-                var allPayments = await _context.PaymentOptions
-                .Where(payment => payment.UserId == userId)
-                .Select(payment => new PaymentOptionsDTO
-                {
-                   FirstName = payment.FirstName,
-                   LastName = payment.LastName,
-                   RoutingNumber = payment.RoutingNumber,
-                   AccountNumber = payment.AccountNumber,
-                   CvcCode = payment.CvcCode,
-                   BillingAddress1 = payment.BillingAddress1,
-                   BillingAddress2 = payment.BillingAddress2,
-                   City = payment.City,
-                   State = payment.State,
-                   ZipCode = payment.ZipCode,
-                   IsCheckingAccount = payment.IsCheckingAccount,
-                   IsCreditCard = payment.IsCreditCard,
-                   PaymentOptionsID = payment.PaymentOptionsID
-                })
-                .ToListAsync();
+                var allPayments = await _paymentStore.GetPaymentOptions(userId);
 
                 var paymentListVM = _mapper.Map<List<PaymentOptionsVM>>(allPayments);
 
@@ -158,17 +131,17 @@ namespace LuckysDepartmentStore.Service
             {
                 if (id == null)
                 {
-                    return ExecutionResult<ShippingAddress>.Failure("Payment data not recieved.");
+                    return ExecutionResult<ShippingAddress>.Failure("Shipping data not recieved.");
                 }
-                var shippingAddress = await _context.ShippingAddress.FindAsync(id);
+                var shippingAddress = await _customerStore.GetShippingAddressByID(id);
 
                 if (shippingAddress == null)
                 {
                     return ExecutionResult<ShippingAddress>.Failure("An error occured. Cannot find delete product.");
                 }
 
-                _context.ShippingAddress.Remove(shippingAddress);
-                await _context.SaveChangesAsync();
+                
+                await _customerStore.DeleteShippingAddress(shippingAddress);
 
                 return ExecutionResult<ShippingAddress>.Success(shippingAddress);
             }
@@ -186,22 +159,12 @@ namespace LuckysDepartmentStore.Service
                     return ExecutionResult<ShippingAddressVM>.Failure("No shipping address selected.");
                 }
 
-                var shippingAddressOld = await _context.ShippingAddress.FindAsync(shippingAddress.ShippingAddressID);
+                int rowsEffected = await _customerStore.UpdateShippingAddress(shippingAddress);
 
-                if (shippingAddressOld == null)
+                if (rowsEffected == 0)
                 {
-                    return ExecutionResult<ShippingAddressVM>.Failure("No shipping address selected.");
+                    return ExecutionResult<ShippingAddressVM>.Failure("Shipping address could not be updated.");
                 }
-
-                shippingAddressOld.FirstName = shippingAddress.FirstName;
-                shippingAddressOld.LastName = shippingAddress.LastName;
-                shippingAddressOld.Address1 = shippingAddress.Address1;
-                shippingAddressOld.Address2 = shippingAddress.Address2;
-                shippingAddressOld.City = shippingAddress.City;
-                shippingAddressOld.State = shippingAddress.State;
-                shippingAddressOld.ZipCode =shippingAddress.ZipCode;
-
-                var productSave = _context.SaveChanges();
 
                 return ExecutionResult<ShippingAddressVM>.Success(shippingAddress);
             }
@@ -219,25 +182,12 @@ namespace LuckysDepartmentStore.Service
                     return ExecutionResult<PaymentOptionsVM>.Failure("No payment option selected.");
                 }
 
-                var paymentOptionsOld = await _context.PaymentOptions.FindAsync(paymentOptions.PaymentOptionsID);
+                int rowsEffected = await _paymentStore.EditPaymentOption(paymentOptions);
 
-                if (paymentOptionsOld == null)
+                if (rowsEffected == 0)
                 {
-                    return ExecutionResult<PaymentOptionsVM>.Failure("No payment option selected.");
+                    return ExecutionResult<PaymentOptionsVM>.Failure("Could not update payment option.");
                 }
-
-                paymentOptionsOld.FirstName = paymentOptions.FirstName;
-                paymentOptionsOld.LastName = paymentOptions.LastName;
-                paymentOptionsOld.BillingAddress1 = paymentOptions.BillingAddress1;
-                paymentOptionsOld.BillingAddress2 = paymentOptions.BillingAddress2;
-                paymentOptionsOld.City = paymentOptions.City;
-                paymentOptionsOld.State = paymentOptions.State;
-                paymentOptionsOld.ZipCode = paymentOptions.ZipCode;
-                paymentOptionsOld.AccountNumber = paymentOptions.AccountNumber;
-                paymentOptionsOld.CvcCode = paymentOptions.CvcCode;
-
-
-                var paymentSave = _context.SaveChanges();
 
                 return ExecutionResult<PaymentOptionsVM>.Success(paymentOptions);
             }
@@ -254,15 +204,14 @@ namespace LuckysDepartmentStore.Service
                 {
                     return ExecutionResult<PaymentOptions>.Failure("Payment data not recieved.");
                 }
-                var paymentRecord = await _context.PaymentOptions.FindAsync(id);
+                var paymentRecord = await _paymentStore.GetPaymentOptionByID(id);
 
                 if (paymentRecord == null)
                 {
                     return ExecutionResult<PaymentOptions>.Failure("An error occured. Cannot find delete product.");
                 }
 
-                _context.PaymentOptions.Remove(paymentRecord);
-                await _context.SaveChangesAsync();
+                await _paymentStore.DeletePaymentOption(paymentRecord);
 
                 return ExecutionResult<PaymentOptions>.Success(paymentRecord);
             }

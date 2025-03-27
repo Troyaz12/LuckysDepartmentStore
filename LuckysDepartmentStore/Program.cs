@@ -57,6 +57,13 @@ builder.Services.AddScoped<IRatingsStore, RatingsStore>();
 builder.Services.AddScoped<IDiscountStore, DiscountStore>();
 builder.Services.AddScoped<IBrandStore, BrandStore>();
 builder.Services.AddSingleton<IUtility, Utility>();
+builder.Services.AddScoped<IPaymentStore, PaymentStore>();
+builder.Services.AddScoped<IShippingStore, ShippingStore>();
+builder.Services.AddScoped<ICustomerStore, CustomerStore>();
+builder.Services.AddScoped<ICategoryStore, CategoryStore>();
+builder.Services.AddScoped<IShoppingCartStore, ShoppingCartStore>();
+builder.Services.AddScoped<ISubcategoryStore, SubcategoryStore>();
+builder.Services.AddScoped<ICustomerOrderItemsStore, CustomerOrderItemsStore>();
 
 builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();

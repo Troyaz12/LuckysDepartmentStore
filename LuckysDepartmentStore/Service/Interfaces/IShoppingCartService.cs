@@ -12,8 +12,6 @@ namespace LuckysDepartmentStore.Service.Interfaces
     {
         public Task<ExecutionResult<CartsVM>> AddToCartAsync(CartItemsDTO product, string ShoppingCartId);
 
-        public Task<ExecutionResult<int>> RemoveFromCart(Product product, string ShoppingCartId);
-
         public Task<ExecutionResult<int>> EmptyCart(string ShoppingCartId);
 
         public Task<ExecutionResult<ShoppingCartVM>> GetCartItems(string ShoppingCartId);
@@ -22,7 +20,7 @@ namespace LuckysDepartmentStore.Service.Interfaces
 
         public Task<ExecutionResult<decimal>> GetTotal(string ShoppingCartId);
 
-        public Task<ExecutionResult<decimal>> CreateOrder(Product order, string ShoppingCartId, int customerId);
+        public Task<ExecutionResult<decimal>> CreateOrder(string ShoppingCartId, int customerId);
 
         public Task<ExecutionResult<string>> MigrateCart(string userName, string ShoppingCartId);
 
@@ -34,9 +32,9 @@ namespace LuckysDepartmentStore.Service.Interfaces
 
         public Task<ExecutionResult<CartsVM>> GetCartItem(int itemId);
 
-        public Task<ExecutionResult<Carts>> RemoveItemFromCart(int Id);
+        public Task<ExecutionResult<bool>> RemoveItemFromCart(int Id);
 
-        public Task<ExecutionResult<Carts>> EditItemInCart(CartItemEdit cartItem);
+        public Task<ExecutionResult<int>> EditItemInCart(CartItemEdit cartItem);
         
         public Task<string> GetCartIdOnLogInAsync();
 

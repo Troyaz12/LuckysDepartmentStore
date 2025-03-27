@@ -67,7 +67,7 @@ namespace LuckysDepartmentStore.Data
              .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<CustomerOrder>()
-             .HasOne(co => co.Customer)
+             .HasOne(co => co.CustomerShippingData)
              .WithMany()
              .HasForeignKey(co => co.ShippingAddressID)
              .OnDelete(DeleteBehavior.NoAction);

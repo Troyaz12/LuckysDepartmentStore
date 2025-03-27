@@ -1,24 +1,17 @@
-﻿using AutoMapper;
-using LuckysDepartmentStore.Data.Stores.Interfaces;
+﻿using LuckysDepartmentStore.Data.Stores.Interfaces;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.DTO.Home;
-using LuckysDepartmentStore.Utilities;
 using Microsoft.EntityFrameworkCore;
-using Utility = LuckysDepartmentStore.Utilities.Utility;
 
 namespace LuckysDepartmentStore.Data.Stores
 {
     public class ColorsStore : IColorStore
     {
         public LuckysContext _context;
-        public IMapper _mapper;
-        private readonly IUtility _utility;
 
-        public ColorsStore(LuckysContext context, IMapper mapper, IUtility utility)
+        public ColorsStore(LuckysContext context)
         {
             _context = context;
-            _mapper = mapper;
-            _utility = utility;
         }
 
         public async Task<List<ColorProductItemDTO>> ColorsByProductID(int productId)
@@ -57,6 +50,48 @@ namespace LuckysDepartmentStore.Data.Stores
                 .ToListAsync();
 
             return size;
+        }
+
+        public async Task<int> AddColor(string name)
+        {
+            var newColor = new Color();
+            newColor.Name = name;
+
+            _context.Add(newColor);
+            var ColorResult = await _context.SaveChangesAsync();
+
+            return ColorResult;
+        }
+        public async Task<string> GetColorName(int id)
+        {
+            var colorName = await _context.Colors
+            .Where(c => c.ColorID == id)
+            .Select(c => c.Name)
+            .SingleOrDefaultAsync();
+
+            return colorName;
+        }
+
+        public async Task<string> GetSizeName(int id)
+        {
+            var size = await _context.Sizes
+               .Where(c => c.SizesID == id)
+               .Select(c => c.Size)
+               .SingleOrDefaultAsync();
+
+            return size;
+        }
+        public async Task<int> CreateSize(string name)
+        {
+            var newSize = new Sizes();
+            newSize.Size = name;
+
+            _context.Add(newSize);
+            var sizeResult = await _context.SaveChangesAsync();
+
+            int newSizeId = newSize.SizesID;
+
+            return newSizeId;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using LuckysDepartmentStore.Data;
+using LuckysDepartmentStore.Data.Stores.Interfaces;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +10,17 @@ namespace LuckysDepartmentStore.Service
     {
         public LuckysContext _context;
         private IShoppingCartService _shoppingCartService;
+        private IShippingStore _shippingStore;
+        private IPaymentStore _paymentStore;
+        private ICustomerStore _customerStore;
 
-        public CheckoutService(LuckysContext context, IShoppingCartService shoppingCartService)
+        public CheckoutService(LuckysContext context, IShoppingCartService shoppingCartService, IShippingStore shippingStore, IPaymentStore paymentStore, ICustomerStore customerStore)
         {
             _context = context;
             _shoppingCartService = shoppingCartService;
+            _shippingStore = shippingStore;
+            _paymentStore = paymentStore;
+            _customerStore = customerStore;
         }
 
         public async Task<Utilities.ExecutionResult<OrderIds>> Order(Order order)
@@ -25,9 +32,7 @@ namespace LuckysDepartmentStore.Service
                     int customerId;
                     OrderIds orderids = new OrderIds();
 
-                    var shippingAddress = await _context.ShippingAddress
-                        .Where(address => address.UserId == order.UserId)
-                        .ToListAsync();
+                    var shippingAddress = await _shippingStore.GetShippingAddress(order.UserId);
 
                     // insert payment
                     var payment = new Payment();
@@ -45,9 +50,9 @@ namespace LuckysDepartmentStore.Service
                     payment.IsProcessed = false;
                     payment.ProcessMessage = "Pending";
 
-                    _context.Payments.Add(payment);
+                    await _paymentStore.SavePayment(payment);
 
-                    await _context.SaveChangesAsync();
+                    
 
                     // insert into shipping id
                     var shipping = new Shipping();
@@ -59,9 +64,7 @@ namespace LuckysDepartmentStore.Service
                     shipping.state = order.state;
                     shipping.Zip = order.Zip;
 
-                    _context.Shipping.Add(shipping);
-
-                    await _context.SaveChangesAsync();
+                    await _shippingStore.AddShippingAddress(shipping);
 
                     // insert into customer orders
                     var customerOrder = new CustomerOrder();
@@ -69,19 +72,25 @@ namespace LuckysDepartmentStore.Service
                     customerOrder.ShippingAddressID = shipping.ShippingID;
                     customerOrder.UserId = order.UserId;
 
-                    _context.CustomerOrders.Add(customerOrder);
-                    await _context.SaveChangesAsync();
+                    await _customerStore.SaveOrder(customerOrder);
 
                     var cart = _shoppingCartService.GetCart();
                     Product product = new Product();
-                    var orderTotal = await _shoppingCartService.CreateOrder(product, cart, customerOrder.CustomerOrderID);
+                    var orderTotal = await _shoppingCartService.CreateOrder(cart, customerOrder.CustomerOrderID);
+
+                    if (!orderTotal.IsSuccess)
+                    {
+                        await transaction.RollbackAsync(); // Explicit rollback for logical failure
+                        return Utilities.ExecutionResult<OrderIds>.Failure($"Failed to calculate order total: {orderTotal.ErrorMessage}");
+                    }
 
                     // Directly update `payment` instead of querying the DB again
                     payment.Total = orderTotal.Data;
-                    int paymentSaved = await _context.SaveChangesAsync();
+                    int paymentSaved = await _paymentStore.UpdatePayment(payment);
 
                     if (paymentSaved == 0)
                     {
+                        await transaction.RollbackAsync(); // Explicit rollback
                         return Utilities.ExecutionResult<OrderIds>.Failure("Failed to update payment total.");
                     }
 
@@ -105,10 +114,7 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                bool isValid = await _context.CustomerOrders
-               .Include(co => co.Customer)
-               .ThenInclude(c => c.User)
-               .AnyAsync(o => o.CustomerOrderID == orderNumber && o.Customer.User.UserName == user);
+                bool isValid = await _customerStore.IsOrderValid(orderNumber, user);
 
                 return Utilities.ExecutionResult<bool>.Success(isValid);
             }

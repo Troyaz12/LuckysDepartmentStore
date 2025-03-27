@@ -92,7 +92,7 @@ namespace LuckysDepartmentStore.Controllers
                 //Process the order
                 var cart = _shoppingCartService.GetCart();
                 Product product = new Product();
-                var orderResult = _shoppingCartService.CreateOrder(product, cart, orderId.Data.CustomerOrderID);
+                var orderResult = _shoppingCartService.CreateOrder(cart, orderId.Data.CustomerOrderID);
 
                 return RedirectToAction("Complete",
                 new { id = orderId.Data.CustomerOrderID });  // revisit to make sure this is correct

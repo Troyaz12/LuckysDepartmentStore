@@ -75,6 +75,8 @@ namespace XunitTestProject.Stores
             context.Discounts.Add(new Discount { DiscountID = 9, DiscountTag = null, SubCategoryID = 1, CategoryID = null, BrandID = null, ProductID = null, DiscountPercent = 5, DiscountAmount = 0, DiscountActive = false });
 
             context.ColorProducts.Add(new ColorProduct { ColorProductID=1, ColorID =1, Quantity =2, ProductID =4, SizeID =1});
+            context.ColorProducts.Add(new ColorProduct { ColorProductID = 2, ColorID = 2, Quantity = 5, ProductID = 4, SizeID = 1 });
+            context.ColorProducts.Add(new ColorProduct { ColorProductID = 3, ColorID = 3, Quantity = 4, ProductID = 4, SizeID = 2 });
 
             context.SaveChanges();
             return context;
@@ -445,7 +447,7 @@ namespace XunitTestProject.Stores
         }
 
         [Fact]
-        public void DeleteProductCorrect()
+        public async Task DeleteProductCorrect()
         {
             // Arrange
             var (context, mapperMock, utilityMock) = GetTestSetup();
@@ -458,6 +460,101 @@ namespace XunitTestProject.Stores
             // Assert
             Assert.True(product.Result);
             Assert.Equal(10, context.Products.Count());
+        }
+
+        [Fact]
+        public async Task AddProductCorrect()
+        {
+            // Arrange
+            var (context, mapperMock, utilityMock) = GetTestSetup();
+            var repository = new ProductStore(context, mapperMock.Object, utilityMock.Object);
+
+            var newProduct = new Product
+            { 
+                Price = 5.00m, 
+                Description = "test 1", 
+                ProductName = "AddProdTest",
+                CategoryID = 1,
+                SubCategoryID = 1, 
+                DiscountID = 0, 
+                DiscountTag = "dog toys",
+                SearchWords = "dog toys", 
+                BrandID = 1 
+            };
+
+            // Act
+            await repository.AddProduct(newProduct);
+
+            var addedProduct = context.Products.Where(p => p.ProductName == newProduct.ProductName).FirstOrDefault();
+
+            // Assert
+            Assert.NotNull(addedProduct);
+            Assert.Equal("AddProdTest", addedProduct.ProductName);
+        }
+
+        [Fact]
+        public async Task AddColorProductListCorrect()
+        {
+            // Arrange
+            var (context, mapperMock, utilityMock) = GetTestSetup();
+            var repository = new ProductStore(context, mapperMock.Object, utilityMock.Object);
+            List<ColorProduct> colorProducts = new List<ColorProduct>();
+
+            var colorProd1 = new ColorProduct
+            {
+                ColorProductID = 4,
+                ColorID = 4,
+                Quantity = 4,
+                ProductID = 4,
+                SizeID = 4
+            };
+            var colorProd2 = new ColorProduct
+            {
+                ColorProductID = 2,
+                ColorID = 2,
+                Quantity = 2,
+                ProductID = 2,
+                SizeID = 2
+            };
+            var colorProd3 = new ColorProduct
+            {
+                ColorProductID = 3,
+                ColorID = 3,
+                Quantity = 3,
+                ProductID = 3,
+                SizeID = 3
+            };
+
+            colorProducts.Add(colorProd1);
+            colorProducts.Add(colorProd2);
+            colorProducts.Add(colorProd3);
+
+            // Act
+            await repository.AddColorProductList(colorProducts);
+
+            var colorProductList = await context.ColorProducts.ToListAsync();
+
+            // Assert
+            Assert.Equal(4, colorProductList.Count);
+        }
+
+        [Fact]
+        public async Task GetColorProductListCorrect()
+        {
+            // Arrange
+            var (context, mapperMock, utilityMock) = GetTestSetup();
+            var repository = new ProductStore(context, mapperMock.Object, utilityMock.Object);
+
+            ProductEditVM productVM = new ProductEditVM();
+            productVM.ProductID = 4;
+            productVM.Price = 5.00m;
+
+            // Act
+            var product = await repository.GetColorProductList(productVM);
+
+            // Assert
+            Assert.NotNull(product);
+            Assert.Equal(3, product.Count());
         }
     }
 }

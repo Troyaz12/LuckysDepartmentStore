@@ -24,6 +24,8 @@ namespace LuckysDepartmentStore.Data.Stores.Interfaces
         public Task<ProductDTO> GetProductByIDNoDiscount(int productID);
         public Task<Product> ProductByID(int productID);
         public Task UpdateProduct(Product product, List<ColorProduct> colorProductsToAdd, List<ColorProduct> colorProductsToRemove);
-
+        public Task AddProduct(Product product);
+        public Task AddColorProductList(List<ColorProduct> colorProductsToAdd);
+        public Task<List<ColorProduct>> GetColorProductList(ProductEditVM productEdit);
     }
 }

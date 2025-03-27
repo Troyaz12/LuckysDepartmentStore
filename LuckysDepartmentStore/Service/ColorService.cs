@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
 using LuckysDepartmentStore.Data;
-using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Data.Stores.Interfaces;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
-using Microsoft.EntityFrameworkCore;
 
 namespace LuckysDepartmentStore.Service
 {
@@ -11,23 +10,21 @@ namespace LuckysDepartmentStore.Service
     {
         public LuckysContext _context;
         public IMapper _mapper;
+        private readonly IColorStore _colorStore;
 
-        public ColorService(LuckysContext context, IMapper mapper) 
+        public ColorService(LuckysContext context, IMapper mapper, IColorStore colorStore) 
         {
             _context = context;
             _mapper = mapper;
+            _colorStore = colorStore;
         }
         public async Task<ExecutionResult<int>> Create(string name)
         {
             try
-            {
-                var newColor = new Color();
-                newColor.Name = name;
+            {                
+                var ColorResult = await _colorStore.AddColor(name);
 
-                _context.Add(newColor);
-                var ColorResult = await _context.SaveChangesAsync();
-
-                int newColorId = newColor.ColorID;
+                int newColorId = ColorResult;
 
                 return ExecutionResult<int>.Success(newColorId);
             }
@@ -40,10 +37,12 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                var colorName = await _context.Colors
-               .Where(c => c.ColorID == id)
-               .Select(c => c.Name)
-               .SingleOrDefaultAsync();
+                var colorName = await _colorStore.GetColorName(id);
+
+                if (colorName == null)
+                {
+                    return ExecutionResult<string>.Failure("Color not found for the given ID.");
+                }
 
                 return ExecutionResult<string>.Success(colorName);
             }
@@ -57,10 +56,12 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                var size = await _context.Sizes
-               .Where(c => c.SizesID == id)
-               .Select(c => c.Size)
-               .SingleOrDefaultAsync();
+                var size = await _colorStore.GetSizeName(id);
+
+                if (size == null)
+                {
+                    return ExecutionResult<string>.Failure("Size not found for the given ID.");
+                }
 
                 return ExecutionResult<string>.Success(size);                
             }
@@ -73,14 +74,10 @@ namespace LuckysDepartmentStore.Service
         public async Task<ExecutionResult<int>> CreateSize(string name)
         {
             try
-            {
-                var newSize = new Sizes();
-                newSize.Size = name;
+            {             
+                var sizeResult = await _colorStore.CreateSize(name);
 
-                _context.Add(newSize);
-                var sizeResult = await _context.SaveChangesAsync();
-
-                int newSizeId = newSize.SizesID;
+                int newSizeId = sizeResult;
 
                 return ExecutionResult<int>.Success(newSizeId);
             }

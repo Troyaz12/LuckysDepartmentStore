@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LuckysDepartmentStore.Data;
+using LuckysDepartmentStore.Data.Stores.Interfaces;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.DTO.ShoppingCart;
 using LuckysDepartmentStore.Models.ViewModels.Discount;
@@ -21,15 +22,19 @@ namespace LuckysDepartmentStore.Service
         private readonly IHttpContextAccessor _httpContext;
         public IUtility _utility;
         public IColorService _colorService;
+        public IShoppingCartStore _shoppingCartStore;
+        private ICustomerOrderItemsStore _customerOrderItemsStore;
 
         public ShoppingCartService(LuckysContext context, IMapper mapper, IHttpContextAccessor httpContext,
-            IUtility utility, IColorService color)
+            IUtility utility, IColorService color, IShoppingCartStore shoppingCartStore, ICustomerOrderItemsStore customerOrderItemsStore)
         {
             _context = context;
             _mapper = mapper;
             _httpContext = httpContext;
             _utility = utility;
             _colorService = color;
+            _shoppingCartStore = shoppingCartStore;
+            _customerOrderItemsStore = customerOrderItemsStore;
         }
 
         public string GetCart()
@@ -49,10 +54,8 @@ namespace LuckysDepartmentStore.Service
             try
             {
                 // Get the matching cart instances
-                var cartItem = await _context.Carts.SingleOrDefaultAsync(
-                    c => c.CartID == ShoppingCartId
-                    && c.ProductID == product.ProductID
-                    && c.Color == product.ColorSelection);
+                var cartItem = await _shoppingCartStore.CheckForItemInCart(product, ShoppingCartId);
+                int rowsUpdated = 0;
 
                 if (cartItem == null)
                 {
@@ -71,16 +74,22 @@ namespace LuckysDepartmentStore.Service
                         Color = product.ColorSelection,
                         Size = product.SizeSelection
                     };
-                    _context.Carts.Add(cartItem);
+
+                    await _shoppingCartStore.AddItemToNewCart(cartItem);
                 }
                 else
                 {
                     // If the item does exist in the cart, 
                     // then add one to the quantity
-                    cartItem.Quantity += cartItem.Quantity;
-                }
-                // Save changes
-                await _context.SaveChangesAsync();
+                    var newQuantity = cartItem.Quantity + product.Quantity;
+
+                    rowsUpdated = await _shoppingCartStore.UpdateCartItemQuantity(cartItem, newQuantity);
+
+                    if (rowsUpdated == 0)
+                    {
+                        return ExecutionResult<CartsVM>.Failure("Unable to update cart.");
+                    }
+                }               
 
                 var cartVM = _mapper.Map<CartsVM>(cartItem);
 
@@ -90,57 +99,54 @@ namespace LuckysDepartmentStore.Service
             {
                 return ExecutionResult<CartsVM>.Failure("Unable to add to cart.");
             }
-
-
         }
 
-        public async Task<ExecutionResult<int>> RemoveFromCart(Product product, string ShoppingCartId)
-        {
-            int itemCount = 0;
+        //public async Task<ExecutionResult<int>> RemoveFromCart(Product product, string ShoppingCartId)
+        //{
+        //    int itemCount = 0;
 
-            try
-            {
-                // Get the cart
-                var cartItem = _context.Carts.Single(
-                    cart => cart.CartID == ShoppingCartId
-                    && cart.ID == product.ProductID);
+        //    try
+        //    {
+        //        // Get the cart
+        //        var cartItem = await _shoppingCartStore.GetCart(product, ShoppingCartId);
 
-                if (cartItem != null)
-                {
-                    if (cartItem.Quantity > 1)
-                    {
-                        cartItem.Quantity--;
-                        itemCount = cartItem.Quantity;
-                    }
-                    else
-                    {
-                        _context.Carts.Remove(cartItem);
-                    }
-                    // Save changes
-                    _context.SaveChangesAsync();
-                }
-                else
-                {
-                    return ExecutionResult<int>.Failure("Unable to get cart items.");
-                }
+        //        if (cartItem != null)
+        //        {
+        //            if (cartItem.Quantity > 1)
+        //            {
+        //                cartItem.Quantity--;
+        //                itemCount = cartItem.Quantity;
+        //            }
+        //            else
+        //            {
+        //                var rowsAffected = await _shoppingCartStore.RemoveFromCart(cartItem);
 
-            }
-            catch (Exception ex)
-            {
-                return ExecutionResult<int>.Failure("Unable to remove cart item.");
-            }
+        //                if (rowsAffected == 0)
+        //                {
+        //                    return ExecutionResult<int>.Failure("Unable to remove cart items.");
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return ExecutionResult<int>.Failure("Unable to get cart items.");
+        //        }
 
-            return ExecutionResult<int>.Success(itemCount);
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExecutionResult<int>.Failure("Unable to remove cart item.");
+        //    }
+
+        //    return ExecutionResult<int>.Success(itemCount);
+        //}
         public async Task<ExecutionResult<int>> EmptyCart(string ShoppingCartId)
         {
             List<Carts> cartItems = null;
 
             try
             {
-                cartItems = await _context.Carts
-                    .Where(cart => cart.CartID == ShoppingCartId)
-                    .ToListAsync();
+                cartItems = await _shoppingCartStore.GetCartDataOnlyItems(ShoppingCartId);
 
                 if (cartItems == null || !cartItems.Any())
                 {
@@ -149,10 +155,9 @@ namespace LuckysDepartmentStore.Service
 
                 foreach (var cartItem in cartItems)
                 {
-                    _context.Carts.Remove(cartItem);
+                    await _shoppingCartStore.RemoveFromCart(cartItem);
                 }
-                // Save changes
-                _context.SaveChangesAsync();
+                
             }
             catch (Exception ex)
             {
@@ -167,70 +172,7 @@ namespace LuckysDepartmentStore.Service
             {
                 var shoppingCart = new ShoppingCartVM();
 
-                var cartItems = await (
-                    from cart in _context.Carts
-                    join product in _context.Products on cart.ProductID equals product.ProductID
-                    join category in _context.Categories on product.CategoryID equals category.CategoryID into categories
-                    from category in categories.DefaultIfEmpty()
-                    join subCategory in _context.SubCategories on product.SubCategoryID equals subCategory.SubCategoryID into subCategories
-                    from subCategory in subCategories.DefaultIfEmpty()
-                    join brand in _context.Brand on product.BrandID equals brand.BrandId into brands
-                    from brand in brands.DefaultIfEmpty()
-                    join productDiscount in _context.Discounts on product.ProductID equals productDiscount.ProductID into productDiscounts
-                    from productDiscount in productDiscounts.Where(d => d.DiscountActive).DefaultIfEmpty()
-                    join brandDiscount in _context.Discounts on product.BrandID equals brandDiscount.BrandID into brandDiscounts
-                    from brandDiscount in brandDiscounts.Where(d => d.DiscountActive).DefaultIfEmpty()
-                    join categoryDiscount in _context.Discounts on product.CategoryID equals categoryDiscount.CategoryID into categoryDiscounts
-                    from categoryDiscount in categoryDiscounts.Where(d => d.DiscountActive).DefaultIfEmpty()
-                    join subCategoryDiscount in _context.Discounts on product.SubCategoryID equals subCategoryDiscount.SubCategoryID into subCategoryDiscounts
-                    from subCategoryDiscount in subCategoryDiscounts.Where(d => d.DiscountActive).DefaultIfEmpty()
-                    join tagDiscount in _context.Discounts on product.DiscountTag equals tagDiscount.DiscountTag into tagDiscounts
-                    from tagDiscount in tagDiscounts.Where(d => d.DiscountActive).DefaultIfEmpty()
-                    where cart.CartID == ShoppingCartId
-                    group new { product, category, subCategory, brand, productDiscount, brandDiscount, categoryDiscount, subCategoryDiscount, tagDiscount }
-                        by new
-                        {
-                            product.ProductID,
-                            product.ProductName,
-                            product.Price,
-                            product.Description,
-                            cart.Quantity,
-                            product.ProductPicture,
-                            category.CategoryName,
-                            subCategory.SubCategoryName,
-                            brand.BrandName,
-                            product.DiscountTag,
-                            cart.Size,
-                            cart.Color,
-                            cart.ID
-                        }
-                    into grouped
-                    select new CartsDTO
-                    {
-                        ProductID = grouped.Key.ProductID,
-                        ProductName = grouped.Key.ProductName,
-                        Price = grouped.Key.Price,
-                        Description = grouped.Key.Description,
-                        Quantity = grouped.Key.Quantity,
-                        ProductPicture = grouped.Key.ProductPicture,
-                        Category = grouped.Key.CategoryName,
-                        SubCategory = grouped.Key.SubCategoryName,
-                        Brand = grouped.Key.BrandName,
-                        DiscountAmount = grouped.Sum(x => x.productDiscount.DiscountAmount) + 
-                                        grouped.Sum(x => x.brandDiscount.DiscountAmount) + 
-                                        grouped.Sum(x => x.categoryDiscount.DiscountAmount) + 
-                                        grouped.Sum(x => x.subCategoryDiscount.DiscountAmount) + 
-                                        grouped.Sum(x => x.tagDiscount.DiscountAmount),
-                        DiscountPercent = grouped.Sum(x => x.productDiscount.DiscountPercent) + 
-                                        grouped.Sum(x => x.brandDiscount.DiscountPercent) + 
-                                        grouped.Sum(x => x.categoryDiscount.DiscountPercent) + 
-                                        grouped.Sum(x => x.subCategoryDiscount.DiscountPercent) + 
-                                        grouped.Sum(x => x.tagDiscount.DiscountPercent),
-                        DiscountTag = grouped.Key.DiscountTag,
-                        Size = grouped.Key.Size,
-                        Color = grouped.Key.Color,
-                        ID = grouped.Key.ID
-                    }).ToListAsync();
+                var cartItems = await _shoppingCartStore.GetCartItemsAllData(ShoppingCartId);
 
                 if (cartItems == null)
                 {
@@ -272,10 +214,7 @@ namespace LuckysDepartmentStore.Service
             try
             {
                 // Get the count of each item in the cart and sum them up
-                count = (from cartItems in _context.Carts
-                         where cartItems.CartID == ShoppingCartId
-                         select (int?)cartItems.Quantity).Sum();
-
+                count = await _shoppingCartStore.GetCartItemCount(ShoppingCartId);
 
             }
             catch (Exception ex)
@@ -289,14 +228,8 @@ namespace LuckysDepartmentStore.Service
         {
             decimal? total = null;
             try
-            {
-                // Multiply album price by count of that album to get 
-                // the current price for each of those albums in the cart
-                // sum all album price totals to get the cart total
-                total = await _context.Carts
-                                  .Where(cartItems => cartItems.CartID == ShoppingCartId)
-                                  .Select(cartItems => (int?)cartItems.Quantity * cartItems.Price)
-                                  .SumAsync();
+            {                
+                total = await _shoppingCartStore.GetCartTotal(ShoppingCartId);
             }
             catch (Exception ex)
             {
@@ -305,14 +238,19 @@ namespace LuckysDepartmentStore.Service
 
             return ExecutionResult<decimal>.Success(total ?? decimal.Zero);
         }
-        public async Task<ExecutionResult<decimal>> CreateOrder(Product order, string ShoppingCartId, int customerOrderId)
+        public async Task<ExecutionResult<decimal>> CreateOrder(string ShoppingCartId, int customerOrderId)
         { // may not need Product
 
             decimal orderTotal = 0;
 
+            // Start a transaction
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
             try
             {
                 var cartItems = GetCartItems(ShoppingCartId);
+                List<CustomerOrderItem> items = new List<CustomerOrderItem>();
+
                 // Iterate over the items in the cart, 
                 // adding the order details for each
                 foreach (var item in cartItems.Result.Data.cartsVMs)
@@ -325,22 +263,26 @@ namespace LuckysDepartmentStore.Service
                         Quantity = item.Quantity
 
                     };
-                    // Set the order total of the shopping cart
-                    //    orderTotal += (item.Quantity * item.Price);
 
-                    _context.CustomerOrderItems.Add(customerOrderItem);
-
+                    items.Add(customerOrderItem);
                 }
 
                 // Save the order
-                await _context.SaveChangesAsync();
+                var rowsEffected = await _customerOrderItemsStore.CustomerOrderItemsAdd(items);
 
-                orderTotal = await _context.CustomerOrderItems
-                    .Where(oi => oi.CustomerOrderID == customerOrderId)
-                    .SumAsync(oi => oi.Price * oi.Quantity);
+                if (rowsEffected == 0)
+                {
+                    await transaction.RollbackAsync();
+                    return Utilities.ExecutionResult<decimal>.Failure("Unable to process order.");
+                }
 
+                orderTotal = await _shoppingCartStore.CalculateOrderTotal(customerOrderId);
 
-
+                if (orderTotal == 0)
+                {
+                    await transaction.RollbackAsync();
+                    return Utilities.ExecutionResult<decimal>.Failure("Unable to process order.");
+                }
 
                 // Empty the shopping cart
                 EmptyCart(ShoppingCartId);
@@ -348,6 +290,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
                 return Utilities.ExecutionResult<decimal>.Failure("Unable to get cart total.");
             }
 
@@ -360,23 +303,18 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                var shoppingCart = _context.Carts.Where(
-                    c => c.CartID == ShoppingCartId);
+                var shoppingCart = await _shoppingCartStore.GetCartDataOnlyItems(ShoppingCartId);
 
-                foreach (Carts item in shoppingCart)
-                {
-                    item.CartID = userName;
-                }
-                await _context.SaveChangesAsync();
+                await _shoppingCartStore.MigrateCart(userName, shoppingCart);
             }
             catch (Exception ex)
             {
-                return Utilities.ExecutionResult<string>.Failure("Unable migrate cart.");
+                return Utilities.ExecutionResult<string>.Failure("Unable to migrate cart.");
             }
 
             return Utilities.ExecutionResult<string>.Success(ShoppingCartId);
         }
-        // We're using HttpContextBase to allow access to cookies.
+        
         public string GetCartId()
         {
 
@@ -412,17 +350,16 @@ namespace LuckysDepartmentStore.Service
             }
             return _httpContext.HttpContext.Session.GetString(CartSessionKey);
         }
-        // We're using HttpContextBase to allow access to cookies.
+        
         public async Task<string> GetCartIdOnLogInAsync()
         {
-
+            var username = _httpContext.HttpContext.User.Identity.Name;
             // does the existing id have any items associated with it? pull items
-            if (_httpContext.HttpContext.Session.GetString(CartSessionKey) != null && !string.IsNullOrWhiteSpace(_httpContext.HttpContext.User.Identity.Name))
+            if (_httpContext.HttpContext.Session.GetString(CartSessionKey) != null && !string.IsNullOrWhiteSpace(username))
             {
                 var cart = GetCart();
                 // pull items from logged in id
-            //    var cartGuest = await GetCartItems(cart);
-                var migrateResult = await MigrateAnonymousCartItems(cart);
+                var migrateResult = await MigrateCart(cart, username);
             }
 
             _httpContext.HttpContext.Session.SetString(CartSessionKey, _httpContext.HttpContext.User.Identity.Name);
@@ -443,57 +380,7 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                var cartItems = await (
-                    from cart in _context.Carts
-                    join product in _context.Products on cart.ProductID equals product.ProductID
-                    join category in _context.Categories on product.CategoryID equals category.CategoryID into categories
-                    from category in categories.DefaultIfEmpty()
-                    join subCategory in _context.SubCategories on product.SubCategoryID equals subCategory.SubCategoryID into subCategories
-                    from subCategory in subCategories.DefaultIfEmpty()
-                    join brand in _context.Brand on product.BrandID equals brand.BrandId into brands
-                    from brand in brands.DefaultIfEmpty()
-                    join discount in _context.Discounts on
-                        product.ProductID equals discount.ProductID into discounts
-                    from discount in discounts.Where(d => d.DiscountActive &&
-                        (d.ProductID == product.ProductID ||
-                         d.BrandID == product.BrandID ||
-                         d.CategoryID == product.CategoryID ||
-                         d.SubCategoryID == product.SubCategoryID)).DefaultIfEmpty()
-                    where cart.ID == itemId
-                    group new { product, category, subCategory, brand, discount }
-                        by new
-                        {
-                            product.ProductID,
-                            product.ProductName,
-                            product.Price,
-                            product.Description,
-                            cart.Quantity,
-                            product.ProductPicture,
-                            category.CategoryName,
-                            subCategory.SubCategoryName,
-                            brand.BrandName,
-                            product.DiscountTag,
-                            cart.Size,
-                            cart.Color
-                        }
-                    into grouped
-                    select new CartsDTO
-                    {
-                        ProductID = grouped.Key.ProductID,
-                        ProductName = grouped.Key.ProductName,
-                        Price = grouped.Key.Price,
-                        Description = grouped.Key.Description,
-                        Quantity = grouped.Key.Quantity,
-                        ProductPicture = grouped.Key.ProductPicture,
-                        Category = grouped.Key.CategoryName,
-                        SubCategory = grouped.Key.SubCategoryName,
-                        Brand = grouped.Key.BrandName,
-                        DiscountAmount = grouped.Sum(x => x.discount.DiscountAmount),
-                        DiscountPercent = grouped.Sum(x => x.discount.DiscountPercent),
-                        DiscountTag = grouped.Key.DiscountTag,
-                        Size = grouped.Key.Size,
-                        Color = grouped.Key.Color
-                    }).FirstOrDefaultAsync();
+                var cartItems = await _shoppingCartStore.GetCartItemsAllDataByID(itemId);
 
                 if (cartItems == null)
                 {
@@ -519,85 +406,59 @@ namespace LuckysDepartmentStore.Service
                 return ExecutionResult<CartsVM>.Failure("Unable to get cart items.");
             }
         }
-        public async Task<ExecutionResult<Carts>> RemoveItemFromCart(int Id)
+        public async Task<ExecutionResult<bool>> RemoveItemFromCart(int Id)
         {
-            var cartItem = await _context.Carts.FindAsync(Id);
+            var itemRemoved = await _shoppingCartStore.RemoveCartItem(Id);
 
-            if (cartItem == null)
+            if (itemRemoved == null || itemRemoved == false)
             {
-                return ExecutionResult<Carts>.Failure("Unable to remove item from cart.");
+                return ExecutionResult<bool>.Failure("Unable to remove item.");
             }
 
-            _context.Carts.Remove(cartItem);
-            await _context.SaveChangesAsync();
-
-            return ExecutionResult<Carts>.Success(cartItem);
+            return ExecutionResult<bool>.Success(itemRemoved);
 
         }
 
-        public async Task<ExecutionResult<Carts>> EditItemInCart(CartItemEdit cartItem)
+        public async Task<ExecutionResult<int>> EditItemInCart(CartItemEdit cartItem)
         {
+            var cartItemResult = await _shoppingCartStore.EditCartItem(cartItem);
 
-            var cartItemResult = await _context.Carts.FindAsync(cartItem.ID);
-
-            if (cartItemResult == null)
+            if (cartItemResult == 0)
             {
-                return ExecutionResult<Carts>.Failure("Unable to edit item in cart.");
-            }
+                return ExecutionResult<int>.Failure("Unable to edit item in cart.");
+            }            
 
-            cartItemResult.Quantity = cartItem.Quantity;
-            cartItemResult.Color = cartItem.ColorSelection;
-            cartItemResult.Size = cartItem.SizeSelection;
-            cartItemResult.Price = cartItem.Price;
-
-            var cartItemSave = _context.SaveChangesAsync();
-
-            return ExecutionResult<Carts>.Success(cartItemResult);
+            return ExecutionResult<int>.Success(cartItemResult);
 
         }
-        public async Task<ExecutionResult<Carts>> RemoveCart(string cartID)
-        {
+        
+        //public async Task<ExecutionResult<List<Carts>>> MigrateAnonymousCartItems(string shoppingCartId)
+        //{
+        //    try
+        //    {
+        //        // Retrieve existing cart items from the database
+        //        var cartItems = await (
+        //            from cart in _context.Carts
+        //            where cart.CartID == shoppingCartId
+        //            select cart
+        //        ).ToListAsync();
 
-            if (cartID == null)
-            {
-                return ExecutionResult<Carts>.Failure("Unable to remove item from cart.");
-            }
+        //        foreach (var product in cartItems)
+        //        {
+        //            // Ensure the product is correctly associated with the ShoppingCartId
+        //            product.CartID = _httpContext.HttpContext.User.Identity.Name;
 
-            var cart = _context.Carts.SingleOrDefault(c => c.CartID == cartID);
+        //        }
 
-            _context.Carts.Remove(cart);
-            await _context.SaveChangesAsync();
+        //        await _context.SaveChangesAsync();
 
-            return ExecutionResult<Carts>.Success(cart);
-
-        }
-        public async Task<ExecutionResult<List<Carts>>> MigrateAnonymousCartItems(string shoppingCartId)
-        {
-            try
-            {
-                // Retrieve existing cart items from the database
-                var cartItems = await (
-                    from cart in _context.Carts
-                    where cart.CartID == shoppingCartId
-                    select cart
-                ).ToListAsync();
-
-                foreach (var product in cartItems)
-                {
-                    // Ensure the product is correctly associated with the ShoppingCartId
-                    product.CartID = _httpContext.HttpContext.User.Identity.Name;
-
-                }
-
-                await _context.SaveChangesAsync();
-
-                return ExecutionResult<List<Carts>>.Success(cartItems);
-            }
-            catch (Exception ex)
-            {
-                return ExecutionResult<List<Carts>>.Failure("Unable to add items cart.");
-            }
-        }
+        //        return ExecutionResult<List<Carts>>.Success(cartItems);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExecutionResult<List<Carts>>.Failure("Unable to add items cart.");
+        //    }
+        //}
         public ExecutionResult<Guid> SetCartSessionKey()
         {
 

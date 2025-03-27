@@ -1,21 +1,16 @@
-﻿using AutoMapper;
+﻿using LuckysDepartmentStore.Data.Stores;
 using LuckysDepartmentStore.Data;
-using LuckysDepartmentStore.Models.DTO.Products;
-using LuckysDepartmentStore.Models;
-using LuckysDepartmentStore.Utilities;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LuckysDepartmentStore.Data.Stores;
-using LuckysDepartmentStore.Models.ViewModels.Product;
+using LuckysDepartmentStore.Models;
 
 namespace XunitTestProject.Stores
 {
-    public class BrandStoreTests
+    public class SubcategoryStoreTests
     {
         private LuckysContext GetInMemoryDbContext()
         {
@@ -25,7 +20,7 @@ namespace XunitTestProject.Stores
                 .Options;
 
             var context = new LuckysContext(options);
-           
+
             context.SaveChanges();
             return context;
         }
@@ -38,21 +33,20 @@ namespace XunitTestProject.Stores
         }
 
         [Fact]
-        public void CreateBrandCorrect()
+        public async Task CreateSubcategoryCorrect()
         {
             // Arrange
             var context = GetTestSetup();
-            var repository = new BrandStore(context);
+            var repository = new SubcategoryStore(context);
 
-            ProductCreateVM product = new ProductCreateVM();
-            product.BrandSelection = "GAP";
+            var subCategory = new SubCategory {SubCategoryName = "Jeans", SubCategoryDescription = "Jeans Desc"};
 
             // Act
-            var brandID = repository.CreateBrand(product);
+            var ID = await repository.CreateSubcategory(subCategory);
 
             // Assert
-            Assert.NotNull(brandID);
-            Assert.Equal(1, brandID.Result);            
+            Assert.True(ID > 0);
+
         }
     }
 }

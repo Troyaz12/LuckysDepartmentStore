@@ -2,8 +2,6 @@
 using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Data.Stores.Interfaces;
 using LuckysDepartmentStore.Models;
-using LuckysDepartmentStore.Models.DTO.Discount;
-using LuckysDepartmentStore.Models.DTO.Home;
 using LuckysDepartmentStore.Models.DTO.Products;
 using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Models.ViewModels.Product;
@@ -11,7 +9,6 @@ using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
-using Utility = LuckysDepartmentStore.Utilities.Utility;
 
 namespace LuckysDepartmentStore.Service
 {
@@ -54,121 +51,119 @@ namespace LuckysDepartmentStore.Service
                 using (var transaction = await _context.Database.BeginTransactionAsync())
                 {
 
-                try
-                {
-                    if ((product != null && product.ColorID == null))
+                    try
                     {
-                        for (int x = 0; x < product.ColorProduct.Count; x++)
+                        if ((product != null && product.ColorID == null))
                         {
-                            if (product.ColorProduct[x].ColorID == 0 || product.ColorProduct[x].ColorID == null)
+                            for (int x = 0; x < product.ColorProduct.Count; x++)
                             {
-                                var colorIdEx = await _colorService.Create(product.ColorProduct[x].Name);
-
-                                if (!colorIdEx.IsSuccess)
-                                {                                    
-                                    return ExecutionResult<Product>.Failure("Cannot create color.");
-                                }
-
-                                var colorId = colorIdEx.Data;
-                                product.ColorProduct[x].ColorID = colorId;
-                            }
-                        }
-                    }
-                    if ((product != null && product.SizeID == null))
-                    {
-                        for (int x = 0; x < product.ColorProduct.Count; x++)
-                        {
-                            if (product.ColorProduct[x].SizeID == 0 || product.ColorProduct[x].SizeID == null)
-                            {
-                                var sizeIdRes = await _colorService.CreateSize(product.ColorProduct[x].SizeName);
-
-                                if (!sizeIdRes.IsSuccess)
+                                if (product.ColorProduct[x].ColorID == 0 || product.ColorProduct[x].ColorID == null)
                                 {
-                                    // Rollback the transaction on error
-                                    await transaction.RollbackAsync();
-                                    return ExecutionResult<Product>.Failure("Cannot create size.");
-                                }
+                                    var colorIdEx = await _colorService.Create(product.ColorProduct[x].Name);
 
-                                product.ColorProduct[x].SizeID = sizeIdRes.Data;
+                                    if (!colorIdEx.IsSuccess)
+                                    {                                    
+                                        return ExecutionResult<Product>.Failure("Cannot create color.");
+                                    }
+
+                                    var colorId = colorIdEx.Data;
+                                    product.ColorProduct[x].ColorID = colorId;
+                                }
                             }
                         }
-                    }
-                    if ((product != null && product.CategoryID == null) || product.CategoryID == 0)
-                    {
-                        var categoryRes = await _categoryService.Create(product);
-
-                        if (!categoryRes.IsSuccess)
+                        if ((product != null && product.SizeID == null))
                         {
-                            // Rollback the transaction on error
-                            await transaction.RollbackAsync();
-                            return ExecutionResult<Product>.Failure("Cannot create category.");
+                            for (int x = 0; x < product.ColorProduct.Count; x++)
+                            {
+                                if (product.ColorProduct[x].SizeID == 0 || product.ColorProduct[x].SizeID == null)
+                                {
+                                    var sizeIdRes = await _colorService.CreateSize(product.ColorProduct[x].SizeName);
+
+                                    if (!sizeIdRes.IsSuccess)
+                                    {
+                                        // Rollback the transaction on error
+                                        await transaction.RollbackAsync();
+                                        return ExecutionResult<Product>.Failure("Cannot create size.");
+                                    }
+
+                                    product.ColorProduct[x].SizeID = sizeIdRes.Data;
+                                }
+                            }
+                        }
+                        if ((product != null && product.CategoryID == null) || product.CategoryID == 0)
+                        {
+                            var categoryRes = await _categoryService.Create(product);
+
+                            if (!categoryRes.IsSuccess)
+                            {
+                                // Rollback the transaction on error
+                                await transaction.RollbackAsync();
+                                return ExecutionResult<Product>.Failure("Cannot create category.");
+                            }
+
+                            product.CategoryID = categoryRes.Data;
                         }
 
-                        product.CategoryID = categoryRes.Data;
-                    }
-
-                    if ((product != null && product.SubCategoryID == null) || product.SubCategoryID == 0)
-                    {
-                        var subcategoryRes = await _subCategoryService.Create(product);
-
-                        if (!subcategoryRes.IsSuccess)
+                        if ((product != null && product.SubCategoryID == null) || product.SubCategoryID == 0)
                         {
-                            // Rollback the transaction on error
-                            await transaction.RollbackAsync();
-                            return ExecutionResult<Product>.Failure("Cannot create subcategory.");
+                            var subcategoryRes = await _subCategoryService.Create(product);
+
+                            if (!subcategoryRes.IsSuccess)
+                            {
+                                // Rollback the transaction on error
+                                await transaction.RollbackAsync();
+                                return ExecutionResult<Product>.Failure("Cannot create subcategory.");
+                            }
+
+                            product.SubCategoryID = subcategoryRes.Data;
                         }
 
-                        product.SubCategoryID = subcategoryRes.Data;
-                    }
 
-
-                    if ((product != null && product.BrandID == null) || product.BrandID == 0)
-                    {
-                        var brandRes = await _brandService.Create(product);
-
-                        if (!brandRes.IsSuccess)
+                        if ((product != null && product.BrandID == null) || product.BrandID == 0)
                         {
-                            // Rollback the transaction on error
-                            await transaction.RollbackAsync();
-                            return ExecutionResult<Product>.Failure("Cannot create brand.");
+                            var brandRes = await _brandService.Create(product);
+
+                            if (!brandRes.IsSuccess)
+                            {
+                                // Rollback the transaction on error
+                                await transaction.RollbackAsync();
+                                return ExecutionResult<Product>.Failure("Cannot create brand.");
+                            }
+
+                            product.BrandID = brandRes.Data;
                         }
 
-                        product.BrandID = brandRes.Data;
+                        var newProduct = _mapper.Map<Product>(product);
+
+                        newProduct.ProductPicture = _utility.ImageBytes(product.ProductPictureFile);
+
+                        await _productStore.AddProduct(newProduct);
+
+                        int productId = newProduct.ProductID;
+
+                        var newColorProducts = product.ColorProduct
+                           .Select(cp =>
+                           {
+                               var newColorProduct = _mapper.Map<ColorProduct>(cp);
+                               newColorProduct.ProductID = productId;
+                               return newColorProduct;
+                           })
+                           .ToList();
+
+                        await _productStore.AddColorProductList(newColorProducts);
+
+                        await transaction.CommitAsync();
+                        return ExecutionResult<Product>.Success(newProduct);
                     }
-
-                    var newProduct = _mapper.Map<Product>(product);
-
-                    newProduct.ProductPicture = _utility.ImageBytes(product.ProductPictureFile);
-
-                    _context.Add(newProduct);
-                    await _context.SaveChangesAsync();
-
-                    int productId = newProduct.ProductID;
-
-                    var newColorProducts = product.ColorProduct
-                       .Select(cp =>
-                       {
-                           var newColorProduct = _mapper.Map<ColorProduct>(cp);
-                           newColorProduct.ProductID = productId;
-                           return newColorProduct;
-                       })
-                       .ToList();
-
-                    _context.AddRange(newColorProducts);
-                    await _context.SaveChangesAsync();
-
-                    await transaction.CommitAsync();
-                    return ExecutionResult<Product>.Success(newProduct);
+                    catch (DbUpdateException ex)
+                    {
+                        return ExecutionResult<Product>.Failure($"Order failed: {ex.Message}");                   
+                    }
+                    catch (Exception ex)
+                    {
+                        return ExecutionResult<Product>.Failure($"Order failed: {ex.Message}");
+                    }
                 }
-                catch (DbUpdateException ex)
-                {
-                    return ExecutionResult<Product>.Failure($"Order failed: {ex.Message}");                   
-                }
-                catch (Exception ex)
-                {
-                    return ExecutionResult<Product>.Failure($"Order failed: {ex.Message}");
-                }
-            }
             });
         }
         public async Task<ExecutionResult<List<Color>>> GetColors()
@@ -341,7 +336,7 @@ namespace LuckysDepartmentStore.Service
 
                 var colorProductsEdit = _mapper.Map<List<ColorProduct>>(productEdit.ColorProduct);                
 
-                var colorProductsDB = _context.ColorProducts.Where(e => e.ProductID == productEdit.ProductID).ToList();
+                var colorProductsDB = await _productStore.GetColorProductList(productEdit);
 
                 var colorProductsToRemove = colorProductsDB
                .Where(cp => !colorProductsEdit.Any(p => p.ColorProductID == cp.ColorProductID) && cp.ColorProductID != 0)
@@ -533,14 +528,12 @@ namespace LuckysDepartmentStore.Service
                 // check for other discounts
                 if (!string.IsNullOrEmpty(item.DiscountTag)) {
                     var discountTagsArray = item.DiscountTag.Split(',').Select(k => k.ToUpper().Trim()).ToList();
-                    var discountDTO = await (
-                        from Discount in _context.Discounts
-                        where discountTagsArray.Any(k => EF.Functions.Like(Discount.DiscountTag.ToUpper(), "%" + k + "%"))
-                        select Discount).ToListAsync();
+
+                    var discount = await _discountStore.GetDiscountByTags(discountTagsArray);
 
                     List<Discount> discountList = new List<Discount>();
 
-                    foreach (var itemDiscount in discountDTO)
+                    foreach (var itemDiscount in discount)
                     {
                         if (itemDiscount.DiscountTag.Equals(item.DiscountTag))
                         {

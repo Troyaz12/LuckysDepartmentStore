@@ -1,15 +1,12 @@
 ﻿using AutoMapper;
-using LuckysDepartmentStore.Data.Configurations;
 using LuckysDepartmentStore.Data.Stores.Interfaces;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.DTO.Home;
 using LuckysDepartmentStore.Models.DTO.Products;
-using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
-using Utility = LuckysDepartmentStore.Utilities.Utility;
 
 
 namespace LuckysDepartmentStore.Data.Stores
@@ -430,6 +427,26 @@ namespace LuckysDepartmentStore.Data.Stores
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task AddProduct(Product product)
+        {
+            _context.Add(product);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddColorProductList(List<ColorProduct> newColorProducts)
+        {
+            _context.AddRange(newColorProducts);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<ColorProduct>> GetColorProductList(ProductEditVM productEdit)
+        {
+
+            var colorProductsDB = _context.ColorProducts.Where(e => e.ProductID == productEdit.ProductID).ToList();
+
+            return colorProductsDB;
         }
     }
 }
