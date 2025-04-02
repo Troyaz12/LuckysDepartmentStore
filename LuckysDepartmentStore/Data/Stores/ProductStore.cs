@@ -41,7 +41,7 @@ namespace LuckysDepartmentStore.Data.Stores
                from SubCategory in subCategories.DefaultIfEmpty()
                join Brand in _context.Brand on Product.BrandID equals Brand.BrandId into Brands
                from Brand in Brands.DefaultIfEmpty()
-               where (Product.SearchWords != null && EF.Functions.Like(Product.SearchWords.ToUpper(), "%" + searchString + "%")) &&
+               where (searchString == null || Product.SearchWords != null && EF.Functions.Like(Product.SearchWords.ToUpper(), "%" + searchString + "%")) &&
                   (brandSelection == null || (Brand != null && Brand.BrandName == brandSelection)) &&
                   (categorySelection == null || (Category != null && Category.CategoryName == categorySelection)) &&
                   (subCategorySelection == null || (SubCategory != null && SubCategory.SubCategoryName == subCategorySelection))
