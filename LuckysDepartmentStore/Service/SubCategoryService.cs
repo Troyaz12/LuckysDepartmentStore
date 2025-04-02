@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using LuckysDepartmentStore.Data;
-using LuckysDepartmentStore.Data.Stores.Interfaces;
+﻿using LuckysDepartmentStore.Data.Stores.Interfaces;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
@@ -10,13 +8,13 @@ namespace LuckysDepartmentStore.Service
 {
     public class SubCategoryService : ISubCategoryService
     {
-        public LuckysContext _context;
-        ISubcategoryStore _subcategoryStore;
+        private readonly ISubcategoryStore _subcategoryStore;
+        private readonly ILogger _logger;
 
-        public SubCategoryService(LuckysContext context, ISubcategoryStore subcategoryStore) 
+        public SubCategoryService(ISubcategoryStore subcategoryStore, ILogger<SubCategoryService> logger) 
         {
-            _context = context;      
             _subcategoryStore = subcategoryStore;
+            _logger = logger;
         }
 
         public async Task<ExecutionResult<int>> Create(ProductCreateVM product)
@@ -33,8 +31,8 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to create a subCategory for {@product}", product);
                 return ExecutionResult<int>.Failure($"Subcategory creation failed.");
-
             }            
         }
     }

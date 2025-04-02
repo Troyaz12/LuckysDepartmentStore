@@ -25,10 +25,11 @@ namespace LuckysDepartmentStore.Service
         private readonly IColorStore _colorStore;
         private readonly IRatingsStore _ratingsStore;
         private readonly IDiscountStore _discountStore;
+        private readonly ILogger _logger;
             
         public ProductService(LuckysContext context, IMapper mapper, IColorService colorService, 
             ICategoryService categoryService, ISubCategoryService subCategoryService, IBrandService brandService,
-            IUtility utility, IProductStore productStore, IColorStore colorStore, IRatingsStore ratingsStore, IDiscountStore discountStore)
+            IUtility utility, IProductStore productStore, IColorStore colorStore, IRatingsStore ratingsStore, IDiscountStore discountStore, ILogger<ProductService> logger)
         {
             _context = context;
             _mapper = mapper;
@@ -41,6 +42,7 @@ namespace LuckysDepartmentStore.Service
             _colorStore = colorStore;
             _ratingsStore = ratingsStore;
             _discountStore = discountStore;
+            _logger = logger;
         }
         public async Task<ExecutionResult<Product>> CreateAsync(ProductCreateVM product)
         {
@@ -157,11 +159,13 @@ namespace LuckysDepartmentStore.Service
                     }
                     catch (DbUpdateException ex)
                     {
-                        return ExecutionResult<Product>.Failure($"Order failed: {ex.Message}");                   
+                        _logger.LogError(ex, "Failed to create product {@Product} in database.", product);
+                        return ExecutionResult<Product>.Failure("Order failed");                   
                     }
                     catch (Exception ex)
                     {
-                        return ExecutionResult<Product>.Failure($"Order failed: {ex.Message}");
+                        _logger.LogError(ex, "Failed to create product {@Product}", product);
+                        return ExecutionResult<Product>.Failure("Order failed");
                     }
                 }
             });
@@ -177,7 +181,8 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
-                return ExecutionResult<List<Color>>.Failure("Unable to search products.");
+                _logger.LogError(ex, "Unable to search colors");
+                return ExecutionResult<List<Color>>.Failure("Unable to search colors.");
             }
             
         }
@@ -191,6 +196,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch(Exception ex)
             {
+                _logger.LogError(ex, "Unable to search categories");
                 return ExecutionResult<List<Category>>.Failure("Unable to search categories.");
             }
         }
@@ -204,6 +210,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch(Exception ex)
             {
+                _logger.LogError(ex, "Unable to search Subcategories.");
                 return ExecutionResult<List<SubCategory>>.Failure("Unable to search Subcategories.");
             }        
         }
@@ -217,6 +224,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to search brands.");
                 return ExecutionResult<List<Brand>>.Failure("Unable to search brands.");
             }
         }
@@ -243,6 +251,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to get products.");
                 return ExecutionResult<List<ProductVM>>.Failure("Unable to get products.");
             }
         }
@@ -280,6 +289,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to search discounts.");
                 return ExecutionResult<List<ProductVM>>.Failure("Unable to search discounts.");
             }
         }
@@ -299,7 +309,8 @@ namespace LuckysDepartmentStore.Service
             }
             catch(Exception ex)
             {
-                return ExecutionResult<ProductEditVM>.Failure("Unable to edit products.");
+                _logger.LogError(ex, "Unable to get product in database.");
+                return ExecutionResult<ProductEditVM>.Failure("Unable to get product in database.");
             }
         }
         public async Task<ExecutionResult<ProductEditVM>> EditProduct(ProductEditVM productEdit)
@@ -352,32 +363,46 @@ namespace LuckysDepartmentStore.Service
 
                 return ExecutionResult<ProductEditVM>.Success(productEdit);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Unable to edit product: {@product} in database.", productEdit);
+                return ExecutionResult<ProductEditVM>.Failure("Unable to edit product in database.");
+            }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to edit product: {@product}", productEdit);
                 return ExecutionResult<ProductEditVM>.Failure("Unable to edit product.");
             }
         }
 
         public async Task<ExecutionResult<ProductDetailVM>> GetDetails(int productId)
         {
-            var productDTO = await _productStore.GetProductByIDNoDiscount(productId);
-            var colorProductDTO = await _colorStore.ColorsByProductID(productId);
-
-
-            if (productDTO == null)
+            try
             {
-                return ExecutionResult<ProductDetailVM>.Failure("Cannot find product in database. Product ID does not exist."); 
+                var productDTO = await _productStore.GetProductByIDNoDiscount(productId);
+                var colorProductDTO = await _colorStore.ColorsByProductID(productId);
+
+
+                if (productDTO == null)
+                {
+                    return ExecutionResult<ProductDetailVM>.Failure("Cannot find product in database. Product ID does not exist.");
+                }
+
+                var productModel = _utility.MapDetailProduct(productDTO);
+
+                var colorProducts = _mapper.Map<List<ColorProductVM>>(colorProductDTO);
+
+                productModel.ProductImage = _utility.BytesToImage(productModel.ProductPicture);
+
+                productModel.ColorProduct = colorProducts;
+
+                return ExecutionResult<ProductDetailVM>.Success(productModel);
             }
-
-            var productModel = _utility.MapDetailProduct(productDTO);
-
-            var colorProducts = _mapper.Map<List<ColorProductVM>>(colorProductDTO);
-
-            productModel.ProductImage = _utility.BytesToImage(productModel.ProductPicture);
-
-            productModel.ColorProduct = colorProducts;
-
-            return ExecutionResult<ProductDetailVM>.Success(productModel);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unable to get details for product: {@product} in database.", productId);
+                return ExecutionResult<ProductDetailVM>.Failure("Unable to get details.");
+            }
         }
         public async Task<ExecutionResult<int>> Delete(int productId)
         {
@@ -393,8 +418,14 @@ namespace LuckysDepartmentStore.Service
 
                 return ExecutionResult<int>.Success(productId);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, " Cannot find delete product id: {@product} in database.", productId);
+                return ExecutionResult<int>.Failure("An error occured. Cannot find delete product in database.");
+            }
             catch (Exception ex)
             {
+                _logger.LogError(ex, " Cannot find delete product id: {@product}.", productId);
                 return ExecutionResult<int>.Failure("An error occured. Cannot find delete product.");
             }
 
@@ -409,6 +440,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Cannot get sizes.");
                 return ExecutionResult<List<Sizes>>.Failure("An error occured. Cannot get sizes.");
             }
         }
@@ -484,8 +516,9 @@ namespace LuckysDepartmentStore.Service
                 return ExecutionResult<ItemVM>.Success(item);
 
             }
-            catch(Exception e)
+            catch(Exception ex)
             {
+                _logger.LogError(ex, "Cannot get item with product id: {productId}.", productId);
                 return ExecutionResult<ItemVM>.Failure("Unable to retrieve item.");
             }
         }
@@ -518,6 +551,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to search products.");
                 return ExecutionResult<List<ProductVM>>.Failure("Unable to search products.");
             }
         }
@@ -554,7 +588,8 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
-                return ExecutionResult<ItemVM>.Failure("Unable to search products.");
+                _logger.LogError(ex, "Unable calculate discount for {@item}.", item);
+                return ExecutionResult<ItemVM>.Failure("Unable calculate discount.");
             }
             
         }
@@ -644,6 +679,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to get discount for product.");
                 return ExecutionResult<List<ProductVmDTO>>.Failure("Unable to get discounts.");
             }
         }

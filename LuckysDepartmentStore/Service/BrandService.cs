@@ -1,39 +1,45 @@
-﻿using AutoMapper;
-using LuckysDepartmentStore.Data;
-using LuckysDepartmentStore.Models;
-using LuckysDepartmentStore.Models.ViewModels.Product;
+﻿using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using LuckysDepartmentStore.Utilities;
-using LuckysDepartmentStore.Data.Stores;
 using LuckysDepartmentStore.Data.Stores.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace LuckysDepartmentStore.Service
 {
     public class BrandService : IBrandService
     {
-        public LuckysContext _context;
-        public IMapper _mapper;
-        public IBrandStore _brandStore;
+        private readonly IBrandStore _brandStore;
+        private readonly ILogger _logger;
 
-        public BrandService(LuckysContext context, IMapper mapper, IBrandStore brandStore)
+        public BrandService(IBrandStore brandStore, ILogger<IBrandService> logger)
         {
-            _context = context;
-            _mapper = mapper;
             _brandStore = brandStore;
+            _logger = logger;
         }
 
         public async Task<ExecutionResult<int>> Create(ProductCreateVM product)
         {
+
+            if (product == null)
+            {
+                return ExecutionResult<int>.Failure("Product data not received.");
+            }
+
             try
             {
-                var brandID = _brandStore.CreateBrand(product);
+                var brandID = await _brandStore.CreateBrand(product);
 
-                return ExecutionResult<int>.Success(brandID.Result);
+                return ExecutionResult<int>.Success(brandID);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to create brand for product {@Product}", product);
+                return ExecutionResult<int>.Failure("Failed to save brand to database.");
             }
             catch (Exception ex)
             {
-                return ExecutionResult<int>.Failure("Failed to update brand service.");
+                _logger.LogError(ex, "Failed to create brand for product {@Product}", product);
+                return ExecutionResult<int>.Failure("Failed to create brand.");
             }
         }
     }

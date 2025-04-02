@@ -8,19 +8,22 @@ namespace LuckysDepartmentStore.Service
 {
     public class CheckoutService : ICheckoutService
     {
-        public LuckysContext _context;
-        private IShoppingCartService _shoppingCartService;
-        private IShippingStore _shippingStore;
-        private IPaymentStore _paymentStore;
-        private ICustomerStore _customerStore;
+        private readonly LuckysContext _context;
+        private readonly IShoppingCartService _shoppingCartService;
+        private readonly IShippingStore _shippingStore;
+        private readonly IPaymentStore _paymentStore;
+        private readonly ICustomerStore _customerStore;
+        private readonly ILogger _logger;
 
-        public CheckoutService(LuckysContext context, IShoppingCartService shoppingCartService, IShippingStore shippingStore, IPaymentStore paymentStore, ICustomerStore customerStore)
+        public CheckoutService(LuckysContext context, IShoppingCartService shoppingCartService, 
+            IShippingStore shippingStore, IPaymentStore paymentStore, ICustomerStore customerStore, ILogger<CheckoutService> logger)
         {
             _context = context;
             _shoppingCartService = shoppingCartService;
             _shippingStore = shippingStore;
             _paymentStore = paymentStore;
             _customerStore = customerStore;
+            _logger = logger;
         }
 
         public async Task<Utilities.ExecutionResult<OrderIds>> Order(Order order)
@@ -102,11 +105,17 @@ namespace LuckysDepartmentStore.Service
 
                     return Utilities.ExecutionResult<OrderIds>.Success(orderids);
                 }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError(ex, "Failed to save order to the database {@order}", order);
+                    return Utilities.ExecutionResult<OrderIds>.Failure("Failed to create order.");
+                }
                 catch (Exception ex)
                 {
+                    _logger.LogError(ex, "Failed to process order {@order}", order);
                     // Rollback the transaction on error
                     await transaction.RollbackAsync();
-                    return Utilities.ExecutionResult<OrderIds>.Failure($"Order failed: {ex.Message}");
+                    return Utilities.ExecutionResult<OrderIds>.Failure("Order failed.");
                 }
             }
         }
@@ -120,6 +129,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to validate order {@orderNumber}, {user}", orderNumber, user);
                 return Utilities.ExecutionResult<bool>.Failure("Failed to check validation.");
             }           
         }

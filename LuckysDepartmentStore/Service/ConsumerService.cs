@@ -1,33 +1,26 @@
 ﻿using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Consumer;
-using LuckysDepartmentStore.Models.ViewModels.Discount;
 using LuckysDepartmentStore.Utilities;
-using LuckysDepartmentStore.Data;
-using LuckysDepartmentStore.Models.DTO.Consumer;
-using Microsoft.EntityFrameworkCore;
-using LuckysDepartmentStore.Models.ViewModels.Product;
 using AutoMapper;
 using LuckysDepartmentStore.Service.Interfaces;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.CodeAnalysis;
-using Microsoft.IdentityModel.Tokens;
 using LuckysDepartmentStore.Data.Stores.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace LuckysDepartmentStore.Service
 {
     public class ConsumerService : IConsumerService
     {
-        public LuckysContext _context { get; set; }
-        public IMapper _mapper;
+        private readonly IMapper _mapper;
         private readonly ICustomerStore _customerStore;
         private readonly IPaymentStore _paymentStore;
+        private readonly ILogger _logger;
 
-        public ConsumerService(LuckysContext context, IMapper mapper, ICustomerStore customerStore, IPaymentStore paymentStore)
+        public ConsumerService(IMapper mapper, ICustomerStore customerStore, IPaymentStore paymentStore, ILogger<ConsumerService> logger)
         {
-            _context = context;
             _mapper = mapper;
             _customerStore = customerStore;
             _paymentStore = paymentStore;
+            _logger = logger;
         }
 
         public async Task<ExecutionResult<bool>> CreateShippingAddress(ShippingAddressVM shippingAddress)
@@ -52,8 +45,14 @@ namespace LuckysDepartmentStore.Service
 
                 await _customerStore.CreateCustomerShippingAddress(newAddress);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to create shipping address for {@UserId} in database.", shippingAddress.UserId);
+                return ExecutionResult<bool>.Failure("Unable to save address to database.");
+            }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to create shipping address for {@UserId}", shippingAddress.UserId);
                 return ExecutionResult<bool>.Failure("Unable to save address.");
             }
 
@@ -77,6 +76,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to get shipping address for {@userId}", userId);
                 return ExecutionResult<List<ShippingAddressVM>>.Failure("Unable to get address.");
             }
 
@@ -96,8 +96,14 @@ namespace LuckysDepartmentStore.Service
                 await _paymentStore.CreatePaymentOption(newPaymentOption);
                 
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to create payment option {@userId} in database.", paymentOption.UserId);
+                return ExecutionResult<bool>.Failure("Unable to add payment to database.");
+            }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to create payment option {@userId}", paymentOption.UserId);
                 return ExecutionResult<bool>.Failure("Unable to add payment data.");
             }
 
@@ -121,6 +127,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to get payment options {@userId}", userId);
                 return ExecutionResult<List<PaymentOptionsVM>>.Failure("Unable to get address.");
             }
 
@@ -145,9 +152,15 @@ namespace LuckysDepartmentStore.Service
 
                 return ExecutionResult<ShippingAddress>.Success(shippingAddress);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to delete shipping record {@userId} in database.", id);
+                return ExecutionResult<ShippingAddress>.Failure("Unable to delete shipping record in database.");
+            }
             catch (Exception ex)
             {
-                return ExecutionResult<ShippingAddress>.Failure("Unable to get address.");
+                _logger.LogError(ex, "Failed to delete shipping record {@userId}", id);
+                return ExecutionResult<ShippingAddress>.Failure("Unable to delete shipping record.");
             }           
         }
         public async Task<ExecutionResult<ShippingAddressVM>> EditShippingRecord(ShippingAddressVM shippingAddress)
@@ -168,9 +181,15 @@ namespace LuckysDepartmentStore.Service
 
                 return ExecutionResult<ShippingAddressVM>.Success(shippingAddress);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to edit shipping records {@userId} in database", shippingAddress.UserId);
+                return ExecutionResult<ShippingAddressVM>.Failure("Unable to edit shipping record in database.");
+            }
             catch (Exception ex)
             {
-                return ExecutionResult<ShippingAddressVM>.Failure("Unable to edit product.");
+                _logger.LogError(ex, "Failed to edit shipping records {@userId}", shippingAddress.UserId);
+                return ExecutionResult<ShippingAddressVM>.Failure("Unable to edit shipping record.");
             }
         }
         public async Task<ExecutionResult<PaymentOptionsVM>> EditPaymentRecord(PaymentOptionsVM paymentOptions)
@@ -191,9 +210,15 @@ namespace LuckysDepartmentStore.Service
 
                 return ExecutionResult<PaymentOptionsVM>.Success(paymentOptions);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to edit payment records {@userId} in database.", paymentOptions.UserId);
+                return ExecutionResult<PaymentOptionsVM>.Failure("Unable to edit payment option in database.");
+            }
             catch (Exception ex)
             {
-                return ExecutionResult<PaymentOptionsVM>.Failure("Unable to edit product.");
+                _logger.LogError(ex, "Failed to edit payment records {@userId}", paymentOptions.UserId);
+                return ExecutionResult<PaymentOptionsVM>.Failure("Unable to edit payment option.");
             }
         }
         public async Task<ExecutionResult<PaymentOptions>> DeletePaymentRecord(int id)
@@ -215,9 +240,15 @@ namespace LuckysDepartmentStore.Service
 
                 return ExecutionResult<PaymentOptions>.Success(paymentRecord);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to delete payment record {@userId} in database.", id);
+                return ExecutionResult<PaymentOptions>.Failure("Unable to delete payment in database.");
+            }
             catch (Exception ex)
             {
-                return ExecutionResult<PaymentOptions>.Failure("Unable to get address.");
+                _logger.LogError(ex, "Failed to delete payment record {@userId}", id);
+                return ExecutionResult<PaymentOptions>.Failure("Unable to delete payment.");
             }
         }
 

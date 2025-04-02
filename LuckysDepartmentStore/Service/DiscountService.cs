@@ -1,30 +1,26 @@
 ﻿using AutoMapper;
-using LuckysDepartmentStore.Data;
-using LuckysDepartmentStore.Data.Stores;
 using LuckysDepartmentStore.Data.Stores.Interfaces;
 using LuckysDepartmentStore.Models;
-using LuckysDepartmentStore.Models.DTO.Discount;
 using LuckysDepartmentStore.Models.ViewModels.Discount;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
-using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 
 namespace LuckysDepartmentStore.Service
 {
     public class DiscountService : IDiscountService
     {
-        public LuckysContext _context;
-        public IMapper _mapper;
+        private readonly IMapper _mapper;
         private readonly IUtility _utility;
-        private IDiscountStore _discountStore;
+        private readonly IDiscountStore _discountStore;
+        private readonly ILogger _logger;
 
-        public DiscountService(LuckysContext context, IMapper mapper, IUtility utility, IDiscountStore discountStore)
+        public DiscountService(IMapper mapper, IUtility utility, IDiscountStore discountStore, ILogger<DiscountService> logger)
         {
-            _context = context;
             _mapper = mapper;
             _utility = utility;
             _discountStore = discountStore;
+            _logger = logger;
         }     
 
         public async Task<ExecutionResult<int>> DeleteDiscount(int discountId)
@@ -43,8 +39,14 @@ namespace LuckysDepartmentStore.Service
 
                 return ExecutionResult<int>.Success(discountId);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to delete discount {@discountId} in database.", discountId);
+                return ExecutionResult<int>.Failure("Unable to delete discount in database.");
+            }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to delete discount {@discountId}", discountId);
                 return ExecutionResult<int>.Failure("Unable to delete discount.");
             }
         }
@@ -67,8 +69,9 @@ namespace LuckysDepartmentStore.Service
                 return ExecutionResult<DiscountVM>.Success(discountProducts);
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to get discount {@discountId}", discountId);
                 return ExecutionResult<DiscountVM>.Failure("Unable to retrieve discount details.");
             }
         }
@@ -86,9 +89,15 @@ namespace LuckysDepartmentStore.Service
 
                 return ExecutionResult<DiscountEditVM>.Success(discount);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to update discount {@discount} in database.", discount);
+                return ExecutionResult<DiscountEditVM>.Failure("Unable to update discount.");
+            }
             catch (Exception ex)
             {
-                return ExecutionResult<DiscountEditVM>.Failure("Unable to save discount.");
+                _logger.LogError(ex, "Failed to update discount {@discount}", discount);
+                return ExecutionResult<DiscountEditVM>.Failure("Unable to update discount.");
             }
         }
 
@@ -115,10 +124,12 @@ namespace LuckysDepartmentStore.Service
             }
             catch (DbUpdateException ex)
             {
-                throw new InvalidOperationException("Error saving product to database", ex);
+                _logger.LogError(ex, "Failed to create discount {@discount} in database.", discount);
+                throw new Exception("An error occurred while processing your request", ex);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to create discount {@discount}", discount);
                 throw new Exception("An error occurred while processing your request", ex);
             }
         }
@@ -146,7 +157,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch(Exception ex)
             {
-
+                _logger.LogError(ex, "Failed to get active discounts");
                 return ExecutionResult<List<DiscountVM>>.Failure("Unable to retrieve Discounts." + ex.Message);
             }
 

@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
 using LuckysDepartmentStore.Data;
-using LuckysDepartmentStore.Models.DTO.ShoppingCart;
-using LuckysDepartmentStore.Models.ViewModels.ShoppingCart;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
-using Microsoft.EntityFrameworkCore;
 
 namespace LuckysDepartmentStore.Service
 {

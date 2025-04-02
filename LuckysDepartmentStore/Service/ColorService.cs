@@ -1,22 +1,19 @@
-﻿using AutoMapper;
-using LuckysDepartmentStore.Data;
-using LuckysDepartmentStore.Data.Stores.Interfaces;
+﻿using LuckysDepartmentStore.Data.Stores.Interfaces;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
+using Microsoft.EntityFrameworkCore;
 
 namespace LuckysDepartmentStore.Service
 {
     public class ColorService : IColorService
     {
-        public LuckysContext _context;
-        public IMapper _mapper;
         private readonly IColorStore _colorStore;
+        private readonly ILogger _logger;
 
-        public ColorService(LuckysContext context, IMapper mapper, IColorStore colorStore) 
+        public ColorService(IColorStore colorStore, ILogger<ColorService> logger) 
         {
-            _context = context;
-            _mapper = mapper;
             _colorStore = colorStore;
+            _logger = logger;
         }
         public async Task<ExecutionResult<int>> Create(string name)
         {
@@ -28,8 +25,14 @@ namespace LuckysDepartmentStore.Service
 
                 return ExecutionResult<int>.Success(newColorId);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to create color {@name} in database.", name);
+                return ExecutionResult<int>.Failure("Failed to save color to database.");
+            }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to create color {@name}", name);
                 return ExecutionResult<int>.Failure("Unable to create color.");
             }
         }
@@ -48,6 +51,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to get color {@id}", id);
                 return ExecutionResult<string>.Failure("Unable to get color name.");
             }
            
@@ -67,6 +71,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex) 
             {
+                _logger.LogError(ex, "Failed to get size name {@id}", id);
                 return ExecutionResult<string>.Failure("Unable to get size name.");
             }
            
@@ -81,8 +86,14 @@ namespace LuckysDepartmentStore.Service
 
                 return ExecutionResult<int>.Success(newSizeId);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to create size {@name} in database.", name);
+                return ExecutionResult<int>.Failure("Failed to save size to database.");
+            }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to create size {@name}", name);
                 return ExecutionResult<int>.Failure("Unable to create color.");
             }
         }

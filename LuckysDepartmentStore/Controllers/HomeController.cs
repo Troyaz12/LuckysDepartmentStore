@@ -117,9 +117,12 @@ namespace LuckysDepartmentStore.Controllers
             return View(productList.Data);
         }
         [HttpGet]
-        public async Task<IActionResult> Item(int? productId)
+        public async Task<IActionResult> Item(int productId)
         {
-            var product = await _productService.GetItem((int) productId);           
+            // Throw an exception to test the middleware
+            throw new Exception("This is a test exception for global error handling");
+
+            var product = await _productService.GetItem(productId);           
 
             if (!product.IsSuccess)
             {

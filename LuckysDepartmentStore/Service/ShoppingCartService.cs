@@ -3,30 +3,28 @@ using LuckysDepartmentStore.Data;
 using LuckysDepartmentStore.Data.Stores.Interfaces;
 using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.DTO.ShoppingCart;
-using LuckysDepartmentStore.Models.ViewModels.Discount;
-using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Models.ViewModels.ShoppingCart;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ShoppingCart = LuckysDepartmentStore.Utilities.ShoppingCart;
 
 namespace LuckysDepartmentStore.Service
 {
     public class ShoppingCartService : IShoppingCartService
     {
-        public LuckysContext _context;
-        public IMapper _mapper;
+        private readonly LuckysContext _context;
+        private readonly IMapper _mapper;
         public const string CartSessionKey = "CartId";
         private readonly IHttpContextAccessor _httpContext;
-        public IUtility _utility;
-        public IColorService _colorService;
-        public IShoppingCartStore _shoppingCartStore;
-        private ICustomerOrderItemsStore _customerOrderItemsStore;
+        private readonly IUtility _utility;
+        private readonly IColorService _colorService;
+        private readonly IShoppingCartStore _shoppingCartStore;
+        private readonly ICustomerOrderItemsStore _customerOrderItemsStore;
+        private readonly ILogger _logger;
 
         public ShoppingCartService(LuckysContext context, IMapper mapper, IHttpContextAccessor httpContext,
-            IUtility utility, IColorService color, IShoppingCartStore shoppingCartStore, ICustomerOrderItemsStore customerOrderItemsStore)
+            IUtility utility, IColorService color, IShoppingCartStore shoppingCartStore, ICustomerOrderItemsStore customerOrderItemsStore, ILogger<ShoppingCartService> logger)
         {
             _context = context;
             _mapper = mapper;
@@ -35,6 +33,7 @@ namespace LuckysDepartmentStore.Service
             _colorService = color;
             _shoppingCartStore = shoppingCartStore;
             _customerOrderItemsStore = customerOrderItemsStore;
+            _logger = logger;
         }
 
         public string GetCart()
@@ -95,51 +94,17 @@ namespace LuckysDepartmentStore.Service
 
                 return ExecutionResult<CartsVM>.Success(cartVM);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Unable to add to cart in database.");
+                return ExecutionResult<CartsVM>.Failure("Unable to add to cart.");
+            }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to add to cart.");
                 return ExecutionResult<CartsVM>.Failure("Unable to add to cart.");
             }
         }
-
-        //public async Task<ExecutionResult<int>> RemoveFromCart(Product product, string ShoppingCartId)
-        //{
-        //    int itemCount = 0;
-
-        //    try
-        //    {
-        //        // Get the cart
-        //        var cartItem = await _shoppingCartStore.GetCart(product, ShoppingCartId);
-
-        //        if (cartItem != null)
-        //        {
-        //            if (cartItem.Quantity > 1)
-        //            {
-        //                cartItem.Quantity--;
-        //                itemCount = cartItem.Quantity;
-        //            }
-        //            else
-        //            {
-        //                var rowsAffected = await _shoppingCartStore.RemoveFromCart(cartItem);
-
-        //                if (rowsAffected == 0)
-        //                {
-        //                    return ExecutionResult<int>.Failure("Unable to remove cart items.");
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return ExecutionResult<int>.Failure("Unable to get cart items.");
-        //        }
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ExecutionResult<int>.Failure("Unable to remove cart item.");
-        //    }
-
-        //    return ExecutionResult<int>.Success(itemCount);
-        //}
         public async Task<ExecutionResult<int>> EmptyCart(string ShoppingCartId)
         {
             List<Carts> cartItems = null;
@@ -161,6 +126,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to add to cart.");
                 return ExecutionResult<int>.Failure("Unable to remove cart item.");
             }
 
@@ -205,6 +171,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to get cart items.");
                 return ExecutionResult<ShoppingCartVM>.Failure("Unable to get cart items.");
             }
         }
@@ -219,6 +186,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to get cart items.");
                 return ExecutionResult<int>.Failure("Unable to get cart items.");
             }
 
@@ -233,6 +201,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to get cart total.");
                 return ExecutionResult<decimal>.Failure("Unable to get cart total.");
             }
 
@@ -288,10 +257,17 @@ namespace LuckysDepartmentStore.Service
                 EmptyCart(ShoppingCartId);
 
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Unable to create order in database.");
+                await transaction.RollbackAsync();
+                return Utilities.ExecutionResult<decimal>.Failure("Unable to create order in database.");
+            }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to create order.");
                 await transaction.RollbackAsync();
-                return Utilities.ExecutionResult<decimal>.Failure("Unable to get cart total.");
+                return Utilities.ExecutionResult<decimal>.Failure("Unable to create order.");
             }
 
             // Return the CustomerOrderID as the confirmation number
@@ -307,10 +283,16 @@ namespace LuckysDepartmentStore.Service
 
                 await _shoppingCartStore.MigrateCart(userName, shoppingCart);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Unable to migrate cart in database.");
+                return ExecutionResult<string>.Failure("Unable to migrate cart in database.");
+            }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to migrate cart.");
                 return Utilities.ExecutionResult<string>.Failure("Unable to migrate cart.");
-            }
+            }            
 
             return Utilities.ExecutionResult<string>.Success(ShoppingCartId);
         }
@@ -403,33 +385,58 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to get cart item {@itemId}", itemId);
                 return ExecutionResult<CartsVM>.Failure("Unable to get cart items.");
             }
         }
         public async Task<ExecutionResult<bool>> RemoveItemFromCart(int Id)
         {
-            var itemRemoved = await _shoppingCartStore.RemoveCartItem(Id);
-
-            if (itemRemoved == null || itemRemoved == false)
+            try
             {
+                var itemRemoved = await _shoppingCartStore.RemoveCartItem(Id);
+
+                if (itemRemoved == null || itemRemoved == false)
+                {
+                    return ExecutionResult<bool>.Failure("Unable to remove item.");
+                }
+
+                return ExecutionResult<bool>.Success(itemRemoved);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to remove cart item {@Id} in database.", Id);
+                return ExecutionResult<bool>.Failure("Unable to remove item in database.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to remove cart item {@Id}", Id);
                 return ExecutionResult<bool>.Failure("Unable to remove item.");
             }
-
-            return ExecutionResult<bool>.Success(itemRemoved);
-
         }
 
         public async Task<ExecutionResult<int>> EditItemInCart(CartItemEdit cartItem)
         {
-            var cartItemResult = await _shoppingCartStore.EditCartItem(cartItem);
-
-            if (cartItemResult == 0)
+            try
             {
-                return ExecutionResult<int>.Failure("Unable to edit item in cart.");
-            }            
+                var cartItemResult = await _shoppingCartStore.EditCartItem(cartItem);
 
-            return ExecutionResult<int>.Success(cartItemResult);
+                if (cartItemResult == 0)
+                {
+                    return ExecutionResult<int>.Failure("Unable to edit item in cart.");
+                }
 
+                return ExecutionResult<int>.Success(cartItemResult);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Unable to edit item in cart. Cart Item: {@cartItem}", cartItem);
+                return ExecutionResult<int>.Failure("Unable to edit item in database.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unable to edit item in cart. Cart Item: {@cartItem}", cartItem);
+                return ExecutionResult<int>.Failure("Unable to edit item in database.");
+            }
         }
 
         public async Task<ExecutionResult<List<Carts>>> MigrateAnonymousCartItems(string anonymousCartId)
@@ -455,17 +462,26 @@ namespace LuckysDepartmentStore.Service
             }
             catch (Exception ex)
             {
-                return ExecutionResult<List<Carts>>.Failure("Unable to add items cart.");
+                _logger.LogError(ex, "Unable migrate cart. Id: {@anonymousCartId}", anonymousCartId);
+                return ExecutionResult<List<Carts>>.Failure("Unable migrate cart.");
             }
         }
         public ExecutionResult<Guid> SetCartSessionKey()
         {
+            try
+            {
+                Guid tempCartId = Guid.NewGuid();
+                // Send tempCartId back to client as a cookie
+                _httpContext.HttpContext.Session.SetString(CartSessionKey, tempCartId.ToString());
 
-            Guid tempCartId = Guid.NewGuid();
-            // Send tempCartId back to client as a cookie
-            _httpContext.HttpContext.Session.SetString(CartSessionKey, tempCartId.ToString());
-
-            return ExecutionResult<Guid>.Success(tempCartId);            
+                return ExecutionResult<Guid>.Success(tempCartId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unable set cart session key.");
+                return ExecutionResult<Guid>.Failure("Unable set cart session key.");
+            }
+            
         }
     }
 }

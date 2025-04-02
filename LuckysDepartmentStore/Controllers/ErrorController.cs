@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace LuckysDepartmentStore.Controllers
 {
@@ -14,7 +15,15 @@ namespace LuckysDepartmentStore.Controllers
         public IActionResult Index()
         {
             var errorMessage = TempData["ErrorMessage"] as string;
-            _logger.LogError(errorMessage);
+
+            if (errorMessage == null)
+            {
+                _logger.LogError("Unhandled exception occurred"); 
+            }
+            else
+            {
+                _logger.LogError(errorMessage);
+            }                
 
             return View("ErrorPage", errorMessage);
         }

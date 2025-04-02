@@ -1,26 +1,20 @@
-﻿using AutoMapper;
-using LuckysDepartmentStore.Data;
-using LuckysDepartmentStore.Models;
-using LuckysDepartmentStore.Models.ViewModels.Product;
+﻿using LuckysDepartmentStore.Models.ViewModels.Product;
 using LuckysDepartmentStore.Service.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using LuckysDepartmentStore.Utilities;
 using LuckysDepartmentStore.Data.Stores.Interfaces;
-using LuckysDepartmentStore.Data.Stores;
+using Microsoft.EntityFrameworkCore;
 
 namespace LuckysDepartmentStore.Service
 {
     public class CategoryService : ICategoryService
-    {
-        public LuckysContext _context;
-        public IMapper _mapper;
-        private ICategoryStore _categoryStore;
+    {    
+        private readonly ICategoryStore _categoryStore;
+        private readonly ILogger _logger;
 
-        public CategoryService(LuckysContext context, IMapper mapper, ICategoryStore categoryStore)
+        public CategoryService(ICategoryStore categoryStore, ILogger<CategoryService> logger)
         {
-            _context = context;
-            _mapper = mapper;
             _categoryStore = categoryStore;
+            _logger = logger;
         }
         public async Task<ExecutionResult<int>> Create(ProductCreateVM product)
         {
@@ -29,10 +23,17 @@ namespace LuckysDepartmentStore.Service
                var newCategoryId = _categoryStore.CreateCategory(product);
 
                 return ExecutionResult<int>.Success(newCategoryId.Result);
+
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to create category in database for {@Product}", product);
+                return ExecutionResult<int>.Failure("Failed to save category to database.");
             }
             catch (Exception ex)
             {
-                return ExecutionResult<int>.Failure("Failed to update payment total.");
+                _logger.LogError(ex, "Failed to create category for product {@Product}", product);
+                return ExecutionResult<int>.Failure("Failed to create product.");
             }
         }
     }
