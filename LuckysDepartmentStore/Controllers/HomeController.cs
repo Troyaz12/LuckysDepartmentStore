@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc;
 using System.Diagnostics;
+using System.Text;
 
 namespace LuckysDepartmentStore.Controllers
 {
@@ -103,7 +104,13 @@ namespace LuckysDepartmentStore.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            string description = "Showing results for \"" + searchString + "\"" + "(" + productList.Data.Count + " items" + ")";
+            StringBuilder searchItem = new StringBuilder();
+            searchItem.Append(category + " " ?? "");
+            searchItem.Append(subCategory + " " ?? "");
+            searchItem.Append(brand + " " ?? "");
+            searchItem.Append(searchString ?? "");
+
+            string description = "Showing results for \"" + searchItem.ToString().TrimEnd() + "\"" + " (" + productList.Data.Count + " items" + ")";
 
             TempData["description"] = description;
 

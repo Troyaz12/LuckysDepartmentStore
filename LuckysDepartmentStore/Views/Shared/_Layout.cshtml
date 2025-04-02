@@ -90,15 +90,15 @@
                                             <ul class="list-unstyled col-md-4">
                                                 <li><a class="dropdown-item menu-heading col" asp-controller="Home" asp-action="GetProductsSearch" asp-route-name="Women's">Featured Brands</a></li>
                                                 <li><hr class="dropdown-divider"></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Ralph Lauren">Ralph Lauren</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="GAP">GAP</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Calvin Klien">Calvin Klien</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Luckys">Lucky Brand</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Guess">Guessn</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="J.Crew">J.Crew</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="H&M">H&M</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Zara">Zara</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Tommy Hilfiger" asp-route-subCategory="Women's">Tommy Hilfiger</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Ralph Lauren" asp-route-Category="Women's">Ralph Lauren</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="GAP" asp-route-Category="Women's">GAP</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Calvin Klien" asp-route-Category="Women's">Calvin Klien</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Luckys" asp-route-Category="Women's">Lucky Brand</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Guess" asp-route-Category="Women's">Guessn</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="J.Crew" asp-route-Category="Women's">J.Crew</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="H&M" asp-route-Category="Women's">H&M</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Zara" asp-route-Category="Women's">Zara</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Tommy Hilfiger" asp-route-Category="Women's">Tommy Hilfiger</a></li>
                                             </ul>
                                             <ul class="list-unstyled col-md-4">
                                                 <a asp-area="dropdown-item" asp-controller="Home" asp-action="SearchDiscount" asp-route-discountTags="womens summer clothes"><img src="~/img/InUse/WomensSale.png" class="imgLayoutSales my-1"></a>
@@ -119,6 +119,7 @@
                                                 <li><a class="dropdown-item menu-heading" asp-controller="Home" asp-action="GetProductsSearch" asp-route-subCategory="mens">Men's Clothing</a></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="Pants" asp-route-Category="men's">Pants</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="shirts" asp-route-Category="men's">Shirts</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="shorts" asp-route-Category="men's">Shorts</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="socks" asp-route-Category="men's">Socks</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="hats" asp-route-Category="men's">Hats</a></li>
@@ -131,14 +132,14 @@
                                             <ul class="list-unstyled col-md-4">
                                                 <li><a class="dropdown-item menu-heading col" asp-controller="Home" asp-action="GetProductsSearch" asp-route-Category="mens">Featured Brands</a></li>
                                                 <li><hr class="dropdown-divider"></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Ralph Lauren">Ralph Lauren</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="GAP">GAP</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Calvin Klien">Calvin Klien</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Luckys" asp-route-Category="mens">Lucky Brand</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Guess">Guessn</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="J.Crew">J.Crew</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="H&M">H&M</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Zara">Zara</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Ralph Lauren" asp-route-Category="men's">Ralph Lauren</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="GAP" asp-route-Category="men's">GAP</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Calvin Klien" asp-route-Category="men's">Calvin Klien</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Luckys"asp-route-Category="mens">Lucky Brand</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Guess" asp-route-Category="men's">Guessn</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="J.Crew" asp-route-Category="men's">J.Crew</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="H&M" asp-route-Category="men's">H&M</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Zara" asp-route-Category="men's">Zara</a></li>
                                             </ul>                              
                                             <ul class="list-unstyled col-md-4">
                                                 <a asp-area="dropdown-item" asp-controller="Home" asp-action="SearchDiscount" asp-route-discountTags="mens summer clothes"><img src="~/img/InUse/55OffMens.jpg" class="imgLayoutSales my-1"></a>
