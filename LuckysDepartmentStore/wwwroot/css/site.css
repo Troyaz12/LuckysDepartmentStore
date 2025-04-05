@@ -340,3 +340,7 @@ header {
     color: red;
     display: none; /* Hide by default */
 }
+
+.navbar-nav .nav-item .nav-link.dropdown-toggle {
+    padding-right: 2rem;
+}
