@@ -65,7 +65,26 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse justify-content-center" id="navbarScroll">
-                        <ul class="navbar-nav navbar-nav-scroll">                           
+                        <ul class="navbar-nav navbar-nav-scroll">
+                            @*     @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin")) { *@
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Administrator
+                                </a>
+                                <div class="dropdown-menu" style="position: fixed; left:0;">
+                                    <div class="container">
+                                        <div class="row">
+                                            <ul class="list-unstyled col-md-6">
+                                                <li><label class="dropdown-item menu-heading">Administrative Functions</label></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index">Products</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Discount" asp-action="Index">Discount</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            @*     } *@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Womens
@@ -74,7 +93,7 @@
                                     <div class="container">
                                         <div class="row">
                                             <ul class="list-unstyled col-md-4">
-                                                <li><a class="dropdown-item menu-heading" asp-controller="Home" asp-action="SearchProduct" asp-route-searchString="Womens">Women's Clothing</a></li>
+                                                <li><a class="dropdown-item menu-heading" asp-controller="Home" asp-action="SearchProduct" asp-route-searchString="Womens clothing">Women's Clothing</a></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="Pants" asp-route-Category="Women's">Pants</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="Dress" asp-route-Category="Women's">Dresses</a></li>
@@ -88,7 +107,7 @@
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-searchString="Womens Outdoor Wear">Outdoor Wear</a></li>
                                              </ul>
                                             <ul class="list-unstyled col-md-4">
-                                                <li><a class="dropdown-item menu-heading col" asp-controller="Home" asp-action="GetProductsSearch" asp-route-name="Women's">Featured Brands</a></li>
+                                                <li><label class="dropdown-item menu-heading col">Featured Brands</label></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Ralph Lauren" asp-route-Category="Women's">Ralph Lauren</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="GAP" asp-route-Category="Women's">GAP</a></li>
@@ -116,7 +135,7 @@
                                     <div class="container">
                                         <div class="row">
                                             <ul class="list-unstyled col-md-4">
-                                                <li><a class="dropdown-item menu-heading" asp-controller="Home" asp-action="GetProductsSearch" asp-route-subCategory="mens">Men's Clothing</a></li>
+                                                <li><a class="dropdown-item menu-heading" asp-controller="Home" asp-action="SearchProduct" asp-route-searchString="mens clothing">Men's Clothing</a></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="Pants" asp-route-Category="men's">Pants</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="shirts" asp-route-Category="men's">Shirts</a></li>
@@ -125,18 +144,18 @@
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="hats" asp-route-Category="men's">Hats</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="coats" asp-route-Category="men's">Coats</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="sweaters" asp-route-Category="men's">Sweaters</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-Category="Men's" asp-route-searchString="mens active wear">Active Wear</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-Category="Men's" asp-route-searchString="active wear">Active Wear</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-searchString="mens outdoor wear" >Outdoor Wear</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-searchString="mens shaving supplies">Shaving Supplies</a></li>
                                             </ul>                                                  
                                             <ul class="list-unstyled col-md-4">
-                                                <li><a class="dropdown-item menu-heading col" asp-controller="Home" asp-action="GetProductsSearch" asp-route-Category="mens">Featured Brands</a></li>
+                                                <li><label class="dropdown-item menu-heading col">Featured Brands</label></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Ralph Lauren" asp-route-Category="men's">Ralph Lauren</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="GAP" asp-route-Category="men's">GAP</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Calvin Klien" asp-route-Category="men's">Calvin Klien</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Luckys"asp-route-Category="mens">Lucky Brand</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Guess" asp-route-Category="men's">Guessn</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Luckys"asp-route-Category="men's">Lucky Brand</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Guess" asp-route-Category="men's">Guess</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="J.Crew" asp-route-Category="men's">J.Crew</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="H&M" asp-route-Category="men's">H&M</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-brand="Zara" asp-route-Category="men's">Zara</a></li>
@@ -166,7 +185,7 @@
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="hats" asp-route-Category="girls">Hats</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="coats" asp-route-Category="girls">Coats</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="sweaters" asp-route-Category="girls">Sweaters</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="tops" asp-route-Category="girls">Tops</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="shirts" asp-route-Category="girls">Tops</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-searchString="girls active wear">Active Wear</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-searchString="girls outdoor wear">Outdoor Wear</a></li>
                                             </ul>
@@ -174,6 +193,7 @@
                                                 <li><a class="dropdown-item menu-heading col" asp-controller="Home" asp-action="SearchDiscount" asp-route-subCategory="boys">Boys Clothing</a></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="Pants" asp-route-Category="boys">Pants</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="shirts" asp-route-Category="boys">Shirts</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="socks" asp-route-Category="boys">Socks</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="hats" asp-route-Category="boys">Hats</a></li>
                                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="SearchProduct" asp-route-subCategory="coats" asp-route-Category="boys">Coats</a></li>
@@ -336,26 +356,6 @@
                                     </div>
                                 </div>
                             </li>
-
-                        @*     @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin")) { *@
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Administrator
-                                    </a>
-                                    <div class="dropdown-menu" style="position: fixed; left:0;">
-                                        <div class="container">
-                                            <div class="row">
-                                                <ul class="list-unstyled col-md-6">
-                                                    <li><label class="dropdown-item menu-heading">Administrative Functions</label></li>
-                                                    <li><hr class="dropdown-divider"></li>
-                                                    <li><a class="dropdown-item" asp-controller="Product"  asp-action="Index">Products</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="Discount" asp-action="Index">Discount</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                        @*     } *@
                         </ul>
                         <partial name="_LoginPartial" />
                     </div>

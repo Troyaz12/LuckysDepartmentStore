@@ -2,24 +2,16 @@ using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc;
 using System.Diagnostics;
 using System.Text;
 
 namespace LuckysDepartmentStore.Controllers
 {
-    public class HomeController(IDiscountService _discountService, ILogger<HomeController> _logger, IProductService _productService, 
-        SignInManager<ApplicationUser> _signInManager, UserManager<ApplicationUser> _userManager, IShoppingCartService _shoppingCartService, 
+    public class HomeController(IDiscountService _discountService, IProductService _productService, 
+        IShoppingCartService _shoppingCartService, 
            IUtility _utility) : Controller
-    {
-        //private readonly ILogger<HomeController> _logger;
-
-        //public HomeController(ILogger<HomeController> logger)
-        //{
-        //    _logger = logger;
-        //}
+    {      
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -119,9 +111,6 @@ namespace LuckysDepartmentStore.Controllers
         [HttpGet]
         public async Task<IActionResult> Item(int productId)
         {
-            // Throw an exception to test the middleware
-            throw new Exception("This is a test exception for global error handling");
-
             var product = await _productService.GetItem(productId);           
 
             if (!product.IsSuccess)

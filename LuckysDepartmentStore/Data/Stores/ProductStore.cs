@@ -160,6 +160,14 @@ namespace LuckysDepartmentStore.Data.Stores
                     .ToList();
             }
 
+            if (exactMatches.Any() && (keywords.Contains("MEN") || keywords.Contains("MENS")))
+            {
+                exactMatches = exactMatches
+                    .Where(item => !item.SearchWords.ToUpper().Contains("WOMENS") &&
+                                    !item.SearchWords.ToUpper().Contains("WOMEN"))
+                    .ToList();
+            }
+
             // find discounts
             var products = from p in exactMatches
                            join DiscountsByBrand in _context.Discounts on p.BrandID equals DiscountsByBrand.BrandID into DiscountBrand
