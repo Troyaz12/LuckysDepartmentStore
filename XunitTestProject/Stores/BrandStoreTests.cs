@@ -1,15 +1,5 @@
-﻿using AutoMapper;
-using LuckysDepartmentStore.Data;
-using LuckysDepartmentStore.Models.DTO.Products;
-using LuckysDepartmentStore.Models;
-using LuckysDepartmentStore.Utilities;
+﻿using LuckysDepartmentStore.Data;
 using Microsoft.EntityFrameworkCore;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LuckysDepartmentStore.Data.Stores;
 using LuckysDepartmentStore.Models.ViewModels.Product;
 
