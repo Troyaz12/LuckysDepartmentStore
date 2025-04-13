@@ -11,18 +11,24 @@ namespace LuckysDepartmentStore.Service
         private readonly ICategoryStore _categoryStore;
         private readonly ILogger _logger;
 
-        public CategoryService(ICategoryStore categoryStore, ILogger<CategoryService> logger)
+        public CategoryService(ICategoryStore categoryStore, ILogger<ICategoryService> logger)
         {
             _categoryStore = categoryStore;
             _logger = logger;
         }
         public async Task<ExecutionResult<int>> Create(ProductCreateVM product)
         {
+
+            if (product == null)
+            {
+                return ExecutionResult<int>.Failure("Product data not received.");
+            }
+
             try
             {
-               var newCategoryId = _categoryStore.CreateCategory(product);
+               var newCategoryId = await _categoryStore.CreateCategory(product);
 
-                return ExecutionResult<int>.Success(newCategoryId.Result);
+                return ExecutionResult<int>.Success(newCategoryId);
 
             }
             catch (DbUpdateException ex)

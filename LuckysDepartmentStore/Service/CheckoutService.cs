@@ -35,7 +35,7 @@ namespace LuckysDepartmentStore.Service
                     int customerId;
                     OrderIds orderids = new OrderIds();
 
-                    var shippingAddress = await _shippingStore.GetShippingAddress(order.UserId);
+                   // var shippingAddress = await _shippingStore.GetShippingAddress(order.UserId);
 
                     // insert payment
                     var payment = new Payment();
@@ -83,6 +83,7 @@ namespace LuckysDepartmentStore.Service
 
                     if (!orderTotal.IsSuccess)
                     {
+                        _logger.LogError("Failed to process order {@order}", order);
                         await transaction.RollbackAsync(); // Explicit rollback for logical failure
                         return Utilities.ExecutionResult<OrderIds>.Failure($"Failed to calculate order total: {orderTotal.ErrorMessage}");
                     }
@@ -93,6 +94,7 @@ namespace LuckysDepartmentStore.Service
 
                     if (paymentSaved == 0)
                     {
+                        _logger.LogError("Failed update payment for order {@order}", order);
                         await transaction.RollbackAsync(); // Explicit rollback
                         return Utilities.ExecutionResult<OrderIds>.Failure("Failed to update payment total.");
                     }
