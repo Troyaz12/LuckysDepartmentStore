@@ -10,7 +10,7 @@ namespace LuckysDepartmentStore.Service
         private readonly IColorStore _colorStore;
         private readonly ILogger _logger;
 
-        public ColorService(IColorStore colorStore, ILogger<ColorService> logger) 
+        public ColorService(IColorStore colorStore, ILogger<IColorService> logger) 
         {
             _colorStore = colorStore;
             _logger = logger;
@@ -44,6 +44,7 @@ namespace LuckysDepartmentStore.Service
 
                 if (colorName == null)
                 {
+                    _logger.LogError("Failed to get color {@id}", id);
                     return ExecutionResult<string>.Failure("Color not found for the given ID.");
                 }
 
@@ -64,6 +65,7 @@ namespace LuckysDepartmentStore.Service
 
                 if (size == null)
                 {
+                    _logger.LogError("Failed to get size {@id}", id);
                     return ExecutionResult<string>.Failure("Size not found for the given ID.");
                 }
 
@@ -94,7 +96,7 @@ namespace LuckysDepartmentStore.Service
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to create size {@name}", name);
-                return ExecutionResult<int>.Failure("Unable to create color.");
+                return ExecutionResult<int>.Failure("Unable to create size.");
             }
         }
     }
