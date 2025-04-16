@@ -15,7 +15,7 @@ namespace LuckysDepartmentStore.Service
         private readonly IDiscountStore _discountStore;
         private readonly ILogger _logger;
 
-        public DiscountService(IMapper mapper, IUtility utility, IDiscountStore discountStore, ILogger<DiscountService> logger)
+        public DiscountService(IMapper mapper, IUtility utility, IDiscountStore discountStore, ILogger<IDiscountService> logger)
         {
             _mapper = mapper;
             _utility = utility;

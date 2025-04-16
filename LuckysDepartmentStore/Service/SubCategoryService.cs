@@ -11,7 +11,7 @@ namespace LuckysDepartmentStore.Service
         private readonly ISubcategoryStore _subcategoryStore;
         private readonly ILogger _logger;
 
-        public SubCategoryService(ISubcategoryStore subcategoryStore, ILogger<SubCategoryService> logger) 
+        public SubCategoryService(ISubcategoryStore subcategoryStore, ILogger<ISubCategoryService> logger) 
         {
             _subcategoryStore = subcategoryStore;
             _logger = logger;

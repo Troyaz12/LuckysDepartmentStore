@@ -15,7 +15,7 @@ namespace LuckysDepartmentStore.Service
         private readonly IPaymentStore _paymentStore;
         private readonly ILogger _logger;
 
-        public ConsumerService(IMapper mapper, ICustomerStore customerStore, IPaymentStore paymentStore, ILogger<ConsumerService> logger)
+        public ConsumerService(IMapper mapper, ICustomerStore customerStore, IPaymentStore paymentStore, ILogger<IConsumerService> logger)
         {
             _mapper = mapper;
             _customerStore = customerStore;
@@ -27,6 +27,7 @@ namespace LuckysDepartmentStore.Service
         {
             if (shippingAddress == null)
             {
+                _logger.LogWarning("Received null shipping address.");
                 return ExecutionResult<bool>.Failure("Did not receive an address.");
             }
 
@@ -63,6 +64,7 @@ namespace LuckysDepartmentStore.Service
         {
             if (userId == null)
             {
+                _logger.LogWarning("No UserID provided.");
                 return ExecutionResult<List<ShippingAddressVM>>.Failure("UserId not recieved.");
             }
 
@@ -78,15 +80,13 @@ namespace LuckysDepartmentStore.Service
             {
                 _logger.LogError(ex, "Failed to get shipping address for {@userId}", userId);
                 return ExecutionResult<List<ShippingAddressVM>>.Failure("Unable to get address.");
-            }
-
-
-          
+            }          
         }
         public async Task<ExecutionResult<bool>> CreatePaymentOption(PaymentOptionsVM paymentOption)
         {
             if (paymentOption == null)
             {
+                _logger.LogWarning("No payment option provided.");
                 return ExecutionResult<bool>.Failure("Payment data not recieved.");
             }
 
@@ -114,6 +114,7 @@ namespace LuckysDepartmentStore.Service
         {
             if (userId == null)
             {
+                _logger.LogError("Failed to get payment options {@userId}", userId);
                 return ExecutionResult<List<PaymentOptionsVM>>.Failure("UserId not recieved.");
             }
 
@@ -136,14 +137,16 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                if (id == null)
+                if (id <= 0)
                 {
+                    _logger.LogWarning("Shipping data not recieved.");
                     return ExecutionResult<ShippingAddress>.Failure("Shipping data not recieved.");
                 }
                 var shippingAddress = await _customerStore.GetShippingAddressByID(id);
 
                 if (shippingAddress == null)
                 {
+                    _logger.LogWarning("Shipping data not found.");
                     return ExecutionResult<ShippingAddress>.Failure("An error occured. Cannot find delete product.");
                 }
 
@@ -169,6 +172,7 @@ namespace LuckysDepartmentStore.Service
             {
                 if (shippingAddress == null)
                 {
+                    _logger.LogWarning("Shipping data not recieved.");
                     return ExecutionResult<ShippingAddressVM>.Failure("No shipping address selected.");
                 }
 
@@ -176,6 +180,7 @@ namespace LuckysDepartmentStore.Service
 
                 if (rowsEffected == 0)
                 {
+                    _logger.LogWarning("No row found to be updated.");
                     return ExecutionResult<ShippingAddressVM>.Failure("Shipping address could not be updated.");
                 }
 
@@ -198,6 +203,7 @@ namespace LuckysDepartmentStore.Service
             {
                 if (paymentOptions == null)
                 {
+                    _logger.LogWarning("Payment data not recieved.");
                     return ExecutionResult<PaymentOptionsVM>.Failure("No payment option selected.");
                 }
 
@@ -205,6 +211,7 @@ namespace LuckysDepartmentStore.Service
 
                 if (rowsEffected == 0)
                 {
+                    _logger.LogWarning("Payment option not found.");
                     return ExecutionResult<PaymentOptionsVM>.Failure("Could not update payment option.");
                 }
 
@@ -225,15 +232,17 @@ namespace LuckysDepartmentStore.Service
         {
             try
             {
-                if (id == null)
+                if (id <= 0)
                 {
-                    return ExecutionResult<PaymentOptions>.Failure("Payment data not recieved.");
+                    _logger.LogWarning("Invalid payment ID.");
+                    return ExecutionResult<PaymentOptions>.Failure("Invalid payment ID.");
                 }
                 var paymentRecord = await _paymentStore.GetPaymentOptionByID(id);
 
                 if (paymentRecord == null)
                 {
-                    return ExecutionResult<PaymentOptions>.Failure("An error occured. Cannot find delete product.");
+                    _logger.LogWarning("Could not find payment.");
+                    return ExecutionResult<PaymentOptions>.Failure("An error occured. Cannot find delete payment.");
                 }
 
                 await _paymentStore.DeletePaymentOption(paymentRecord);
