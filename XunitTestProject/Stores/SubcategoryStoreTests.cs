@@ -1,11 +1,6 @@
 ﻿using LuckysDepartmentStore.Data.Stores;
 using LuckysDepartmentStore.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LuckysDepartmentStore.Models;
 
 namespace XunitTestProject.Stores

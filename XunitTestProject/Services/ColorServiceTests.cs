@@ -111,7 +111,6 @@ namespace XunitTestProject.Services
             Assert.True(!result.IsSuccess);
             _mockStore.Verify(x => x.GetColorName(expectedColorId), Times.Once());
             Assert.Equal("Color not found for the given ID.", result.ErrorMessage);
-            _mockStore.Verify(x => x.GetColorName(expectedColorId), Times.Once);
             _loggerMock.Verify(
                 x => x.Log(
                     LogLevel.Error,
@@ -135,7 +134,6 @@ namespace XunitTestProject.Services
             Assert.True(!result.IsSuccess);
             _mockStore.Verify(x => x.GetColorName(expectedColorId), Times.Once());
             Assert.Equal("Unable to get color name.", result.ErrorMessage);
-            _mockStore.Verify(x => x.GetColorName(expectedColorId), Times.Once);
             _loggerMock.Verify(
                 x => x.Log(
                     LogLevel.Error,
