@@ -96,7 +96,7 @@ namespace LuckysDepartmentStore.Service
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError(ex, "Unable to add to cart in database.");
+                _logger.LogError(ex, "Unable to add to cart to database.");
                 return ExecutionResult<CartsVM>.Failure("Unable to add to cart.");
             }
             catch (Exception ex)
@@ -115,6 +115,7 @@ namespace LuckysDepartmentStore.Service
 
                 if (cartItems == null || !cartItems.Any())
                 {
+                    _logger.LogError("Unable to get cart items.");
                     return ExecutionResult<int>.Failure("Unable to get cart items.");
                 }
 
@@ -146,7 +147,7 @@ namespace LuckysDepartmentStore.Service
                 }
                 else if (!cartItems.Any())
                 {
-                    ExecutionResult<ShoppingCartVM>.Success(shoppingCart);
+                    return ExecutionResult<ShoppingCartVM>.Success(shoppingCart);
                 }
 
                 var cartVM = _mapper.Map<List<CartsVM>>(cartItems);
