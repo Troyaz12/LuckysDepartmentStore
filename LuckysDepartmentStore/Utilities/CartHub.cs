@@ -1,4 +1,5 @@
-﻿using LuckysDepartmentStore.Service.Interfaces;
+﻿using LuckysDepartmentStore.Models;
+using LuckysDepartmentStore.Service.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 
 namespace LuckysDepartmentStore.Utilities
@@ -19,9 +20,13 @@ namespace LuckysDepartmentStore.Utilities
             {
                 var cartID = _shoppingCartService.GetCart();
 
-                var cartCount = await _shoppingCartService.GetCartCount(cartID);
+                if (!cartID.IsSuccess)
+                {
+                    _logger.LogWarning("Failed to get cart id for cart update");
+                }
 
-                _logger.LogInformation("Test Connection called");
+                var cartCount = await _shoppingCartService.GetCartCount(cartID.Data);
+
                 await Clients.All.SendAsync("ReceiveCartCountUpdate", cartCount.Data);
             }
             catch (Exception ex)
@@ -33,13 +38,11 @@ namespace LuckysDepartmentStore.Utilities
         }
         public async Task TestConnection() 
         {
-            _logger.LogInformation("TestConnection called"); 
             await Clients.All.SendAsync("ReceiveCartCountUpdate", 999);
         }
 
         public override async Task OnConnectedAsync()
-        {
-            _logger.LogInformation("A client connected: " + Context.ConnectionId);
+        {         
             await base.OnConnectedAsync();
         }
 

@@ -91,8 +91,15 @@ namespace LuckysDepartmentStore.Controllers
 
                 //Process the order
                 var cart = _shoppingCartService.GetCart();
+
+                if (!cart.IsSuccess)
+                {
+                    TempData["FailureMessage"] = "Error getting cart data.";
+                    return RedirectToAction("Index", "Error");
+                }
+
                 Product product = new Product();
-                var orderResult = _shoppingCartService.CreateOrder(cart, orderId.Data.CustomerOrderID);
+                var orderResult = _shoppingCartService.CreateOrder(cart.Data, orderId.Data.CustomerOrderID);
 
                 return RedirectToAction("Complete",
                 new { id = orderId.Data.CustomerOrderID });  // revisit to make sure this is correct

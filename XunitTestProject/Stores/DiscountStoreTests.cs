@@ -80,7 +80,7 @@ namespace XunitTestProject.Stores
 
             // Assert
             Assert.NotNull(allDiscounts);
-            Assert.Single(allDiscounts);
+            Assert.Equal(2, allDiscounts.Count);
         }
 
         [Fact]
@@ -183,14 +183,14 @@ namespace XunitTestProject.Stores
             // Act
             await repository.AddDiscount(newDiscount);
 
-            var updateDiscount = await context.Discounts.FindAsync(2);
+            var retrieveNewDiscount = await context.Discounts.FindAsync(3);
 
             var allDiscounts = await context.Discounts.ToListAsync();
 
             // Assert
-            Assert.NotNull(updateDiscount);
-            Assert.Equal("Sale On Coats", updateDiscount.DiscountDescription);
-            Assert.Equal(2, allDiscounts.Count);
+            Assert.NotNull(retrieveNewDiscount);
+            Assert.Equal("Sale On Coats", retrieveNewDiscount.DiscountDescription);
+            Assert.Equal(3, allDiscounts.Count);
         }
 
         [Fact]
@@ -204,7 +204,7 @@ namespace XunitTestProject.Stores
 
             // Assert
             Assert.NotNull(discounts);
-            Assert.Equal(1, discounts.Count);
+            Assert.Equal(2, discounts.Count);
         }
 
         [Fact]

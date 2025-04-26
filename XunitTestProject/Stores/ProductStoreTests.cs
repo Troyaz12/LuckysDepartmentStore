@@ -385,7 +385,7 @@ namespace XunitTestProject.Stores
             List<ColorProduct> colorAdd = new List<ColorProduct>();
             List<ColorProduct> colorRemove = new List<ColorProduct>();
 
-            var newColor = new ColorProduct { ColorProductID = 2, ColorID = 1, Quantity = 2, ProductID = 4, SizeID = 1 };
+            var newColor = new ColorProduct { ColorProductID = 7, ColorID = 1, Quantity = 2, ProductID = 4, SizeID = 1 };
             colorAdd.Add(newColor);
 
             // Act
@@ -414,7 +414,7 @@ namespace XunitTestProject.Stores
 
             // Act
             await repository.UpdateProduct(product.Result, colorAdd, colorRemove);
-            var color = context.ColorProducts.Find(2);
+            var color = context.ColorProducts.Find(1);
 
             // Assert
             Assert.Null(color);
@@ -432,7 +432,7 @@ namespace XunitTestProject.Stores
             List<ColorProduct> colorRemove = new List<ColorProduct>();
             colorRemove.Add(context.ColorProducts.Find(1));
 
-            var newColor = new ColorProduct { ColorProductID = 2, ColorID = 1, Quantity = 2, ProductID = 4, SizeID = 1 };
+            var newColor = new ColorProduct { ColorProductID = 8, ColorID = 1, Quantity = 2, ProductID = 4, SizeID = 1 };
             colorAdd.Add(newColor);
 
             // Act
@@ -443,7 +443,7 @@ namespace XunitTestProject.Stores
 
             // Assert
             Assert.NotNull(color);
-            Assert.Equal(1,colorProducts.Count);
+            Assert.Equal(3,colorProducts.Count);
         }
 
         [Fact]
@@ -510,7 +510,7 @@ namespace XunitTestProject.Stores
             };
             var colorProd2 = new ColorProduct
             {
-                ColorProductID = 2,
+                ColorProductID = 5,
                 ColorID = 2,
                 Quantity = 2,
                 ProductID = 2,
@@ -518,7 +518,7 @@ namespace XunitTestProject.Stores
             };
             var colorProd3 = new ColorProduct
             {
-                ColorProductID = 3,
+                ColorProductID = 6,
                 ColorID = 3,
                 Quantity = 3,
                 ProductID = 3,
@@ -535,7 +535,7 @@ namespace XunitTestProject.Stores
             var colorProductList = await context.ColorProducts.ToListAsync();
 
             // Assert
-            Assert.Equal(4, colorProductList.Count);
+            Assert.Equal(6, colorProductList.Count);
         }
 
         [Fact]

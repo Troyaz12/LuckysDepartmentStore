@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LuckysDepartmentStore.Models;
 using LuckysDepartmentStore.Models.DTO.ShoppingCart;
 using LuckysDepartmentStore.Models.ViewModels.Home;
 using LuckysDepartmentStore.Models.ViewModels.ShoppingCart;
@@ -29,7 +30,14 @@ namespace LuckysDepartmentStore.Controllers
         public async Task<IActionResult> Index()
         {
             var cartID = _shoppingCartService.GetCart();
-            var allItems = await _shoppingCartService.GetCartItems(cartID);
+
+            if (!cartID.IsSuccess)
+            {
+                TempData["FailureMessage"] = "Error getting cart data.";
+                return RedirectToAction("Index", "Error");
+            }
+
+            var allItems = await _shoppingCartService.GetCartItems(cartID.Data);
 
             if (!allItems.IsSuccess)
             {
@@ -48,7 +56,14 @@ namespace LuckysDepartmentStore.Controllers
             if (ModelState.IsValid)
             {               
                 var cart = _shoppingCartService.GetCart();
-                var cartResp = await _shoppingCartService.AddToCartAsync(item, cart);
+
+                if (!cart.IsSuccess)
+                {
+                    TempData["FailureMessage"] = "Error getting cart data.";
+                    return RedirectToAction("Index", "Error");
+                }
+
+                var cartResp = await _shoppingCartService.AddToCartAsync(item, cart.Data);
 
                 if (!cartResp.IsSuccess)
                 {
@@ -86,7 +101,13 @@ namespace LuckysDepartmentStore.Controllers
         {
             var cart = _shoppingCartService.GetCart();
 
-            var count = await _shoppingCartService.GetCount(cart);
+            if (!cart.IsSuccess)
+            {
+                TempData["FailureMessage"] = "Error getting cart data.";
+                return RedirectToAction("Index", "Error");
+            }
+
+            var count = await _shoppingCartService.GetCount(cart.Data);
 
             if (!count.IsSuccess)
             {
@@ -105,7 +126,14 @@ namespace LuckysDepartmentStore.Controllers
         public async Task<IActionResult> GetShoppingCartCountAsync()
         {
             var cart = _shoppingCartService.GetCart();
-            var count = await _shoppingCartService.GetCount(cart);
+
+            if (!cart.IsSuccess)
+            {
+                TempData["FailureMessage"] = "Error getting cart data.";
+                return RedirectToAction("Index", "Error");
+            }
+
+            var count = await _shoppingCartService.GetCount(cart.Data);
 
             if (!count.IsSuccess)
             {

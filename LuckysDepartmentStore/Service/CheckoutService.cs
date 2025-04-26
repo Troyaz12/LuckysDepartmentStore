@@ -78,8 +78,16 @@ namespace LuckysDepartmentStore.Service
                     await _customerStore.SaveOrder(customerOrder);
 
                     var cart = _shoppingCartService.GetCart();
+
+                    if (!cart.IsSuccess)
+                    {
+                        _logger.LogError("Failed to process order {@order}. Unable to get CartID.", order);
+                        await transaction.RollbackAsync(); // Explicit rollback for logical failure
+                        return Utilities.ExecutionResult<OrderIds>.Failure($"Failed to process order.");
+                    }
+
                     Product product = new Product();
-                    var orderTotal = await _shoppingCartService.CreateOrder(cart, customerOrder.CustomerOrderID);
+                    var orderTotal = await _shoppingCartService.CreateOrder(cart.Data, customerOrder.CustomerOrderID);
 
                     if (!orderTotal.IsSuccess)
                     {

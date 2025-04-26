@@ -24,9 +24,9 @@ namespace LuckysDepartmentStore.Service.Interfaces
 
         public Task<ExecutionResult<string>> MigrateCart(string userName, string ShoppingCartId);
 
-        public string GetCart();
+        public ExecutionResult<string> GetCart();
 
-        public string GetCart(Controller controller);
+        public ExecutionResult<string> GetCart(Controller controller);
 
         public Task<ExecutionResult<int>> GetCartCount(string ShoppingCartId);
 
@@ -36,7 +36,7 @@ namespace LuckysDepartmentStore.Service.Interfaces
 
         public Task<ExecutionResult<int>> EditItemInCart(CartItemEdit cartItem);
         
-        public Task<string> GetCartIdOnLogInAsync();
+        public Task<ExecutionResult<string>> GetCartIdOnLogInAsync();
 
         public ExecutionResult<Guid> SetCartSessionKey();
 

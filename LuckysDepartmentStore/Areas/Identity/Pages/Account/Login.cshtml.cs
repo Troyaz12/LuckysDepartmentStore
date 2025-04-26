@@ -119,7 +119,13 @@ namespace LuckysDepartmentStore.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    await _shoppingCartService.GetCartIdOnLogInAsync();
+                    var cartID = await _shoppingCartService.GetCartIdOnLogInAsync();
+
+                    if (!cartID.IsSuccess)
+                    {
+                        _logger.LogWarning("Unable to get or set CartID");
+                    }
+
 
                     return LocalRedirect(returnUrl);
                 }

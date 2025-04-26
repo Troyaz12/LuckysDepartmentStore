@@ -19,6 +19,12 @@ namespace LuckysDepartmentStore.Controllers
             // Call GetCartId() early to ensure session is set up
             var cartID = _shoppingCartService.GetCart();
 
+            if (!cartID.IsSuccess)
+            {
+                TempData["FailureMessage"] = "Error getting cart data.";
+                return RedirectToAction("Index", "Error");
+            }
+
             var frontPageData = await _discountService.GetActiveDiscounts();
 
             if (!frontPageData.IsSuccess)

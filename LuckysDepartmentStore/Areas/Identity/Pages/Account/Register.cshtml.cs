@@ -203,8 +203,18 @@ namespace LuckysDepartmentStore.Areas.Identity.Pages.Account
             // Associate shopping cart items with logged-in user
             var cart = _shoppingCartService.GetCart();
 
-            _shoppingCartService.MigrateCart(UserName, cart);
+            if (cart.IsSuccess)
+            {
+                _shoppingCartService.MigrateCart(UserName, cart.Data);
+            }
+            else
+            {
+                _logger.LogError("Unable to add to cart to database.");
+            }
+
             HttpContext.Session.SetString(ShoppingCart.CartSessionKey, UserName);
+
+
         }
     }
 }

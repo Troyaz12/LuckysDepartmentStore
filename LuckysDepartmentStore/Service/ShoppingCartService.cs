@@ -36,14 +36,14 @@ namespace LuckysDepartmentStore.Service
             _logger = logger;
         }
 
-        public string GetCart()
+        public ExecutionResult<string> GetCart()
         {
             //var cart = new ShoppingCart();
             var shoppingCartId = GetCartId();
             return shoppingCartId;
         }
         // Helper method to simplify shopping cart calls
-        public string GetCart(Controller controller)
+        public ExecutionResult<string> GetCart(Controller controller)
         {
             return GetCart();
 
@@ -218,12 +218,20 @@ namespace LuckysDepartmentStore.Service
 
             try
             {
-                var cartItems = GetCartItems(ShoppingCartId);
+                var cartItems = await GetCartItems(ShoppingCartId);
+
+                if (!cartItems.IsSuccess || cartItems.Data == null || !cartItems.Data.cartsVMs.Any())
+                {
+                    _logger.LogError("Unable to retrieve cart items or cart is empty for ShoppingCartId: {ShoppingCartId}", ShoppingCartId);
+                    await transaction.RollbackAsync();
+                    return Utilities.ExecutionResult<decimal>.Failure("Unable to retrieve cart items or cart is empty.");
+                }
+
                 List<CustomerOrderItem> items = new List<CustomerOrderItem>();
 
                 // Iterate over the items in the cart, 
                 // adding the order details for each
-                foreach (var item in cartItems.Result.Data.cartsVMs)
+                foreach (var item in cartItems.Data.cartsVMs)
                 {
                     var customerOrderItem = new CustomerOrderItem
                     {
@@ -242,6 +250,7 @@ namespace LuckysDepartmentStore.Service
 
                 if (rowsEffected == 0)
                 {
+                    _logger.LogError("Cannot add order item. Rolling back transaction.");
                     await transaction.RollbackAsync();
                     return Utilities.ExecutionResult<decimal>.Failure("Unable to process order.");
                 }
@@ -250,12 +259,13 @@ namespace LuckysDepartmentStore.Service
 
                 if (orderTotal == 0)
                 {
+                    _logger.LogError("Cannot calculate order total. Rolling back transaction.");
                     await transaction.RollbackAsync();
                     return Utilities.ExecutionResult<decimal>.Failure("Unable to process order.");
                 }
 
-                // Empty the shopping cart
-                EmptyCart(ShoppingCartId);
+                // Empty the shopping cart, no need to rollback
+                await EmptyCart(ShoppingCartId);
 
             }
             catch (DbUpdateException ex)
@@ -298,7 +308,7 @@ namespace LuckysDepartmentStore.Service
             return Utilities.ExecutionResult<string>.Success(ShoppingCartId);
         }
         
-        public string GetCartId()
+        public ExecutionResult<string> GetCartId()
         {
 
             if (_httpContext.HttpContext.Session.GetString(CartSessionKey) == null)
@@ -311,9 +321,9 @@ namespace LuckysDepartmentStore.Service
                     }
                     catch (Exception ex)
                     {
-
+                        _logger.LogError(ex, "Unable to create cart ID from userID.");
+                        return ExecutionResult<string>.Failure("Unable to create cart ID from userID.");
                     }
-
                 }
                 else
                 {
@@ -326,15 +336,16 @@ namespace LuckysDepartmentStore.Service
                     }
                     catch (Exception ex)
                     {
-
+                        _logger.LogError(ex, "Unable to create cart ID.");
+                        return ExecutionResult<string>.Failure("Unable to create cart ID.");
                     }
 
                 }
             }
-            return _httpContext.HttpContext.Session.GetString(CartSessionKey);
+            return ExecutionResult<string>.Success(_httpContext.HttpContext.Session.GetString(CartSessionKey));
         }
         
-        public async Task<string> GetCartIdOnLogInAsync()
+        public async Task<ExecutionResult<string>> GetCartIdOnLogInAsync()
         {
             var username = _httpContext.HttpContext.User.Identity.Name;
             // does the existing id have any items associated with it? pull items
@@ -342,12 +353,18 @@ namespace LuckysDepartmentStore.Service
             {
                 var cart = GetCart();
                 // pull items from logged in id
-                var migrateResult = await MigrateAnonymousCartItems(cart);
+                var migrateResult = await MigrateAnonymousCartItems(cart.Data);
+
+                if (!migrateResult.IsSuccess)
+                {
+                    return ExecutionResult<string>.Failure("Unable to migrate cart.");
+                }
+
             }
 
             _httpContext.HttpContext.Session.SetString(CartSessionKey, _httpContext.HttpContext.User.Identity.Name);
 
-            return _httpContext.HttpContext.Session.GetString(CartSessionKey);
+            return ExecutionResult<string>.Success(_httpContext.HttpContext.Session.GetString(CartSessionKey));
         }
 
         public async Task<ExecutionResult<int>> GetCartCount(string ShoppingCartId)

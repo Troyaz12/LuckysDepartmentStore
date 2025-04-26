@@ -8,6 +8,7 @@ using Moq;
 using LuckysDepartmentStore.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using LuckysDepartmentStore.Utilities;
 
 namespace XunitTestProject.Services
 {
@@ -84,7 +85,7 @@ namespace XunitTestProject.Services
              .Callback<CustomerOrder>(p => p.CustomerOrderID = 1)
                 .Returns(Task.CompletedTask);
 
-            _shoppingCartServiceMock.Setup(c => c.GetCart()).Returns(cart);
+            _shoppingCartServiceMock.Setup(c => c.GetCart()).Returns(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success(cart));
             _shoppingCartServiceMock.Setup(c => c.CreateOrder(cart, It.IsAny<int>()))
                 .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<decimal>.Success(100.00m));
 
@@ -128,7 +129,7 @@ namespace XunitTestProject.Services
             _paymentStoreMock.Setup(p => p.SavePayment(It.IsAny<Payment>()));
             _shippingStoreMock.Setup(s => s.AddShippingAddress(It.IsAny<Shipping>()));
             _customerStoreMock.Setup(c => c.SaveOrder(It.IsAny<CustomerOrder>()));
-            _shoppingCartServiceMock.Setup(c => c.GetCart()).Returns(cart);
+            _shoppingCartServiceMock.Setup(c => c.GetCart()).Returns(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success(cart));
 
             _shoppingCartServiceMock.Setup(c => c.CreateOrder(cart, customerOrder.CustomerOrderID)).ReturnsAsync(failedTotal);
 
@@ -182,7 +183,7 @@ namespace XunitTestProject.Services
             _shippingStoreMock.Setup(s => s.AddShippingAddress(It.IsAny<Shipping>()));
             _customerStoreMock.Setup(c => c.SaveOrder(It.IsAny<CustomerOrder>()));
 
-            _shoppingCartServiceMock.Setup(c => c.GetCart()).Returns(cart);
+            _shoppingCartServiceMock.Setup(c => c.GetCart()).Returns(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success(cart));
             _shoppingCartServiceMock.Setup(c => c.CreateOrder(cart, It.IsAny<int>()))
                 .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<decimal>.Failure("Mocked failure"));
 
@@ -237,7 +238,7 @@ namespace XunitTestProject.Services
             _shippingStoreMock.Setup(s => s.AddShippingAddress(It.IsAny<Shipping>()));
             _customerStoreMock.Setup(c => c.SaveOrder(It.IsAny<CustomerOrder>()));
 
-            _shoppingCartServiceMock.Setup(c => c.GetCart()).Returns(cart);
+            _shoppingCartServiceMock.Setup(c => c.GetCart()).Returns(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success(cart));
             _shoppingCartServiceMock.Setup(c => c.CreateOrder(cart, It.IsAny<int>()))
                 .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<decimal>.Success(100.00m));
 
@@ -295,7 +296,7 @@ namespace XunitTestProject.Services
             _shippingStoreMock.Setup(s => s.AddShippingAddress(It.IsAny<Shipping>()));
             _customerStoreMock.Setup(c => c.SaveOrder(It.IsAny<CustomerOrder>()));
 
-            _shoppingCartServiceMock.Setup(c => c.GetCart()).Returns(cart);
+            _shoppingCartServiceMock.Setup(c => c.GetCart()).Returns(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success(cart));
             _shoppingCartServiceMock.Setup(c => c.CreateOrder(cart, It.IsAny<int>()))
                 .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<decimal>.Success(100.00m));
 
