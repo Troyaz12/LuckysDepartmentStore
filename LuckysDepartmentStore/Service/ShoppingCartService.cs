@@ -353,7 +353,7 @@ namespace LuckysDepartmentStore.Service
             {
                 var cart = GetCart();
                 // pull items from logged in id
-                var migrateResult = await MigrateAnonymousCartItems(cart.Data);
+                var migrateResult = await MigrateAnonymousCartItems(cart.Data, username);
 
                 if (!migrateResult.IsSuccess)
                 {
@@ -457,11 +457,12 @@ namespace LuckysDepartmentStore.Service
             }
         }
 
-        public async Task<ExecutionResult<List<Carts>>> MigrateAnonymousCartItems(string anonymousCartId)
+        public async Task<ExecutionResult<List<Carts>>> MigrateAnonymousCartItems(string anonymousCartId, string userId)
         {
             try
             {
-                var userId = _httpContext.HttpContext.User.Identity.Name;
+                if(userId == null)
+                    userId = _httpContext.HttpContext.User.Identity.Name;                
 
                 if (string.IsNullOrEmpty(userId))
                 {

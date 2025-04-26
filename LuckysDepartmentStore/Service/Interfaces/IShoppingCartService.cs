@@ -40,6 +40,6 @@ namespace LuckysDepartmentStore.Service.Interfaces
 
         public ExecutionResult<Guid> SetCartSessionKey();
 
-        public Task<ExecutionResult<List<Carts>>> MigrateAnonymousCartItems(string shoppingCartId);
+        public Task<ExecutionResult<List<Carts>>> MigrateAnonymousCartItems(string shoppingCartId, string userId);
     }
 }

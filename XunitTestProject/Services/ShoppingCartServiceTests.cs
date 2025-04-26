@@ -17,6 +17,8 @@ using LuckysDepartmentStore.Utilities;
 using System;
 using System.Security.Claims;
 using System.Security.Principal;
+using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace XunitTestProject.Services
 {
@@ -311,9 +313,9 @@ namespace XunitTestProject.Services
             _utilityMock.Setup(x => x.CalculateItemSubtotal(It.IsAny<int>(), It.IsAny<decimal>()))
                 .Returns(10.00m);
             _colorServiceMock.Setup(x => x.GetSizeName(It.IsAny<int>()))
-                .ReturnsAsync(ExecutionResult<string>.Success("Medium"));
+                .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success("Medium"));
             _colorServiceMock.Setup(x => x.GetColorName(It.IsAny<int>()))
-                .ReturnsAsync(ExecutionResult<string>.Success("Blue"));
+                .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success("Blue"));
 
             // Act
             var result = await _service.GetCartItems(cartId);
@@ -379,9 +381,9 @@ namespace XunitTestProject.Services
 
 
             _colorServiceMock.Setup(x => x.GetSizeName(It.IsAny<int>()))
-                .ReturnsAsync(ExecutionResult<string>.Success(sizeName));
+                .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success(sizeName));
             _colorServiceMock.Setup(x => x.GetColorName(It.IsAny<int>()))
-                .ReturnsAsync(ExecutionResult<string>.Success(colorName));
+                .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success(colorName));
 
             _shoppingCartStoreMock.Setup(x => x.GetCartItemsAllData(cartId))
                 .ReturnsAsync(cartList);
@@ -440,9 +442,9 @@ namespace XunitTestProject.Services
             cartListVM.Add(cartVM);
 
             _colorServiceMock.Setup(x => x.GetSizeName(It.IsAny<int>()))
-                .ReturnsAsync(ExecutionResult<string>.Success(sizeName));
+                .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success(sizeName));
             _colorServiceMock.Setup(x => x.GetColorName(It.IsAny<int>()))
-                .ReturnsAsync(ExecutionResult<string>.Success(colorName));
+                .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success(colorName));
 
             _shoppingCartStoreMock.Setup(x => x.GetCartItemsAllData(cartId))
                 .ReturnsAsync(cartList);
@@ -500,9 +502,9 @@ namespace XunitTestProject.Services
             cartListVM.Add(cartVM);
 
             _colorServiceMock.Setup(x => x.GetSizeName(It.IsAny<int>()))
-                .ReturnsAsync(ExecutionResult<string>.Success(sizeName));
+                .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success(sizeName));
             _colorServiceMock.Setup(x => x.GetColorName(It.IsAny<int>()))
-                .ReturnsAsync(ExecutionResult<string>.Success(colorName));
+                .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success(colorName));
 
             _shoppingCartStoreMock.Setup(x => x.GetCartItemsAllData(cartId))
                 .ReturnsAsync(cartList);
@@ -565,9 +567,9 @@ namespace XunitTestProject.Services
                 .ThrowsAsync(exception);
 
             _colorServiceMock.Setup(x => x.GetSizeName(It.IsAny<int>()))
-               .ReturnsAsync(ExecutionResult<string>.Success(sizeName));
+               .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success(sizeName));
             _colorServiceMock.Setup(x => x.GetColorName(It.IsAny<int>()))
-                .ReturnsAsync(ExecutionResult<string>.Success(colorName));
+                .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success(colorName));
 
             _shoppingCartStoreMock.Setup(x => x.GetCartItemsAllData(cartId))
                 .ReturnsAsync(cartList);
@@ -632,9 +634,9 @@ namespace XunitTestProject.Services
             cartListVM.Add(cartVM);
 
             _colorServiceMock.Setup(x => x.GetSizeName(It.IsAny<int>()))
-                .ReturnsAsync(ExecutionResult<string>.Success(sizeName));
+                .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success(sizeName));
             _colorServiceMock.Setup(x => x.GetColorName(It.IsAny<int>()))
-                .ReturnsAsync(ExecutionResult<string>.Success(colorName));
+                .ReturnsAsync(LuckysDepartmentStore.Utilities.ExecutionResult<string>.Success(colorName));
 
             _shoppingCartStoreMock.Setup(x => x.GetCartItemsAllData(cartId))
                 .ReturnsAsync(cartList);
@@ -933,5 +935,118 @@ namespace XunitTestProject.Services
                   It.IsAny<Func<It.IsAnyType, Exception, string>>()),
               Times.Once);
         }
+
+        [Fact]
+        public async Task GetCartIdOnLogInAsync_NoExistingCart_SetsUsername()
+        {
+            await InitializeAsync();
+            var sessionMock = new Mock<ISession>();
+            var userMock = new Mock<ClaimsPrincipal>();
+            var identityMock = new Mock<IIdentity>();
+            // Arrange
+            var userName = "testUser";
+            var cartId = "cart123";
+            var cartItems = new List<Carts> { new Carts { ProductID = 1, CartID = cartId } };
+
+            // Setup HttpContext
+            _httpContextMock.Setup(x => x.HttpContext.Session).Returns(sessionMock.Object);
+            _httpContextMock.Setup(x => x.HttpContext.User).Returns(userMock.Object);
+
+            // Setup User and Identity
+            userMock.Setup(x => x.Identity).Returns(identityMock.Object);
+            identityMock.Setup(x => x.Name).Returns("testUser");
+
+            // Simulate no existing cart (GetString returns null)
+            byte[] storedValue = null;
+            sessionMock.Setup(x => x.TryGetValue(It.IsAny<string>(), out storedValue))
+                .Returns(false);
+
+            // Simulate setting a string in session
+            string capturedKey = null;
+            sessionMock.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<byte[]>()))
+                .Callback<string, byte[]>((key, value) =>
+                {
+                    capturedKey = key;
+                    storedValue = value;
+                    // Update TryGetValue to return the stored value
+                    sessionMock.Setup(s => s.TryGetValue(key, out storedValue))
+                        .Returns(true);
+                });
+
+            // GetCartId Setup
+            // Setup HttpContext
+            _httpContextMock.Setup(x => x.HttpContext.Session).Returns(sessionMock.Object);
+            _httpContextMock.Setup(x => x.HttpContext.User).Returns(userMock.Object);
+
+            // Setup User and Identity to return null Name (anonymous user)
+            userMock.Setup(x => x.Identity).Returns(identityMock.Object);
+            identityMock.Setup(x => x.Name).Returns(userName);
+
+            // Act
+            var result = await _service.GetCartIdOnLogInAsync();
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.Equal("testUser", result.Data);
+            Assert.NotNull(capturedKey);
+            Assert.Equal("testUser", Encoding.UTF8.GetString(storedValue));            
+        }
+
+        [Fact]
+        public async Task GetCartIdOnLogInAsync_ExistingCart_MigratesCart()
+        {
+            await InitializeAsync();
+            var sessionMock = new Mock<ISession>();
+            var userMock = new Mock<ClaimsPrincipal>();
+            var identityMock = new Mock<IIdentity>();
+            // Arrange
+            var userName = "testUser";
+            var cartId = "cart123";
+            var cartItems = new List<Carts> { new Carts { ProductID = 1, CartID = cartId } };
+
+            // Setup HttpContext
+            _httpContextMock.Setup(x => x.HttpContext.Session).Returns(sessionMock.Object);
+            _httpContextMock.Setup(x => x.HttpContext.User).Returns(userMock.Object);
+
+            // Setup User and Identity
+            userMock.Setup(x => x.Identity).Returns(identityMock.Object);
+            identityMock.Setup(x => x.Name).Returns("testUser");
+
+            // Simulate no existing cart (GetString returns null)
+            byte[] storedValue = Encoding.UTF8.GetBytes("3f2504e0-4f89-41d3-9a0c-0305e82c3301");
+            sessionMock.Setup(x => x.TryGetValue(It.IsAny<string>(), out storedValue))
+                .Returns(false);
+
+            // Simulate setting a string in session
+            string capturedKey = null;
+            sessionMock.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<byte[]>()))
+                .Callback<string, byte[]>((key, value) =>
+                {
+                    capturedKey = key;
+                    storedValue = value;
+                    // Update TryGetValue to return the stored value
+                    sessionMock.Setup(s => s.TryGetValue(key, out storedValue))
+                        .Returns(true);
+                });
+
+            // GetCartId Setup
+            // Setup HttpContext
+            _httpContextMock.Setup(x => x.HttpContext.Session).Returns(sessionMock.Object);
+            _httpContextMock.Setup(x => x.HttpContext.User).Returns(userMock.Object);
+
+            // Setup User and Identity to return null Name (anonymous user)
+            userMock.Setup(x => x.Identity).Returns(identityMock.Object);
+            identityMock.Setup(x => x.Name).Returns(userName);
+
+            // Act
+            var result = await _service.GetCartIdOnLogInAsync();
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.Equal("testUser", result.Data);
+            Assert.NotNull(capturedKey);
+            Assert.Equal("testUser", Encoding.UTF8.GetString(storedValue));
+        }
+       
     }
 }
