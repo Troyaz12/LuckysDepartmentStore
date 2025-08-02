@@ -11,5 +11,7 @@ namespace LuckysDepartmentStore.Models
         public virtual ICollection<CustomerOrder> CustomerOrder { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+
+        public virtual ICollection<Shipping> Shipping { get; set; }
     }
 }

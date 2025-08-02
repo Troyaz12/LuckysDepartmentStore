@@ -209,13 +209,9 @@ namespace LuckysDepartmentStore.Service
             return ExecutionResult<decimal>.Success(total ?? decimal.Zero);
         }
         public async Task<ExecutionResult<decimal>> CreateOrder(string ShoppingCartId, int customerOrderId)
-        { // may not need Product
-
+        {
             decimal orderTotal = 0;
-
-            // Start a transaction
-            using var transaction = await _context.Database.BeginTransactionAsync();
-
+            
             try
             {
                 var cartItems = await GetCartItems(ShoppingCartId);
@@ -223,7 +219,6 @@ namespace LuckysDepartmentStore.Service
                 if (!cartItems.IsSuccess || cartItems.Data == null || !cartItems.Data.cartsVMs.Any())
                 {
                     _logger.LogError("Unable to retrieve cart items or cart is empty for ShoppingCartId: {ShoppingCartId}", ShoppingCartId);
-                    await transaction.RollbackAsync();
                     return Utilities.ExecutionResult<decimal>.Failure("Unable to retrieve cart items or cart is empty.");
                 }
 
@@ -251,7 +246,6 @@ namespace LuckysDepartmentStore.Service
                 if (rowsEffected == 0)
                 {
                     _logger.LogError("Cannot add order item. Rolling back transaction.");
-                    await transaction.RollbackAsync();
                     return Utilities.ExecutionResult<decimal>.Failure("Unable to process order.");
                 }
 
@@ -260,7 +254,6 @@ namespace LuckysDepartmentStore.Service
                 if (orderTotal == 0)
                 {
                     _logger.LogError("Cannot calculate order total. Rolling back transaction.");
-                    await transaction.RollbackAsync();
                     return Utilities.ExecutionResult<decimal>.Failure("Unable to process order.");
                 }
 
@@ -271,13 +264,11 @@ namespace LuckysDepartmentStore.Service
             catch (DbUpdateException ex)
             {
                 _logger.LogError(ex, "Unable to create order in database.");
-                await transaction.RollbackAsync();
                 return Utilities.ExecutionResult<decimal>.Failure("Unable to create order in database.");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unable to create order.");
-                await transaction.RollbackAsync();
                 return Utilities.ExecutionResult<decimal>.Failure("Unable to create order.");
             }
 

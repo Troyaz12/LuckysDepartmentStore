@@ -69,8 +69,14 @@ namespace LuckysDepartmentStore.Data
             builder.Entity<CustomerOrder>()
              .HasOne(co => co.CustomerShippingData)
              .WithMany()
-             .HasForeignKey(co => co.ShippingAddressID)
+             .HasForeignKey(co => co.ShippingID)
              .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<ApplicationUser>()
+                .HasMany(a => a.Shipping)
+                .WithOne(b => b.User)
+                .HasForeignKey(b => b.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.ApplyConfiguration(new ColorProductConfiguration());
 

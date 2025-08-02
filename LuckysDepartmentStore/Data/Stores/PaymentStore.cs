@@ -23,9 +23,23 @@ namespace LuckysDepartmentStore.Data.Stores
 
         public async Task SavePayment(Payment payment)
         {
-            await _context.Payments.AddAsync(payment);
+            try
+            {
+                await _context.Payments.AddAsync(payment);
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+
+                var connection = _context.Database.GetDbConnection();
+                Console.WriteLine("Saving to database:");
+                Console.WriteLine("Connection string: " + connection.ConnectionString);
+                Console.WriteLine("Database: " + connection.Database);
+                Console.WriteLine("DataSource: " + connection.DataSource);
+
+            }
+            catch (Exception ex) { 
+                Console.WriteLine(ex.ToString());
+            }
+            
         }
 
         public async Task<int> UpdatePayment(Payment payment)

@@ -12,5 +12,7 @@
         public string state {  get; set; }
         public int Zip {  get; set; }
         public DateTime CreatedDate { get; set; }
+        public string? UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
     }
 }

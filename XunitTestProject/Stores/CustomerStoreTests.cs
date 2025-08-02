@@ -57,7 +57,7 @@ namespace XunitTestProject.Stores
             string userID = "1263";
             var customerOrder = new CustomerOrder();
             customerOrder.PaymentID = 1531231;
-            customerOrder.ShippingAddressID = 123456;
+            customerOrder.ShippingID = 123456;
             customerOrder.UserId = userID;
             // Act
             await repository.SaveOrder(customerOrder);
@@ -94,13 +94,24 @@ namespace XunitTestProject.Stores
                 LastName = "Gugler",
                 State= "TX"
             };
+
+            var shipping = new Shipping
+            {
+                User = testUser,
+                Address1 = "1154 Renner Rd",
+                City = "Richardson",
+                FirstName = "Troy",
+                LastName = "Gugler",
+                state = "TX"
+            };
+
             context.ShippingAddress.Add(shippingAddress);
 
             var customerOrder = new CustomerOrder
             {
                 CustomerOrderID = 1,
-                ShippingAddressID = shippingAddress.ShippingAddressID,
-                CustomerShippingData = shippingAddress,
+                ShippingID = shipping.ShippingID,
+                CustomerShippingData = shipping,
                 UserId = testUser.Id,
                 CreatedDate = DateTime.Now,
                 PaymentID = 1531231
