@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LuckysDepartmentStore.Models
 {
@@ -7,7 +8,9 @@ namespace LuckysDepartmentStore.Models
         public int DiscountID { get; set; }
         public required decimal DiscountPercent { get; set; }
         public required decimal DiscountAmount { get; set; }
-        public required bool DiscountActive {  get; set; }        
+        public required bool DiscountActive {  get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedDate { get; set; }
         public byte[]? DiscountArt { get; set; }
         public string? DiscountDescription { get; set; }

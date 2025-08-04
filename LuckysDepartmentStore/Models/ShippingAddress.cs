@@ -1,4 +1,6 @@
-﻿namespace LuckysDepartmentStore.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace LuckysDepartmentStore.Models
 {
     public class ShippingAddress
     {
@@ -9,7 +11,9 @@
         public string? Address2 { get; set; }
         public string City { get; set; }
         public string State {  get; set; }
-        public int ZipCode { get; set; } 
+        public int ZipCode { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedDate { get; set; }
         public string UserId { get; set; }
         public virtual ApplicationUser User { get; set; }

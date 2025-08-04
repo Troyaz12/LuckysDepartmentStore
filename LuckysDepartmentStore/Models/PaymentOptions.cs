@@ -1,4 +1,6 @@
-﻿namespace LuckysDepartmentStore.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace LuckysDepartmentStore.Models
 {
     public class PaymentOptions
     {
@@ -16,6 +18,8 @@
         public bool IsCheckingAccount { get; set; }
         public bool IsCreditCard { get; set; }
         public bool IsActive { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedDate { get; set; }
         public string UserId { get; set; }
         public virtual ApplicationUser User { get; set; }

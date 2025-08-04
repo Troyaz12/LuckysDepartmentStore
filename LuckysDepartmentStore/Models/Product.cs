@@ -1,4 +1,6 @@
-﻿namespace LuckysDepartmentStore.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace LuckysDepartmentStore.Models
 {
     public class Product
     {
@@ -11,6 +13,8 @@
         public int BrandID { get; set; }
         public int SubCategoryID { get; set; }
         public byte[]? ProductPicture { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedDate { get; set; }
         public int DiscountID { get; set; }
         public string? DiscountTag { get; set; }

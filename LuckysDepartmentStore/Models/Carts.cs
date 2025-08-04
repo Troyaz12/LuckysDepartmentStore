@@ -1,4 +1,6 @@
-﻿namespace LuckysDepartmentStore.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace LuckysDepartmentStore.Models
 {
     public class Carts
     {
@@ -7,6 +9,8 @@
         public int ProductID { get; set; }
         public Decimal Price { get; set; }
         public int Quantity { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedDate { get; set; }
         public byte[]? ProductPicture { get; set; }
         public string ProductName { get; set; }

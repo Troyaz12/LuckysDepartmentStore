@@ -1,4 +1,6 @@
-﻿namespace LuckysDepartmentStore.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace LuckysDepartmentStore.Models
 {
     public class CustomerOrderItem
     {
@@ -7,6 +9,8 @@
         public int CustomerOrderID { get; set; }
         public Decimal Price { get; set; }
         public int Quantity { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedDate { get; set; }
         public int ShippingID { get; set; }
     }

@@ -1,9 +1,13 @@
-﻿namespace LuckysDepartmentStore.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace LuckysDepartmentStore.Models
 {
     public class Brand
     {
         public int BrandId { get; set; }
         public string BrandName { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime Created {  get; set; }
     }
 }

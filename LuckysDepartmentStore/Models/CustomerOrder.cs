@@ -1,9 +1,12 @@
-﻿namespace LuckysDepartmentStore.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace LuckysDepartmentStore.Models
 {
     public class CustomerOrder
     {
         public int CustomerOrderID { get; set; }
         public int ShippingID { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedDate { get; set; }
         public int PaymentID { get; set; }
         public virtual Shipping CustomerShippingData { get; set; }

@@ -1,7 +1,10 @@
-﻿namespace LuckysDepartmentStore.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace LuckysDepartmentStore.Models
 {
     public class Order
     {
+        public int OrderId { get; set; }
         public string FirstNameShipping { get; set; }
         public string LastNameShipping { get; set; }
         public string Address1 { get; set; }
@@ -9,9 +12,6 @@
         public string City { get; set; }
         public string state { get; set; }
         public int Zip { get; set; }
-        //     public int ProductID { get; set; }
-        //    public Decimal Price { get; set; }
-        //       public int Quantity { get; set; }
         public string FirstNameBilling { get; set; }
         public string LastNameBilling { get; set; }
         public string RoutingNumber { get; set; }
@@ -25,6 +25,8 @@
         public bool IsCheckingAccount { get; set; }
         public bool IsCreditCard { get; set; }
         public DateTime OrderDate { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedDate { get; set; }
         public string UserName { get; set; }
         public string UserId { get; set; }
