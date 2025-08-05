@@ -13,8 +13,6 @@ namespace LuckysDepartmentStore.Models
         public string City { get; set; }    
         public string state {  get; set; }
         public int Zip {  get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedDate { get; set; }
         public string? UserId { get; set; }
         public virtual ApplicationUser User { get; set; }

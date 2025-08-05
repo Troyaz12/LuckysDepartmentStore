@@ -4,6 +4,7 @@ using LuckysDepartmentStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LuckysDepartmentStore.Migrations
 {
     [DbContext(typeof(LuckysContext))]
-    partial class LuckysContextModelSnapshot : ModelSnapshot
+    [Migration("20250804062933_GetdateCartsCreatedDate")]
+    partial class GetdateCartsCreatedDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,15 +100,15 @@ namespace LuckysDepartmentStore.Migrations
                         {
                             Id = "d601656b-5848-4236-96d5-d722d471089d",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "875868de-2ef4-4633-9a36-8d671c31df74",
+                            ConcurrencyStamp = "39d2ae64-3391-4fd3-8612-48f86a822745",
                             Email = "admin@localhost.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOzGDIb77munvkE44ZluhjTZAq5Uwmn1HBIqANX6jQ5R6kWJtWbFPxtkxOWme6epLQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEAKBFQTn2kDee/iaCFXZDoHMoAYLx+0dVsFU83Byakga7GE11ddKJCxn05HKHJ+eQQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ea15aaaf-e74b-43a7-a9be-747461da0b54",
+                            SecurityStamp = "31ec4267-48e0-4526-ba04-a4b306b71aa9",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         });
@@ -124,9 +127,9 @@ namespace LuckysDepartmentStore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Created")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.HasKey("BrandId");
 
@@ -194,9 +197,9 @@ namespace LuckysDepartmentStore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.HasKey("CategoryID");
 
@@ -256,9 +259,9 @@ namespace LuckysDepartmentStore.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ColorID"));
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -301,9 +304,9 @@ namespace LuckysDepartmentStore.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.Property<int>("ProductID")
                         .HasColumnType("int");
@@ -330,9 +333,9 @@ namespace LuckysDepartmentStore.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ConsumerID"));
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -363,9 +366,9 @@ namespace LuckysDepartmentStore.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerOrderID"));
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.Property<int>("PaymentID")
                         .HasColumnType("int");
@@ -395,9 +398,9 @@ namespace LuckysDepartmentStore.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerOrderItemID"));
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.Property<int>("CustomerOrderID")
                         .HasColumnType("int");
@@ -434,9 +437,9 @@ namespace LuckysDepartmentStore.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.Property<bool>("DiscountActive")
                         .HasColumnType("bit");
@@ -514,9 +517,9 @@ namespace LuckysDepartmentStore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.Property<int>("CvcCode")
                         .HasColumnType("int");
@@ -595,9 +598,9 @@ namespace LuckysDepartmentStore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.Property<int>("CustomerID")
                         .HasColumnType("int");
@@ -660,9 +663,9 @@ namespace LuckysDepartmentStore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.Property<int>("CvcCode")
                         .HasColumnType("int");
@@ -720,9 +723,9 @@ namespace LuckysDepartmentStore.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -767,9 +770,9 @@ namespace LuckysDepartmentStore.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RatingID"));
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.Property<int>("CustomerID")
                         .HasColumnType("int");
@@ -809,9 +812,9 @@ namespace LuckysDepartmentStore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -861,9 +864,9 @@ namespace LuckysDepartmentStore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -949,9 +952,9 @@ namespace LuckysDepartmentStore.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubCategoryID"));
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("SYSDATETIME()");
 
                     b.Property<string>("SubCategoryDescription")
                         .IsRequired()

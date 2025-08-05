@@ -9,8 +9,6 @@ namespace LuckysDepartmentStore.Models
         public string Review { get; set; }
         public int CustomerID { get; set; }
         public int ProductID { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedDate { get; set; }
 
     }

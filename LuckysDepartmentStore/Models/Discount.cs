@@ -9,8 +9,6 @@ namespace LuckysDepartmentStore.Models
         public required decimal DiscountPercent { get; set; }
         public required decimal DiscountAmount { get; set; }
         public required bool DiscountActive {  get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedDate { get; set; }
         public byte[]? DiscountArt { get; set; }
         public string? DiscountDescription { get; set; }

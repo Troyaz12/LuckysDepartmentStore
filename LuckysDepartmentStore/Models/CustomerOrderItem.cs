@@ -9,8 +9,6 @@ namespace LuckysDepartmentStore.Models
         public int CustomerOrderID { get; set; }
         public Decimal Price { get; set; }
         public int Quantity { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedDate { get; set; }
         public int ShippingID { get; set; }
     }

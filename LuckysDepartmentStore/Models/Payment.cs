@@ -18,8 +18,6 @@ namespace LuckysDepartmentStore.Models
         public int ZipCode { get; set; }
         public bool IsCheckingAccount { get; set; }
         public bool IsCreditCard { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedDate { get; set; }
         public decimal? Total { get; set; }
     }

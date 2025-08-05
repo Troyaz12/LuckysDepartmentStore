@@ -25,8 +25,6 @@ namespace LuckysDepartmentStore.Models
         public bool IsCheckingAccount { get; set; }
         public bool IsCreditCard { get; set; }
         public DateTime OrderDate { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedDate { get; set; }
         public string UserName { get; set; }
         public string UserId { get; set; }

@@ -74,7 +74,7 @@ namespace LuckysDepartmentStore.Data
 
             builder.Entity<CustomerOrder>()
             .Property(c => c.CreatedDate)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<ApplicationUser>()
                 .HasMany(a => a.Shipping)
@@ -84,67 +84,67 @@ namespace LuckysDepartmentStore.Data
 
             builder.Entity<Brand>()
             .Property(c => c.Created)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<Carts>()
             .Property(c => c.CreatedDate)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<Category>()
            .Property(c => c.CreatedDate)
-           .HasDefaultValueSql("SYSDATETIME()");
+           .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<Color>()
             .Property(c => c.CreatedDate)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<ColorProduct>()
             .Property(c => c.CreatedDate)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<Consumer>()
             .Property(c => c.CreatedDate)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<CustomerOrderItem>()
             .Property(c => c.CreatedDate)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<Discount>()
             .Property(c => c.CreatedDate)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<Order>()
             .Property(c => c.CreatedDate)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<Payment>()
             .Property(c => c.CreatedDate)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<PaymentOptions>()
             .Property(c => c.CreatedDate)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<Product>()
             .Property(c => c.CreatedDate)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<Rating>()
             .Property(c => c.CreatedDate)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<Shipping>()
             .Property(c => c.CreatedDate)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<ShippingAddress>()
             .Property(c => c.CreatedDate)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.Entity<SubCategory>()
             .Property(c => c.CreatedDate)
-            .HasDefaultValueSql("SYSDATETIME()");
+            .HasDefaultValueSql("GETDATE()");
 
             builder.ApplyConfiguration(new ColorProductConfiguration());
 

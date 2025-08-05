@@ -6,8 +6,6 @@ namespace LuckysDepartmentStore.Models
     {
         public int BrandId { get; set; }
         public string BrandName { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime Created {  get; set; }
     }
 }
