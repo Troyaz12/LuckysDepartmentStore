@@ -36,3 +36,32 @@ FROM Products p
 left join TotalSales on p.ProductID = TotalSales.ProductID
 order by [Sales Rating] desc
 
+-- categories that have more then 15 products in inventory
+select CategoryName, sum(Quantity)
+from products prod
+inner join Categories cat on Prod.CategoryID = cat.CategoryID
+group by CategoryName
+having sum(Quantity) > 15
+
+--  roll up to show subCategory totals and Category totals
+select CategoryName, SubCategoryName, sum(Quantity) Quantity
+from products prod
+inner join Categories cat on prod.CategoryID = cat.CategoryID
+inner join SubCategories sub on sub.SubCategoryID = prod.SubCategoryID
+group by rollup(CategoryName,SubCategoryName);
+
+-- validate grand total in rollup
+select sum(quantity) as TotalQuantity
+from Products
+
+-- check that every products category has a name in the Categories table
+select *
+from Products
+where CategoryID not in (select CategoryID from Categories) 
+
+
+select CategoryName, SubCategoryName, sum(Quantity) Quantity
+from products prod
+inner join Categories cat on prod.CategoryID = cat.CategoryID
+inner join SubCategories sub on sub.SubCategoryID = prod.SubCategoryID
+group by cube(CategoryName,SubCategoryName);
