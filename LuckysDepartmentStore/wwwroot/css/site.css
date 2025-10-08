@@ -125,14 +125,6 @@ body {
     text-align:center
 }
 
-.big-header {
-    font-size: 3.00rem;
-    font-family: "Lato", serif;
-}
-
-.small-header {
-    font-family: "Lato", serif;
-}
 .custom-card {
     padding-top: 30px;
     display: flex;
@@ -343,4 +335,21 @@ header {
 
 .navbar-nav .nav-item .nav-link.dropdown-toggle {
     padding-right: 2rem;
+}
+
+.big-header, .small-header {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+
+.big-header {
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.small-header {
+    margin-top: 10px;
+    letter-spacing: 0.3px;
+    margin-bottom: 25px;
 }
