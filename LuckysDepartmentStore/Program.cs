@@ -35,11 +35,10 @@ internal class Program
             )
         );
 
-
-
-        builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddEntityFrameworkStores<LuckysContext>()
             .AddDefaultTokenProviders();
+
 
         builder.Services.AddRazorPages();
 
