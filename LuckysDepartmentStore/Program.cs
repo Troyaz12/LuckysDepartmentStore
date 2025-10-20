@@ -6,6 +6,7 @@ using LuckysDepartmentStore.Service;
 using LuckysDepartmentStore.Service.Interfaces;
 using LuckysDepartmentStore.Utilities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 //using LuckysDepartmentStore.Data;
@@ -35,10 +36,11 @@ internal class Program
             )
         );
 
-        builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
             .AddEntityFrameworkStores<LuckysContext>()
             .AddDefaultTokenProviders();
 
+        builder.Services.AddTransient<IEmailSender, NullEmailSender>();
 
         builder.Services.AddRazorPages();
 
