@@ -353,3 +353,9 @@ header {
     letter-spacing: 0.3px;
     margin-bottom: 25px;
 }
+
+.carousel-banner {
+    display: block; /* same as d-block */
+    margin: 0 auto; /* same as mx-auto */
+    width: 80%;
+}
