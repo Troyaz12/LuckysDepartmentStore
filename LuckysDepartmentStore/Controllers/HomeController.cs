@@ -25,7 +25,7 @@ namespace LuckysDepartmentStore.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            var frontPageData = await _discountService.GetActiveDiscounts();
+            var frontPageData = await _discountService.GetActiveDiscountGroups();
 
             if (!frontPageData.IsSuccess)
             {
@@ -157,6 +157,36 @@ namespace LuckysDepartmentStore.Controllers
                 return RedirectToAction("Index", "Error");
             }
             
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchDiscountByProduct(string? categorySelection, string? subCategorySelection,
+            string? brandSelection, int? productID, string? discountTags, string? discountDescription)
+        {
+            if (!string.IsNullOrEmpty(discountTags))
+            {
+                discountTags = discountTags.Trim();
+            }
+
+            if (!_utility.IsSearchStringValid(discountTags, out string errorMessage))
+            {
+                TempData["ErrorMessage"] = errorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var productList = await _productService.GetProductsByDiscount(categorySelection, subCategorySelection, brandSelection, productID, discountTags);
+
+            if (!productList.IsSuccess)
+            {
+                TempData["ErrorMessage"] = productList.ErrorMessage;
+
+                return RedirectToAction("Index", "Error");
+            }
+
+            string description = "Showing results for \"" + discountDescription + "\"" + "(" + productList.Data.Count + " items" + ")";
+            TempData["description"] = description;
+
+            return View(productList.Data);
         }
     }
 }

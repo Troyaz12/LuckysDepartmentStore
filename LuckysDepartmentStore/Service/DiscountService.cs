@@ -162,5 +162,61 @@ namespace LuckysDepartmentStore.Service
             }
 
         }
+        public async Task<ExecutionResult<List<DiscountVM>>> GetActiveDiscountsByProductID()
+        {
+            try
+            {
+                var discount = await _discountStore.GetAllDiscountsByProductID();
+
+                if (discount == null)
+                {
+                    return ExecutionResult<List<DiscountVM>>.Failure("Unable to retrieve Discounts.");
+                }
+
+                var discountProducts = _mapper.Map<List<DiscountVM>>(discount);
+
+                for (int x = 0; x < discountProducts.Count; x++)
+                {
+                    discountProducts[x].DiscountImage = _utility.BytesToImage(discount[x].DiscountArt);
+                }
+
+                return ExecutionResult<List<DiscountVM>>.Success(discountProducts);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get active discounts");
+                return ExecutionResult<List<DiscountVM>>.Failure("Unable to retrieve Discounts." + ex.Message);
+            }
+
+        }
+
+        public async Task<ExecutionResult<List<DiscountVM>>> GetActiveDiscountGroups()
+        {
+            try
+            {
+                var discount = await _discountStore.GetAllDiscountGroups();
+
+                if (discount == null)
+                {
+                    return ExecutionResult<List<DiscountVM>>.Failure("Unable to retrieve Discounts.");
+                }
+
+                var discountProducts = _mapper.Map<List<DiscountVM>>(discount);
+
+                for (int x = 0; x < discountProducts.Count; x++)
+                {
+                    discountProducts[x].DiscountImage = _utility.BytesToImage(discount[x].DiscountArt);
+                }
+
+                return ExecutionResult<List<DiscountVM>>.Success(discountProducts);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get active discounts");
+                return ExecutionResult<List<DiscountVM>>.Failure("Unable to retrieve Discounts." + ex.Message);
+            }
+        }
     }
 }

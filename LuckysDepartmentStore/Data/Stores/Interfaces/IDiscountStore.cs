@@ -14,5 +14,7 @@ namespace LuckysDepartmentStore.Data.Stores.Interfaces
         public Task AddDiscount(Discount discount);
         public Task<List<DiscountDTO>> GetAllDiscounts();
         public Task<List<Discount>> GetDiscountByTags(List<string> discountTags);
+        public Task<List<DiscountDTO>> GetAllDiscountsByProductID();
+        public Task<List<DiscountDTO>> GetAllDiscountGroups();
     }
 }

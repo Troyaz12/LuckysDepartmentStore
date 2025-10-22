@@ -11,5 +11,7 @@ namespace LuckysDepartmentStore.Service.Interfaces
         public Task<ExecutionResult<DiscountVM>> GetDiscount(int discountID);
         public Task<Discount> CreateAsync(DiscountCreateVM discount);
         public Task<ExecutionResult<List<DiscountVM>>> GetActiveDiscounts();
+        public Task<ExecutionResult<List<DiscountVM>>> GetActiveDiscountsByProductID();
+        public Task<ExecutionResult<List<DiscountVM>>> GetActiveDiscountGroups();
     }
 }

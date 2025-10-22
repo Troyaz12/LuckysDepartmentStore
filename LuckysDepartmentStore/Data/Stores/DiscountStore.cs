@@ -122,7 +122,6 @@ namespace LuckysDepartmentStore.Data.Stores
                     join Brand in _context.Brand on Discount.BrandID equals Brand.BrandId into Brands
                     from Brand in Brands.DefaultIfEmpty()
                     where Discount.DiscountActive == true
-                        && Discount.ProductID == null
                     select new DiscountDTO
                     {
                         DiscountID = Discount.DiscountID,
@@ -157,6 +156,70 @@ namespace LuckysDepartmentStore.Data.Stores
                         
 
             return discounts;
+        }
+
+        public async Task<List<DiscountDTO>> GetAllDiscountsByProductID()
+        {
+            var discount = await(
+                    from Discount in _context.Discounts
+                    join Category in _context.Categories on Discount.CategoryID equals Category.CategoryID into categories
+                    from Category in categories.DefaultIfEmpty()
+                    join SubCategory in _context.SubCategories on Discount.SubCategoryID equals SubCategory.SubCategoryID into subCategories
+                    from SubCategory in subCategories.DefaultIfEmpty()
+                    join Brand in _context.Brand on Discount.BrandID equals Brand.BrandId into Brands
+                    from Brand in Brands.DefaultIfEmpty()
+                    where Discount.DiscountActive == true
+                        && Discount.ProductID.HasValue
+                    select new DiscountDTO
+                    {
+                        DiscountID = Discount.DiscountID,
+                        DiscountPercent = Discount.DiscountPercent,
+                        DiscountAmount = Discount.DiscountAmount,
+                        DiscountActive = Discount.DiscountActive,
+                        CreatedDate = Discount.CreatedDate,
+                        DiscountArt = Discount.DiscountArt,
+                        DiscountDescription = Discount.DiscountDescription,
+                        SubCategorySelection = SubCategory.SubCategoryName,
+                        CategorySelection = Category.CategoryName,
+                        ProductID = Discount.ProductID,
+                        BrandSelection = Brand.BrandName,
+                        DiscountTag = Discount.DiscountTag,
+                        ExpirationDate = Discount.ExpirationDate
+                    }).ToListAsync();
+
+            return discount;
+        }
+
+        public async Task<List<DiscountDTO>> GetAllDiscountGroups()
+        {
+            var discount = await(
+                   from Discount in _context.Discounts
+                   join Category in _context.Categories on Discount.CategoryID equals Category.CategoryID into categories
+                   from Category in categories.DefaultIfEmpty()
+                   join SubCategory in _context.SubCategories on Discount.SubCategoryID equals SubCategory.SubCategoryID into subCategories
+                   from SubCategory in subCategories.DefaultIfEmpty()
+                   join Brand in _context.Brand on Discount.BrandID equals Brand.BrandId into Brands
+                   from Brand in Brands.DefaultIfEmpty()
+                   where Discount.DiscountActive == true
+                       && Discount.ProductID == null
+                   select new DiscountDTO
+                   {
+                       DiscountID = Discount.DiscountID,
+                       DiscountPercent = Discount.DiscountPercent,
+                       DiscountAmount = Discount.DiscountAmount,
+                       DiscountActive = Discount.DiscountActive,
+                       CreatedDate = Discount.CreatedDate,
+                       DiscountArt = Discount.DiscountArt,
+                       DiscountDescription = Discount.DiscountDescription,
+                       SubCategorySelection = SubCategory.SubCategoryName,
+                       CategorySelection = Category.CategoryName,
+                       ProductID = Discount.ProductID,
+                       BrandSelection = Brand.BrandName,
+                       DiscountTag = Discount.DiscountTag,
+                       ExpirationDate = Discount.ExpirationDate
+                   }).ToListAsync();
+
+            return discount;
         }
     }
 }
