@@ -359,3 +359,24 @@ header {
     margin: 0 auto; /* same as mx-auto */
     width: 80%;
 }
+
+.row.banner-row {
+    height: 30vh;
+    margin-top:40px;
+}
+
+/* Make the <a> a block so it can have dimensions */
+.banner-link {
+    display: block;
+    width: 100%; /* fills parent container */
+    height: 50%; /* fills parent container */
+    overflow: hidden; /* prevent image overflow */
+}
+
+/* Make the image cover the entire <a> area */
+.banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* maintains aspect ratio, fills area */
+    display: block; /* remove extra space below image */
+}
