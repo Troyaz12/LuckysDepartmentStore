@@ -40,6 +40,11 @@ internal class Program
             .AddEntityFrameworkStores<LuckysContext>()
             .AddDefaultTokenProviders();
 
+        builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.LoginPath = "/Identity/Account/Login";
+        });
+
         builder.Services.AddTransient<IEmailSender, NullEmailSender>();
 
         builder.Services.AddRazorPages();
