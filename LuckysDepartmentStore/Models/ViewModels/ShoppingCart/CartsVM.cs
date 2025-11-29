@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LuckysDepartmentStore.Models.ViewModels.ShoppingCart
 {
@@ -23,6 +24,7 @@ namespace LuckysDepartmentStore.Models.ViewModels.ShoppingCart
         public string? SizeString { get; set; }
         [Display(Name = "Color")]
         public string? ColorString { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Subtotal {  get; set; }
     }
 }

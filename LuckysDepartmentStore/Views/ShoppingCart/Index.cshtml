@@ -136,14 +136,14 @@
                             </div>
                         </div>
                         <div class="d-flex flex-column col-md-2">
-                            <span>@item.Subtotal</span>
+                            <span>@string.Format("{0:C2}", @item.Subtotal)</span>
                         </div>
                     </div>
                 </div>
 
         }
     </ul>
-    <div style="display: flex; justify-content:flex-end; padding-right:11px;">Total: @Model.CartTotal</div>
+    <div style="display: flex; justify-content:flex-end; padding-right:11px;">Total: @string.Format("{0:C2}",@Model.CartTotal)</div>
 }
 else
 {

@@ -12,7 +12,7 @@ namespace LuckysDepartmentStore.Models
         public string AccountNumber { get; set; }
         public int CvcCode { get; set; }
         public string BillingAddress1 { get; set; }
-        public string BillingAddress2 { get; set; }
+        public string? BillingAddress2 { get; set; }
         public string City { get; set; }
         public string State { get; set; }
         public int ZipCode { get; set; }
